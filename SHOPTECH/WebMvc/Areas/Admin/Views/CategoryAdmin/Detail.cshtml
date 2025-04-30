@@ -1,0 +1,403 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@model Application.Dtos.CategoryDtos.DetailCategoryDto
+@{
+    var baseUrl = Configuration["API"];
+    ViewData["Title"] = "Chi tiết danh mục";
+}
+
+<h2>@Model.Name</h2>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Thông tin cơ bản</h5>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>ID:</strong> @Model.Id</li>
+                    <li class="list-group-item"><strong>Tên:</strong> @Model.Name</li>
+                    <li class="list-group-item"><strong>Mô tả:</strong> @Model.Description</li>
+                    <li class="list-group-item">
+                        <strong>Trạng thái:</strong>
+                        <span class="badge @(Model.IsActive ? "badge-success" : "badge-danger")">
+                            @(Model.IsActive ? "Hoạt động" : "Không hoạt động")
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Thông tin tạo</h5>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Ngày tạo:</strong> @Model.CreatedAt?.ToString("dd/MM/yyyy")</li>
+                    @* <li class="list-group-item"><strong>Người tạo:</strong> @Model.CreatedByUser</li> *@
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Thông tin cập nhật</h5>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Ngày cập nhật:</strong> @Model.UpdatedAt?.ToString("dd/MM/yyyy")</li>
+                    @* <li class="list-group-item"><strong>Người cập nhật:</strong> @Model.UpdatedByUser</li> *@
+                </ul>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            @if (Model.Image != null)
+            {
+                var base64String = Convert.ToBase64String(Model.Image.Data);
+                var imageSrc = $"data:{Model.Image.Type};base64,{base64String}";
+                <img src="@imageSrc" alt="Hình ảnh" class="img-fluid" style="max-width: 200px;" />
+            }
+            else
+            {
+                <span class="text-muted">Không có hình ảnh</span>
+            }
+        </div>
+
+        <!-- Danh sách thuộc tính sản phẩm -->
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Danh sách thuộc tính sản phẩm</h5>
+                <button type="button" class="btn btn-success" id="btnAddAttribute">
+                    <i class="fas fa-plus"></i> Thêm thuộc tính
+                </button>
+            </div>
+
+            <table class="table table-bordered table-hover" id="attributeTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên thuộc tính</th>
+                        <th>Mô tả</th>
+                        <th>Hiển thị</th>
+                        <th>Hoạt động</th>
+                        <th>Có thể lọc</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ProductAttributes != null)
+                    {
+                        foreach (var a in Model.ProductAttributes)
+                        {
+                            <tr>
+                                <td>@a.Id</td>
+                                <td>@a.Name</td>
+                                <td>@a.Description</td>
+                                <td>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input switch-display"
+                                               id="displaySwitch_@a.Id" @(a.IsDisplay ? "checked" : "")
+                                               data-id="@a.Id" data-current="@a.IsDisplay.ToString().ToLower()">
+                                        <label class="custom-control-label" for="displaySwitch_@a.Id"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input switch-active"
+                                               id="activeSwitch_@a.Id" @(a.IsActive ? "checked" : "")
+                                               data-id="@a.Id" data-current="@a.IsActive.ToString().ToLower()">
+                                        <label class="custom-control-label" for="activeSwitch_@a.Id"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input switch-filter"
+                                               id="filterSwitch_@a.Id" @(a.CanFilter ? "checked" : "")
+                                               data-id="@a.Id" data-current="@a.CanFilter.ToString().ToLower()">
+                                        <label class="custom-control-label" for="filterSwitch_@a.Id"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm btn-edit-attribute" data-id="@a.Id">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm btn-delete-attribute" data-id="@a.Id" data-name="@a.Name">
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">Không có thuộc tính nào</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <a href="@Url.Action("Update", "CategoryAdmin", new {id = Model.Id })" class="btn btn-primary">Chỉnh sửa danh mục</a>
+            <a asp-action="Index" class="btn btn-secondary">Danh sách</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thêm/sửa thuộc tính -->
+<div class="modal fade" id="attributeModal" tabindex="-1" role="dialog" aria-labelledby="attributeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="attributeModalLabel">Thuộc tính sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="attributeForm">
+                    <input type="hidden" id="attributeId" name="Id" value="0" />
+                    <input type="hidden" id="categoryId" name="CategoryId" value="@Model.Id" />
+
+                    <div class="form-group">
+                        <label for="attributeName">Tên thuộc tính <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="attributeName" name="Name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attributeDescription">Mô tả</label>
+                        <textarea class="form-control" id="attributeDescription" name="Description" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="attributeIsActive" name="IsActive" checked>
+                            <label class="custom-control-label" for="attributeIsActive">Hoạt động</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="attributeIsDisplay" name="IsDisplay" checked>
+                            <label class="custom-control-label" for="attributeIsDisplay">Hiển thị</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="attributeIsFilter" name="IsFilter">
+                            <label class="custom-control-label" for="attributeIsFilter">Có thể lọc</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnSaveAttribute">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa thuộc tính <strong id="deleteAttributeName"></strong>?</p>
+                <input type="hidden" id="deleteAttributeId" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmDelete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+		var baseUrl = @Html.Raw(Json.Serialize(baseUrl));
+
+        $(document).ready(function() {
+            // Khởi tạo DataTable
+            $('#attributeTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
+                }
+            });
+
+            // Mở modal thêm thuộc tính
+            $("#btnAddAttribute").click(function() {
+                resetAttributeForm();
+                $("#attributeModalLabel").text("Thêm thuộc tính sản phẩm");
+                $("#attributeModal").modal("show");
+            });
+
+            // Mở modal sửa thuộc tính
+            $(document).on("click", ".btn-edit-attribute", function() {
+                const id = $(this).data("id");
+                getAttributeDetails(id);
+            });
+
+            // Mở modal xóa thuộc tính
+            $(document).on("click", ".btn-delete-attribute", function() {
+                const id = $(this).data("id");
+                const name = $(this).data("name");
+                $("#deleteAttributeId").val(id);
+                $("#deleteAttributeName").text(name);
+                $("#deleteModal").modal("show");
+            });
+
+            // Lưu thuộc tính
+            $("#btnSaveAttribute").click(function() {
+                saveAttribute();
+            });
+
+            // Xác nhận xóa thuộc tính
+            $("#btnConfirmDelete").click(function() {
+                const id = $("#deleteAttributeId").val();
+                deleteAttribute(id);
+            });
+
+            // Thay đổi trạng thái hiển thị
+            $(document).on("change", ".switch-display", function() {
+                const id = $(this).data("id");
+                const isDisplay = $(this).prop("checked");
+                changeAttributeStatus(id, "display", isDisplay);
+            });
+
+            // Thay đổi trạng thái hoạt động
+            $(document).on("change", ".switch-active", function() {
+                const id = $(this).data("id");
+                const isActive = $(this).prop("checked");
+                changeAttributeStatus(id, "active", isActive);
+            });
+
+            // Thay đổi trạng thái lọc
+            $(document).on("change", ".switch-filter", function() {
+                const id = $(this).data("id");
+                const isFilter = $(this).prop("checked");
+                changeAttributeStatus(id, "filter", isFilter);
+            });
+        });
+
+        // Reset form thêm/sửa thuộc tính
+        function resetAttributeForm() {
+            $("#attributeId").val(0);
+            $("#attributeName").val("");
+            $("#attributeDescription").val("");
+            $("#attributeIsActive").prop("checked", true);
+            $("#attributeIsDisplay").prop("checked", true);
+            $("#attributeIsFilter").prop("checked", false);
+        }
+
+        // Lấy thông tin chi tiết thuộc tính
+        function getAttributeDetails(id) {
+            $.ajax({
+                url: baseUrl + "/ProductAttributeAdminApi/" + id,
+                type: "GET",
+                success: function(response) {
+                    $("#attributeId").val(response.id);
+                    $("#attributeName").val(response.name);
+                    $("#attributeDescription").val(response.description);
+                    $("#attributeIsActive").prop("checked", response.isActive);
+                    $("#attributeIsDisplay").prop("checked", response.isDisplay);
+                    $("#attributeIsFilter").prop("checked", response.isFilter);
+
+                    $("#attributeModalLabel").text("Sửa thuộc tính sản phẩm");
+                    $("#attributeModal").modal("show");
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    toastr.error(response?.message || "Đã xảy ra lỗi khi lấy thông tin thuộc tính!");
+                }
+            });
+        }
+
+        // Lưu thuộc tính
+        function saveAttribute() {
+            const formData = {
+                id: parseInt($("#attributeId").val()),
+                categoryId: parseInt($("#categoryId").val()),
+                name: $("#attributeName").val(),
+                description: $("#attributeDescription").val(),
+                isActive: $("#attributeIsActive").prop("checked"),
+                isDisplay: $("#attributeIsDisplay").prop("checked"),
+                isFilter: $("#attributeIsFilter").prop("checked")
+            };
+
+            const isUpdate = formData.id > 0;
+            const url = baseUrl + "/ProductAttributeAdminApi";
+            const method = isUpdate ? "PUT" : "POST";
+
+            $.ajax({
+                url: url,
+                type: method,
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    $("#attributeModal").modal("hide");
+                    toastr.success(`Thuộc tính đã được ${isUpdate ? "cập nhật" : "thêm"} thành công!`);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    toastr.error(response?.message || `Đã xảy ra lỗi khi ${isUpdate ? "cập nhật" : "thêm"} thuộc tính!`);
+                }
+            });
+        }
+
+        // Xóa thuộc tính
+        function deleteAttribute(id) {
+            $.ajax({
+                url: baseUrl + "/ProductAttributeAdminApi/" + id,
+                type: "DELETE",
+                success: function() {
+                    $("#deleteModal").modal("hide");
+                    toastr.success("Thuộc tính đã được xóa thành công!");
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                },
+                error: function(xhr) {
+                    $("#deleteModal").modal("hide");
+                    const response = xhr.responseJSON;
+                    toastr.error(response?.message || "Đã xảy ra lỗi khi xóa thuộc tính!");
+                }
+            });
+        }
+
+        // Thay đổi trạng thái thuộc tính
+        function changeAttributeStatus(id, type, value) {
+            let url = baseUrl;
+            switch(type) {
+                case "display":
+                    url += `/ProductAttributeAdminApi/ChangeDisplay/${id}`;
+                    break;
+                case "active":
+                    url += `/ProductAttributeAdminApi/ChangeActive/${id}`;
+                    break;
+                case "filter":
+                    url += `/ProductAttributeAdminApi/ChangeFilter/${id}`;
+                    break;
+            }
+
+            $.ajax({
+                url: url,
+                type: "PATCH",
+                contentType: "application/json",
+                data: JSON.stringify(value),
+                success: function() {
+                    toastr.success("Cập nhật trạng thái thành công!");
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    toastr.error(response?.message || "Đã xảy ra lỗi khi cập nhật trạng thái!");
+                    // Quay lại trạng thái cũ
+                    const switchId = `#${type}Switch_${id}`;
+                    $(switchId).prop("checked", !value);
+                }
+            });
+        }
+    </script>
+}

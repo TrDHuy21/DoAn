@@ -1,0 +1,296 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\areas\\admin\\views\\categoryadmin\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\areas\\admin\\views\\categoryadmin\\detail.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\areas\\admin\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\areas\\admin\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\areas\\admin\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\areas\\admin\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\areas\\admin\\controllers\\productattributeadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\areas\\admin\\controllers\\productattributeadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\models\\commonurl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\models\\commonurl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\application\\mapping\\categorymapping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|solutionrelative:application\\mapping\\categorymapping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57C29EA8-2AB6-47F9-A874-615F5F3ACE7B}|Domain\\Domain.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\domain\\entity\\productattribute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57C29EA8-2AB6-47F9-A874-615F5F3ACE7B}|Domain\\Domain.csproj|solutionrelative:domain\\entity\\productattribute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\application\\dtos\\productattributedtos\\indexproductattributedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|solutionrelative:application\\dtos\\productattributedtos\\indexproductattributedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\application\\service\\implementation\\productattributeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|solutionrelative:application\\service\\implementation\\productattributeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webmvc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E0946E0-1AF0-4EE0-8568-0ED31632A33B}|WebMvc\\WebMvc.csproj|solutionrelative:webmvc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FC291EA2-4BA2-403E-B166-EF4D4E526A7D}|WebApi\\WebApi.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webapi\\controllers\\admin\\productattributeadminapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FC291EA2-4BA2-403E-B166-EF4D4E526A7D}|WebApi\\WebApi.csproj|solutionrelative:webapi\\controllers\\admin\\productattributeadminapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FC291EA2-4BA2-403E-B166-EF4D4E526A7D}|WebApi\\WebApi.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\webapi\\controllers\\admin\\brandadminapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FC291EA2-4BA2-403E-B166-EF4D4E526A7D}|WebApi\\WebApi.csproj|solutionrelative:webapi\\controllers\\admin\\brandadminapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\application\\models\\errorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|solutionrelative:application\\models\\errorresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\application\\service\\interface\\iproductattributeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3AAECB9C-9ED5-45EC-B36D-419E97D74A15}|Application\\Application.csproj|solutionrelative:application\\service\\interface\\iproductattributeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{162061D7-3D65-4F09-B658-2C6A787A6059}|Infrastructure\\Infrastructure.csproj|e:\\dai_hoc\\do_an\\doan\\shoptech\\infrastructure\\unitofwork\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{162061D7-3D65-4F09-B658-2C6A787A6059}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\unitofwork\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 306,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 922,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "WebMvc\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml*",
+              "RelativeToolTip": "WebMvc\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml*",
+              "ViewState": "AgIAAPEAAAAAAAAAAAArwP8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T14:57:37.756Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Views\\Shared\\Error.cshtml",
+              "RelativeDocumentMoniker": "WebMvc\\Areas\\Admin\\Views\\Shared\\Error.cshtml",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Views\\Shared\\Error.cshtml",
+              "RelativeToolTip": "WebMvc\\Areas\\Admin\\Views\\Shared\\Error.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T14:57:37.178Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CategoryMapping.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Mapping\\CategoryMapping.cs",
+              "RelativeDocumentMoniker": "Application\\Mapping\\CategoryMapping.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Mapping\\CategoryMapping.cs",
+              "RelativeToolTip": "Application\\Mapping\\CategoryMapping.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAMwBEAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:48:27.336Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Program.cs",
+              "RelativeDocumentMoniker": "WebMvc\\Program.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Program.cs",
+              "RelativeToolTip": "WebMvc\\Program.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAQwB4AAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:39:48.453Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CommonUrl.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Models\\CommonUrl.cs",
+              "RelativeDocumentMoniker": "WebMvc\\Models\\CommonUrl.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Models\\CommonUrl.cs",
+              "RelativeToolTip": "WebMvc\\Models\\CommonUrl.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:34:57.702Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\appsettings.json",
+              "RelativeDocumentMoniker": "WebMvc\\appsettings.json",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\appsettings.json",
+              "RelativeToolTip": "WebMvc\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-30T14:33:37.387Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ProductAttributeAdminController.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Controllers\\ProductAttributeAdminController.cs",
+              "RelativeDocumentMoniker": "WebMvc\\Areas\\Admin\\Controllers\\ProductAttributeAdminController.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Controllers\\ProductAttributeAdminController.cs",
+              "RelativeToolTip": "WebMvc\\Areas\\Admin\\Controllers\\ProductAttributeAdminController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:30:44.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IndexProductAttributeDto.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Dtos\\ProductAttributeDtos\\IndexProductAttributeDto.cs",
+              "RelativeDocumentMoniker": "Application\\Dtos\\ProductAttributeDtos\\IndexProductAttributeDto.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Dtos\\ProductAttributeDtos\\IndexProductAttributeDto.cs",
+              "RelativeToolTip": "Application\\Dtos\\ProductAttributeDtos\\IndexProductAttributeDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwA0AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:29:56.078Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Detail.cshtml",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Views\\CategoryAdmin\\Detail.cshtml",
+              "RelativeDocumentMoniker": "WebMvc\\Areas\\Admin\\Views\\CategoryAdmin\\Detail.cshtml",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\Areas\\Admin\\Views\\CategoryAdmin\\Detail.cshtml",
+              "RelativeToolTip": "WebMvc\\Areas\\Admin\\Views\\CategoryAdmin\\Detail.cshtml",
+              "ViewState": "AgIAAHgBAAAAAAAAAAArwGABAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-30T14:24:42.286Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "BrandAdminApiController.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebApi\\Controllers\\Admin\\BrandAdminApiController.cs",
+              "RelativeDocumentMoniker": "WebApi\\Controllers\\Admin\\BrandAdminApiController.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebApi\\Controllers\\Admin\\BrandAdminApiController.cs",
+              "RelativeToolTip": "WebApi\\Controllers\\Admin\\BrandAdminApiController.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:17:46.189Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ProductAttributeAdminApiController.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebApi\\Controllers\\Admin\\ProductAttributeAdminApiController.cs",
+              "RelativeDocumentMoniker": "WebApi\\Controllers\\Admin\\ProductAttributeAdminApiController.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebApi\\Controllers\\Admin\\ProductAttributeAdminApiController.cs",
+              "RelativeToolTip": "WebApi\\Controllers\\Admin\\ProductAttributeAdminApiController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:15:37.173Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ErrorResponse.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Models\\ErrorResponse.cs",
+              "RelativeDocumentMoniker": "Application\\Models\\ErrorResponse.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Models\\ErrorResponse.cs",
+              "RelativeToolTip": "Application\\Models\\ErrorResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:14:28.364Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IUnitOfWork.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Infrastructure\\UnitOfWork\\IUnitOfWork.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\UnitOfWork\\IUnitOfWork.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Infrastructure\\UnitOfWork\\IUnitOfWork.cs",
+              "RelativeToolTip": "Infrastructure\\UnitOfWork\\IUnitOfWork.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAwwCkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T14:08:18.546Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ProductAttributeService.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Service\\Implementation\\ProductAttributeService.cs",
+              "RelativeDocumentMoniker": "Application\\Service\\Implementation\\ProductAttributeService.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Service\\Implementation\\ProductAttributeService.cs",
+              "RelativeToolTip": "Application\\Service\\Implementation\\ProductAttributeService.cs",
+              "ViewState": "AgIAAKUAAAAAAAAAAAAWwMkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T13:27:40.201Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "IProductAttributeService.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Service\\Interface\\IProductAttributeService.cs",
+              "RelativeDocumentMoniker": "Application\\Service\\Interface\\IProductAttributeService.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Application\\Service\\Interface\\IProductAttributeService.cs",
+              "RelativeToolTip": "Application\\Service\\Interface\\IProductAttributeService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T13:27:38.942Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ProductAttribute.cs",
+              "DocumentMoniker": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Domain\\Entity\\ProductAttribute.cs",
+              "RelativeDocumentMoniker": "Domain\\Entity\\ProductAttribute.cs",
+              "ToolTip": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\Domain\\Entity\\ProductAttribute.cs",
+              "RelativeToolTip": "Domain\\Entity\\ProductAttribute.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwA8AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-30T13:17:48.391Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

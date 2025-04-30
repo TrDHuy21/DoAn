@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model Application.Dtos.LoginDtos.LoginDto
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="card px-5 py-5" id="form1">
+                <form asp-action="Login" asp-controller="Login" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="mb-4">
+                        <label for="UserName" class="form-label">Tên Đăng Nhập</label>
+                        <input type="text" asp-for="Username" class="form-control" required />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="Password" class="form-label">Mật Khẩu</label>
+                        <input type="password" asp-for="Password" class="form-control" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Đăng Nhập</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
