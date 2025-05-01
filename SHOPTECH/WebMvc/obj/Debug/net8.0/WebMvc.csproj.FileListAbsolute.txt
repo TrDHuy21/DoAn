@@ -276,3 +276,4 @@ E:\Dai_Hoc\Do_an\DoAn\SHOPTECH\WebMvc\bin\Debug\net8.0\Swashbuckle.AspNetCore.Sw
 E:\Dai_Hoc\Do_an\DoAn\SHOPTECH\WebMvc\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 E:\Dai_Hoc\Do_an\DoAn\SHOPTECH\WebMvc\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 E:\Dai_Hoc\Do_an\DoAn\SHOPTECH\WebMvc\obj\Debug\net8.0\WebMvc.MvcApplicationPartsAssemblyInfo.cs
+E:\Dai_Hoc\Do_an\DoAn\SHOPTECH\WebMvc\bin\Debug\net8.0\libman.json

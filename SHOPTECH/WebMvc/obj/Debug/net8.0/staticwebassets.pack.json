@@ -7737,6 +7737,22 @@
       "PackagePath": "staticwebassets\\sbadmin2\\vendor\\jquery\\jquery.slim.min.map"
     },
     {
+      "Id": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\wwwroot\\toastr\\toastr.css",
+      "PackagePath": "staticwebassets\\toastr\\toastr.css"
+    },
+    {
+      "Id": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\wwwroot\\toastr\\toastr.js",
+      "PackagePath": "staticwebassets\\toastr\\toastr.js"
+    },
+    {
+      "Id": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\wwwroot\\toastr\\toastr.min.css",
+      "PackagePath": "staticwebassets\\toastr\\toastr.min.css"
+    },
+    {
+      "Id": "E:\\Dai_Hoc\\Do_an\\DoAn\\SHOPTECH\\WebMvc\\wwwroot\\toastr\\toastr.min.js",
+      "PackagePath": "staticwebassets\\toastr\\toastr.min.js"
+    },
+    {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebMvc.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },

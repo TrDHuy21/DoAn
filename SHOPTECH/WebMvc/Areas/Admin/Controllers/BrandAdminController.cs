@@ -107,7 +107,7 @@ namespace WebMvc.Areas.Admin.Controllers
                     }
 
                     var brandId = await response.Content.ReadFromJsonAsync<int>();
-                    TempData["SuccessMessage"] = "Student updated successfully!";
+                    TempData["SuccessMessage"] = "Cập nhật thương hiệu thành công !";
                     return RedirectToAction("Detail", new { id = brandId });
                 }
             }

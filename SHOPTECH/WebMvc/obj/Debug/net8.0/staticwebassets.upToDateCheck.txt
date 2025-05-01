@@ -1931,3 +1931,7 @@ wwwroot\sbadmin2\vendor\jquery\jquery.slim.min.map
 wwwroot\sbadmin2\vendor\jquery-easing\jquery.easing.compatibility.js
 wwwroot\sbadmin2\vendor\jquery-easing\jquery.easing.js
 wwwroot\sbadmin2\vendor\jquery-easing\jquery.easing.min.js
+wwwroot\toastr\toastr.css
+wwwroot\toastr\toastr.js
+wwwroot\toastr\toastr.min.css
+wwwroot\toastr\toastr.min.js

@@ -20,6 +20,7 @@ namespace Application.Mapping
             CreateMap<ProductAttribute, UpdateProductAttributeDto>();
 
             CreateMap<ProductAttribute, IndexProductAttributeDto>();
+            CreateMap<ProductAttribute, DetailProductAttributeDto>().ReverseMap();
 
         }
     }

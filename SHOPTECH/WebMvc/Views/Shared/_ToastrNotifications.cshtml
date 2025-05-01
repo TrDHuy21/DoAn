@@ -1,0 +1,29 @@
+﻿@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        $(document).ready(function() {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "5000"
+            };
+            toastr.success('@Html.Raw(Json.Serialize(TempData["SuccessMessage"]))');
+        });
+    </script>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <script>
+        $(document).ready(function() {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "5000"
+            };
+            toastr.error('@Html.Raw(Json.Serialize(TempData["ErrorMessage"]))');
+        });
+    </script>
+}

@@ -219,9 +219,6 @@
         $(document).ready(function() {
             // Khởi tạo DataTable
             $('#attributeTable').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
-                }
             });
 
             // Mở modal thêm thuộc tính
@@ -276,7 +273,7 @@
                 const id = $(this).data("id");
                 const isFilter = $(this).prop("checked");
                 changeAttributeStatus(id, "filter", isFilter);
-            });
+            });  
         });
 
         // Reset form thêm/sửa thuộc tính
@@ -286,7 +283,7 @@
             $("#attributeDescription").val("");
             $("#attributeIsActive").prop("checked", true);
             $("#attributeIsDisplay").prop("checked", true);
-            $("#attributeIsFilter").prop("checked", false);
+            $("#attributeIsFilter").prop("checked", false); 
         }
 
         // Lấy thông tin chi tiết thuộc tính
