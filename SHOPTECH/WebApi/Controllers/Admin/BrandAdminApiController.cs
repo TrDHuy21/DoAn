@@ -95,7 +95,7 @@ namespace WebApi.Controllers.Admin
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateBrandDto brandDto)
+        public async Task<IActionResult> Update([FromForm] UpdateBrandDto brandDto)
         {
             try
             {

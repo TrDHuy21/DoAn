@@ -1,0 +1,88 @@
+﻿@using Application.Dtos.BrandDtos
+@using Application.Dtos.CategoryDtos
+@model Application.Dtos.ProductDtos.UpdateProductDto
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm mới";
+    var categories = ViewData["Categories"] as List<IndexCategoryDto>;
+    var brands = ViewData["Brands"] as List<IndexBrandDto>;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Update" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input asp-for="Id" type="hidden"/>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Tên sản phẩm</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Mô tả</label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="form-label">Danh mục</label>
+                            <select asp-for="CategoryId" class="form-select">
+                                <option value="">-- Chọn danh mục --</option>
+                                @if (categories != null)
+                                {
+                                    @foreach (var category in categories)
+                                    {
+                                        <option value="@category.Id">@category.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BrandId" class="form-label">Thương hiệu</label>
+                            <select asp-for="BrandId" class="form-select">
+                                <option value="">-- Chọn thương hiệu --</option>
+                                @if (brands != null)
+                                {
+                                    @foreach (var brand in brands)
+                                    {
+                                        <option value="@brand.Id">@brand.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FormFile" class="form-label">Hình ảnh sản phẩm</label>
+                            <input asp-for="FormFile" type="file" class="form-control" />
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="IsActive" class="form-check-input" />
+                            <label asp-for="IsActive" class="form-check-label">Kích hoạt</label>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" class="btn btn-warning">Cập nhật</button>
+                            <a href="@Url.Action("Detail", "ProductAdmin", new {id = Model.Id })" class="btn btn-primary">Chi tiết</a>
+                            <a asp-action="Index" class="btn btn-secondary">Danh sách sản phẩm</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -35,7 +35,7 @@ namespace Application.Service.Implementation
                 throw new Exception("Error deleting file", ex);
             }
 
-            return result;
+             return result;
         }
 
         public Task<List<ImageFileDto>> GetAllFileAsync()

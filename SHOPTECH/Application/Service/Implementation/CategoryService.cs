@@ -71,46 +71,43 @@ namespace Application.Service.Implementation
 
         public async Task<Category?> ChangeActiveAsync(int id, bool isActive)
         {
+            try
             {
-                try
+                await _unitOfWork.BeginTransactionAsync();
+
+                // Tìm brand cần vô hiệu hóa
+                var category = await _unitOfWork.Categories
+                    .GetAll()
+                    .Include(b => b.Products)
+                    .FirstOrDefaultAsync(b => b.Id == id);
+
+                if (category == null)
                 {
-                    await _unitOfWork.BeginTransactionAsync();
-
-                    // Tìm brand cần vô hiệu hóa
-                    var category = await _unitOfWork.Categories
-                        .GetAll()
-                        .Include(b => b.Products)
-                        .FirstOrDefaultAsync(b => b.Id == id);
-
-                    if (category == null)
-                    {
-                        throw new KeyNotFoundException($"Brand with ID {id} not found");
-                    }
-
-                    // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
-                    category.IsActive = isActive;
-
-                    // Vô hiệu hóa tất cả sản phẩm thuộc brand này
-                    //foreach (var product in brand.Products)
-                    //{
-                    //    product.IsActive = isActive;
-                    //}
-                    // sau sẽ kiểm tra isactive của brand và category khi select sản phẩm
-
-
-                    // Cập nhật brand
-                    BaseEntityService<Category> .Update(category);
-                    await _unitOfWork.SaveChangeAsync();
-                    await _unitOfWork.CommitTransactionAsync();
-                    return category;
-                }
-                catch (Exception ex)
-                {
-                    await _unitOfWork.RollbackTransactionAsync();
-                    Console.WriteLine($"Error deactivating category: {ex.Message}");
-                    throw ex;
+                    throw new KeyNotFoundException($"Brand with ID {id} not found");
                 }
 
+                // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
+                category.IsActive = isActive;
+
+                // Vô hiệu hóa tất cả sản phẩm thuộc brand này
+                //foreach (var product in brand.Products)
+                //{
+                //    product.IsActive = isActive;
+                //}
+                // sau sẽ kiểm tra isactive của brand và category khi select sản phẩm
+
+
+                // Cập nhật brand
+                BaseEntityService<Category>.Update(category);
+                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.CommitTransactionAsync();
+                return category;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                Console.WriteLine($"Error deactivating category: {ex.Message}");
+                throw ex;
             }
         }
 
@@ -160,7 +157,7 @@ namespace Application.Service.Implementation
                 {
                     throw new Exception("Brand not found");
                 }
-                
+
                 return category;
             }
             catch (Exception ex)
@@ -238,7 +235,7 @@ namespace Application.Service.Implementation
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackTransactionAsync();
-                Console.WriteLine($"Error updating brand: {ex.Message}");
+                Console.WriteLine($"Error updating category: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
                 throw ex;
 

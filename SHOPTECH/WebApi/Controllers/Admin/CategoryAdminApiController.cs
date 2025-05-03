@@ -96,7 +96,7 @@ namespace WebApi.Controllers.Admin
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateCategoryDto categoryDto)
+        public async Task<IActionResult> Update([FromForm] UpdateCategoryDto categoryDto)
         {
 
             try
@@ -123,9 +123,9 @@ namespace WebApi.Controllers.Admin
                 var result = await _categoryService.DeleteAsync(id);
                 if (!result)
                 {
-                    throw new Exception("Failed to delete brand");
+                    throw new Exception("Failed to delete category");
                 }
-                return Ok("Brand deleted successfully.");
+                return Ok("Category deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -142,7 +142,7 @@ namespace WebApi.Controllers.Admin
             try
             {
                 var category = await _categoryService.ChangeActiveAsync(id, isActive);
-                return Ok("Brand status updated successfully.");
+                return Ok("Category status updated successfully.");
             }
             catch (Exception ex)
             {

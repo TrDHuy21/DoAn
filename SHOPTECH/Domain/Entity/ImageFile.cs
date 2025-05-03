@@ -14,8 +14,10 @@ namespace Domain.Enity
         public byte[]? Data { get; set; }
         public string? Type { get; set; }
 
+
         public IEnumerable<Brand>? Brands { get; set; }
         public IEnumerable<Category>? Categories { get; set; }
+        public IEnumerable<Product>? Products { get; set; }
         public IEnumerable<ProductDetailAttribute>? ProductDetailAttributes { get; set; }
         public IEnumerable<ProductDetail>? ProductDetails { get; set; }
         public IEnumerable<User>? Employees { get; set; }

@@ -15,8 +15,7 @@ namespace Application.Mapping
     public class CategoryMapping : Profile
     {
         public CategoryMapping() {
-            CreateMap<AddCategoryDto, Category>()
-                .ForMember(t => t.ProductAttributes, o => o.Ignore());
+            CreateMap<AddCategoryDto, Category>();
 
             CreateMap<Category, IndexCategoryDto>()
                 .ForMember(t => t.Image, x => x.MapFrom(s => s.Image != null ? new ImageFileDto

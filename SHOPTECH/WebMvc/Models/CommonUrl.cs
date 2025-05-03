@@ -25,15 +25,21 @@ namespace WebMvc.Models
         public static string BRAND_ADMIN() => BASE_URL + "/BrandAdminApi";
         public static string BRAND_ADMIN(int id) => BRAND_ADMIN() + "/" + id;
         public static string BRAND_ADMIN_PAGE(int pageIndex, int pageSize) => BRAND_ADMIN() + $"/page/{pageIndex}?pagesize={pageSize}";
-        internal static string BRAND_ADMIN_CHANGE_ACTIVE(int id, bool active) => BRAND_ADMIN() + $"/changeactive/{id}?isactive={active}";
+        public static string BRAND_ADMIN_CHANGE_ACTIVE(int id, bool active) => BRAND_ADMIN() + $"/changeactive/{id}?isactive={active}";
 
         // category admin
         public static string CATEGORY_ADMIN() => BASE_URL + "/CategoryAdminApi";
         public static string CATEGORY_ADMIN(int id) => CATEGORY_ADMIN() + "/" + id;
         public static string CATEGORY_ADMIN_PAGE(int pageIndex, int pageSize) => CATEGORY_ADMIN() + $"/page/{pageIndex}?pagesize={pageSize}";
-        internal static string CATEGORY_ADMIN_CHANGE_ACTIVE(int id, bool active) => CATEGORY_ADMIN() + $"/changeactive/{id}?isactive={active}";
+        public static string CATEGORY_ADMIN_CHANGE_ACTIVE(int id, bool active) => CATEGORY_ADMIN() + $"/changeactive/{id}?isactive={active}";
 
         // Product Attribute admin
+
+        // product admin
+        public static string PRODUCT_ADMIN() => BASE_URL + "/ProductAdminApi";
+        public static string PRODUCT_ADMIN(int id) => PRODUCT_ADMIN() + "/" + id;
+        public static string PRODUCT_ADMIN_PAGE(int pageIndex, int pageSize) => PRODUCT_ADMIN() + $"/page/{pageIndex}?pagesize={pageSize}";
+        public static string PRODUCT_ADMIN_CHANGE_ACTIVE(int id, bool active) => PRODUCT_ADMIN() + $"/changeactive/{id}?isactive={active}";
 
     }
 }

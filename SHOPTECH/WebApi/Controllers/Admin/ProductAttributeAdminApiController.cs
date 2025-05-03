@@ -23,9 +23,9 @@ namespace WebApi.Controllers.Admin
 
 
 
-        // GET: api/ProductAttribute
+        // GET: api/ProductAttributeAdminApi
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductAttribute>>> GetAllProductAttributes()
+        public async Task<ActionResult<IEnumerable<ProductAttribute>>> GetAll()
         {
             try
             {
@@ -39,9 +39,9 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // GET: api/ProductAttribute/5
+        // GET: api/ProductAttributeAdminApi/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductAttribute>> GetProductAttribute(int id)
+        public async Task<ActionResult<ProductAttribute>> GetById(int id)
         {
             try
             {
@@ -59,14 +59,14 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // POST: api/ProductAttribute
+        // POST: api/ProductAttributeAdminApi
         [HttpPost]
-        public async Task<ActionResult<ProductAttribute>> CreateProductAttribute([FromBody] AddProductAttributeDto productAttributeDto)
+        public async Task<ActionResult<ProductAttribute>> Create([FromBody] AddProductAttributeDto productAttributeDto)
         {
             try
             {
                 var createdProductAttribute = await _productAttributeService.AddAsync(productAttributeDto);
-                return CreatedAtAction(nameof(GetProductAttribute), new { id = createdProductAttribute.Id }, createdProductAttribute.Id);
+                return CreatedAtAction(nameof(GetById), new { id = createdProductAttribute.Id }, createdProductAttribute.Id);
             }
             catch (ArgumentNullException ex)
             {
@@ -78,9 +78,9 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PUT: api/ProductAttribute
+        // PUT: api/ProductAttributeAdminApi
         [HttpPut]
-        public async Task<ActionResult<ProductAttribute>> UpdateProductAttribute([FromBody] UpdateProductAttributeDto productAttributeDto)
+        public async Task<ActionResult<ProductAttribute>> Update([FromBody] UpdateProductAttributeDto productAttributeDto)
         {
             try
             {
@@ -97,9 +97,9 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // DELETE: api/ProductAttribute/5
+        // DELETE: api/ProductAttributeAdminApi/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProductAttribute(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PATCH: api/ProductAttribute/ChangeActive/5
+        // PATCH: api/ProductAttributeAdminApi/ChangeActive/5
         [HttpPatch("ChangeActive/{id}")]
         public async Task<ActionResult<ProductAttribute>> ChangeActiveStatus(int id, [FromBody] bool isActive)
         {
@@ -135,7 +135,7 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PATCH: api/ProductAttribute/ChangeDisplay/5
+        // PATCH: api/ProductAttributeAdminApi/ChangeDisplay/5
         [HttpPatch("ChangeDisplay/{id}")]
         public async Task<ActionResult<ProductAttribute>> ChangeDisplayStatus(int id, [FromBody] bool isDisplay)
         {
@@ -155,7 +155,7 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PATCH: api/ProductAttribute/ChangeFilter/5
+        // PATCH: api/ProductAttributeAdminApi/ChangeFilter/5
         [HttpPatch("ChangeFilter/{id}")]
         public async Task<ActionResult<ProductAttribute>> ChangeFilterStatus(int id, [FromBody] bool isFilter)
         {

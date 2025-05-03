@@ -1,7 +1,7 @@
-﻿@model Application.Dtos.PageResultDto<Application.Dtos.CategoryDtos.IndexCategoryDto>
+﻿@model Application.Dtos.PageResultDto<Application.Dtos.ProductDtos.IndexProductDto>
 
 @{
-	ViewData["Title"] = "Quản Lý Danh Mục";
+	ViewData["Title"] = "Quản lý danh hiệu";
 }
 
 <div class="container-fluid">
@@ -10,8 +10,8 @@
 			<div class="card">
 				<div class="card-header">
 					<div class="d-flex justify-content-between align-items-center">
-						<h4 class="card-title">Danh sách danh mục</h4>
-						<a href="@Url.Action("Add", "CategoryAdmin")" class="btn btn-primary">
+						<h4 class="card-title">Danh sách sản phẩm</h4>
+						<a href="@Url.Action("Add", "ProductAdmin")" class="btn btn-primary">
 							<i class="fas fa-plus"></i> Thêm mới
 						</a>
 					</div>
@@ -21,10 +21,10 @@
 						<table class="table table-bordered table-hover" id="indexTable">
 							<thead class="thead-light">
 								<tr>
-									<th width="10%">ID</th>
 									<th width="15%">Hình ảnh</th>
-									<th width="20%">Tên danh mục</th>
-									<th width="30%">Mô tả</th>
+									<th width="20%">Tên sản phẩm</th>
+									<th width="20%">Hãng</th>
+									<th width="20%">Danh mục</th>
 									<th width="10%">Trạng thái</th>
 									<th width="15%">Thao tác</th>
 								</tr>
@@ -35,12 +35,11 @@
 									@foreach (var item in Model.Items)
 									{
 										<tr>
-											<td>@item.Id</td>
 											<td class="text-center">
-												@if (item.Image != null)
+												@if (item.MainImage != null)
 												{
-													var base64String = Convert.ToBase64String(item.Image.Data);
-													var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+													var base64String = Convert.ToBase64String(item.MainImage.Data);
+													var imageSrc = $"data:{item.MainImage.Type};base64,{base64String}";
 													<img src="@imageSrc" alt="Image" style="max-width: 100px; max-height: 100px; width: auto; height: auto;" />
 												}
 												else
@@ -49,35 +48,28 @@
 												}
 											</td>
 											<td>@item.Name</td>
-											<td>
-												@if (!string.IsNullOrEmpty(item.Description))
-												{
-													@(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)
-												}
-											</td>
+											<td>@item.BrandName</td>
+											<td>@item.CategoryName</td>
 											<td class="text-center">
-
 												@if (item.IsActive)
 												{
 													<span class="btn btn-success"> Bật</span>
-													
+
 												}
 												else
 												{
 													<span class="btn btn-danger"> Tắt</span>
 												}
-
-
 											</td>
 											<td class="text-center">
 												<div class="btn-group">
-													<a href="@Url.Action("Detail", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-info">
+													<a href="@Url.Action("Detail", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-info">
 														<i class="fas fa-info"></i> Xem
 													</a>
-													<a href="@Url.Action("Update", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-warning">
+													<a href="@Url.Action("Update", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-warning">
 														<i class="fas fa-edit"></i> Sửa
 													</a>
-													<a href="@Url.Action("Delete", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-danger">
+													<a href="@Url.Action("Delete", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-danger">
 														<i class="fas fa-trash"></i> Xóa
 													</a>
 
@@ -110,7 +102,7 @@
 									@if (Model.PageIndex > 1)
 									{
 										<li class="page-item">
-											<a class="page-link" href="@Url.Action("Index", "CategoryAdmin", new {pageIndex = Model.PageIndex - 1, pageSize = Model.PageSize })">
+											<a class="page-link" href="@Url.Action("Index", "ProductAdmin", new {pageIndex = Model.PageIndex - 1, pageSize = Model.PageSize })">
 												<i class="fas fa-chevron-left"></i>
 											</a>
 										</li>
@@ -129,7 +121,7 @@
 									@for (int i = startPage; i <= endPage; i++)
 									{
 										<li class="page-item @(i == Model.PageIndex ? "active" : "")">
-											<a class="page-link" href="@Url.Action("Index", "CategoryAdmin", new {pageIndex = i, pageSize = Model.PageSize })">
+											<a class="page-link" href="@Url.Action("Index", "ProductAdmin", new {pageIndex = i, pageSize = Model.PageSize })">
 												@i
 											</a>
 										</li>
@@ -138,7 +130,7 @@
 									@if (Model.PageIndex < Model.TotalPages)
 									{
 										<li class="page-item">
-											<a class="page-link" href="@Url.Action("Index", "CategoryAdmin", new {pageIndex = Model.PageIndex + 1, pageSize = Model.PageSize })">
+											<a class="page-link" href="@Url.Action("Index", "ProductAdmin", new {pageIndex = Model.PageIndex + 1, pageSize = Model.PageSize })">
 												<i class="fas fa-chevron-right"></i>
 											</a>
 										</li>

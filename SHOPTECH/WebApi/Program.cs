@@ -50,6 +50,7 @@ namespace WebApi
             builder.Services.AddTransient<IImageFileService, ImageFileService>();
             builder.Services.AddTransient<ICategoryService, CategoryService>();
             builder.Services.AddTransient<IProductAttributeService, ProductAttributeService>();
+            builder.Services.AddTransient<IProductService, ProductService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

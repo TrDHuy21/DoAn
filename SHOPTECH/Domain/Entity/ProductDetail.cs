@@ -15,7 +15,8 @@ namespace Domain.Enity
 		public bool? isNew { get; set; }
         public bool? isHot { get; set; }
         public bool? isSale { get; set; }
-        public string? Color { get; set; }
+        public string? ColorName { get; set; }
+        public string? ColorCode { get; set; }
         public int? ProductId { get; set; }
         public virtual Product? Product { get; set; }
 

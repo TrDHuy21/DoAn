@@ -9,6 +9,9 @@ namespace Domain.Enity
 {
     public class Product : BaseEntity
     {
+        public int? MainImageId { get; set; }
+        public ImageFile? MainImage { get; set; }
+
         public int? BrandId { get; set; }
         public Brand? Brand { get; set; }
 

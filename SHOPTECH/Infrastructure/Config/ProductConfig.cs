@@ -19,6 +19,10 @@ namespace Infrastructure.Config
             builder.Property(c => c.Id)
                 .UseIdentityColumn();
 
+            builder.HasOne(c => c.MainImage)
+                .WithMany(i => i.Products)
+                .HasForeignKey(c => c.MainImageId);
+
             builder.HasOne(x => x.Brand)
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.BrandId);
