@@ -1,6 +1,8 @@
 ﻿using Application.Dtos;
 using Application.Dtos.BrandDtos;
 using Application.Dtos.CategoryDtos;
+using Application.Dtos.ProductAttributeDtos;
+using Application.Dtos.ProductDetailDtos;
 using Application.Dtos.ProductDtos;
 using Application.Helper;
 using Application.Models;
@@ -38,7 +40,8 @@ namespace WebMvc.Areas.Admin.Controllers
                     throw new Exception(errorResponse?.Message);
                 }
                 // check content
-                var pageResult = await response.Content.ReadFromJsonAsync<PageResultDto<IndexProductDto>>() ?? throw new Exception("error");
+                var pageResult = await response.Content.ReadFromJsonAsync<PageResultDto<IndexProductDto>>() 
+                    ?? throw new Exception("error");
                 return View(pageResult);
             }
             catch (Exception ex)
@@ -54,15 +57,35 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
+                //get product
                 var response = await _httpClient.GetAsync(CommonUrl.PRODUCT_ADMIN(id));
-                //check response
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
                     throw new Exception(errorResponse?.Message);
                 }
-                // check content
                 var product = await response.Content.ReadFromJsonAsync<DetailProductDto>() ?? throw new Exception("error");
+
+                //get product detail of this product
+                response = await _httpClient.GetAsync(CommonUrl.PRODUCT_DETAIL_ADMIN_PRODUCT(id));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                var productDetails = await response.Content.ReadFromJsonAsync<List<IndexProductDetailDto>>() ?? throw new Exception("error");
+                ViewData["ProductDetails"] = productDetails;
+
+                //get product detail of this product
+                response = await _httpClient.GetAsync(CommonUrl.PRODUCT_ATTRIBUTE_ADMIN_CATEGORY(product.CategoryId));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                var productAttributes = await response.Content.ReadFromJsonAsync<List<IndexProductAttributeDto>>() ?? throw new Exception("error");
+                ViewData["ProductAttributes"] = productAttributes;
+
                 return View(product);
             }
             catch (Exception ex)

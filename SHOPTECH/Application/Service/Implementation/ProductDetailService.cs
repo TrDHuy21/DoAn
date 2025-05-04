@@ -1,0 +1,271 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Application.Dtos;
+using Application.Dtos.ProductDetailDtos;
+using Application.Helper;
+using Application.Service.Interface;
+using AutoMapper;
+using Domain.Enity;
+using Infrastructure.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
+
+namespace Application.Service.Implementation
+{
+    public class ProductDetailService : IProductDetailService
+    {
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IMapper _mapper;
+        protected readonly IImageFileService _imageFileService;
+
+        public ProductDetailService(IUnitOfWork unitOfWork, IMapper mapper, IImageFileService imageFileService)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _imageFileService = imageFileService;
+        }
+
+        public async Task<ProductDetail?> AddAsync(AddProductDetailDto productDetailDto)
+        {
+            try
+            {
+                if (productDetailDto == null)
+                {
+                    throw new ArgumentNullException("Branddto can not null");
+                }
+
+                var productDetail = _mapper.Map<ProductDetail>(productDetailDto);
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                if (productDetailDto.FormFile != null)
+                {
+                    var image = await _imageFileService.UploadFileAsync(productDetailDto.FormFile);
+                    if (image != null)
+                    {
+                        productDetail.ImageId = image.Id;
+                    }
+                }
+
+                BaseEntityService<ProductDetail>.Add(productDetail);
+                await _unitOfWork.ProductDetails.AddAsync(productDetail);
+                await _unitOfWork.SaveChangeAsync();
+
+                //add productdetail attribute
+                 if (productDetailDto.ProductDetailAttributes != null)
+                {
+                    foreach (var productAttribute in productDetailDto.ProductDetailAttributes)
+                    {
+                        var productDetailAttribute = new ProductDetailAttribute()
+                        {
+                            ProductDetailId = productDetail.Id,
+                            ProductAttributeId = productAttribute.ProductAttributeId,
+                            Value = productAttribute.Value
+                        };
+                        await _unitOfWork.ProductDetailAttributes.AddAsync(productDetailAttribute);
+                    }
+                }
+
+                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.CommitTransactionAsync();
+                return productDetail;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.Message);
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(id);
+                if (productDetail == null)
+                {
+                    throw new Exception("Product detail not found");
+                }
+                await _unitOfWork.LoadCollectionAsync(productDetail, productDetail => productDetail.ProductDetailAttributes);
+                foreach (var pda in productDetail?.ProductDetailAttributes ?? Enumerable.Empty<ProductDetailAttribute>())
+                {
+                    await _unitOfWork.ProductDetailAttributes.DeleteAsync(pda);
+                }
+                await _unitOfWork.SaveChangeAsync();
+
+                await _unitOfWork.ProductDetails.DeleteAsync(id);
+
+                var result = await _unitOfWork.SaveChangeAsync() > 0;
+                await _unitOfWork.CommitTransactionAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                Console.WriteLine($"Error deactivating brand: {ex.Message}");
+                throw new Exception("Error deactivating brand", ex);
+            }
+        }
+        public async Task<IEnumerable<ProductDetail>?> GetAllAsync()
+        {
+            try
+            {
+                var categories = await _unitOfWork.ProductDetails.GetAll()
+               .Include(x => x.Image)
+               .ToListAsync();
+
+                return categories;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<ProductDetail?> GetByIdAsync(int id)
+        {
+            try
+            {
+                var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(id);
+
+                if (productDetail == null)
+                {
+                    throw new Exception("Brand not found");
+                }
+
+                return productDetail;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                throw ex;
+            }
+        }
+        public async Task<PageResultDto<IndexProductDetailDto>?> GetPageResultAsync(int pageIndex, int pageSize)
+        {
+            try
+            {
+                var pageResultDto = await _unitOfWork.Categories.GetAll()
+                 .Include(x => x.Image)
+                 .ToPagedResultAsync(
+                    pageIndex,
+                    pageSize,
+                    categories => _mapper.Map<List<IndexProductDetailDto>>(categories)
+                );
+                return pageResultDto;
+            }
+            catch
+            {
+                throw new Exception("Error");
+            }
+        }
+        public async Task<ProductDetail?> UpdateAsync(UpdateProductDetailDto productDetailDto)
+        {
+            try
+            {
+                if (productDetailDto == null)
+                {
+                    throw new ArgumentNullException(nameof(productDetailDto), "productDetailDto cannot be null");
+                }
+
+                var productDetail = await GetByIdAsync(productDetailDto.Id);
+                if (productDetail == null)
+                {
+                    throw new KeyNotFoundException($"Product detail with ID {productDetailDto.Id} not found");
+                }
+
+                var product = await _unitOfWork.Products.GetByIdAsync(productDetailDto.ProductId ?? 0)
+                    ?? throw new Exception("Product not found");
+
+                // Bắt đầu transaction
+                await _unitOfWork.BeginTransactionAsync();
+
+                // Cập nhật thông tin brand từ DTO
+                _mapper.Map(productDetailDto, productDetail);
+
+                // Xử lý upload file mới nếu có
+                if (productDetailDto.FormFile != null)
+                {
+                    // Upload file mới
+                    var imageFile = await _imageFileService.UploadFileAsync(productDetailDto.FormFile);
+
+                    // Xóa file cũ nếu có
+                    if (productDetail.ImageId.HasValue)
+                    {
+                        await _imageFileService.DeleteFileAsync(productDetail.ImageId.Value);
+                    }
+
+                    productDetail.ImageId = imageFile.Id;
+                }
+
+                // Cập nhật các thuộc tính cơ bản như UpdatedAt, UpdatedBy
+                BaseEntityService<ProductDetail>.Update(productDetail);
+                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.CommitTransactionAsync();
+
+                return productDetail;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                Console.WriteLine($"Error updating category: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
+                throw ex;
+
+            }
+        }
+        public async Task<ProductDetail?> ChangeActive(int id, bool isActive)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                // Tìm brand cần vô hiệu hóa
+                var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(id);
+
+                if (productDetail == null)
+                {
+                    throw new KeyNotFoundException($"Brand with ID {id} not found");
+                }
+
+                // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
+                productDetail.IsActive = isActive;
+
+
+
+                // Cập nhật brand
+                BaseEntityService<ProductDetail>.Update(productDetail);
+                await _unitOfWork.SaveChangeAsync();
+                await _unitOfWork.CommitTransactionAsync();
+                return productDetail;
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                Console.WriteLine($"Error deactivating category: {ex.Message}");
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<ProductDetail>?> GetByProductIdAsync(int productId)
+        {
+            try
+            {
+                var productDetails = await _unitOfWork.ProductDetails.GetByProductIdAsync(productId);
+                if (productDetails == null)
+                {
+                    throw new Exception("ProductDetail not found");
+                }
+                return productDetails;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+}

@@ -155,7 +155,7 @@ namespace Application.Service.Implementation
 
                 if (category == null)
                 {
-                    throw new Exception("Brand not found");
+                    throw new Exception("Category not found");
                 }
 
                 return category;

@@ -9,7 +9,7 @@ namespace Infrastructure.Repo.Interface
 {
     public interface IProductDetailRepo : IGenericRepo<ProductDetail, int>
     {
-		
+		public Task<IEnumerable<ProductDetail>> GetByProductIdAsync(int productId);
 
     }
 }

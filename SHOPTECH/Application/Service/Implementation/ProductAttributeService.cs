@@ -198,5 +198,24 @@ namespace Application.Service.Implementation
                 throw new Exception($"Error changing filter status: {ex.Message}", ex);
             }
         }
+
+        public async Task<IEnumerable<ProductAttribute>> GetByCategoryIdAsync(int categoryId)
+        {
+            try
+            {
+                var productAttribute = await _unitOfWork.ProductAttributes.GetAll()
+                    .Where(x => x.CategoryId == categoryId)
+                    .ToListAsync();
+                if (productAttribute == null)
+                {
+                    throw new KeyNotFoundException("No product attributes found for this category.");
+                }
+                return productAttribute;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

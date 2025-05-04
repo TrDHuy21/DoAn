@@ -1,16 +1,22 @@
-﻿@model Application.Dtos.ProductDtos.DetailProductDto
+﻿@using Application.Dtos.ProductAttributeDtos
+@using Application.Dtos.ProductDetailDtos;
+
+@model Application.Dtos.ProductDtos.DetailProductDto
 
 @{
     ViewData["Title"] = "Info";
+    var productDetails = (ViewData["ProductDetails"] as IEnumerable<IndexProductDetailDto>) 
+        ?? new List<IndexProductDetailDto>();
+    // Thêm list attributes cho category này
+    var productAttributes = (ViewData["ProductAttributes"] as List<IndexProductAttributeDto>) 
+        ?? new List<IndexProductAttributeDto>();
 }
-
+<!-- product -->
 <div class="card">
+    <div class="card-header">
+        <h2>Product: @Model.Name</h2>
+    </div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <h2>Product: @Model.Name</h2>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-4">
                 <h5>Thông tin cơ bản</h5>
@@ -72,3 +78,278 @@
     </div>
 </div>
 
+<!-- product detail -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Danh sách phiên bản của sản phẩm</h3>
+        <button class="btn btn-success" id="btnAddProductDetail">
+            <i class="fas fa-plus"></i> Thêm phiên bản mới
+        </button>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover" id="productDetailTable">
+            <thead>
+                <tr>
+                    <th width="10%">Mã</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Hình ảnh</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Màu sắc</th>
+                    <th>Trạng thái</th>
+                    <th>Tình trạng</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in productDetails)
+                {
+                    <tr>
+                        <td>@item.Code</td>
+                        <td>@item.Name</td>
+                        <td>
+                            @if (item.Image != null)
+                            {
+                                var base64String = Convert.ToBase64String(item.Image.Data);
+                                var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+                                <img src="@imageSrc" alt="Hình ảnh" class="img-fluid" style="max-width: 100px;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không có hình ảnh</span>
+                            }
+                        </td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("N0") đ</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ColorName))
+                            {
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(item.ColorCode))
+                                    {
+                                        <div style="width: 20px; height: 20px; background-color: @item.ColorCode; margin-right: 5px; border: 1px solid #ddd;"></div>
+                                    }
+                                    <span>@item.ColorName</span>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="btn btn-sm btn-success"> Bật</span>
+                            }
+                            else
+                            {
+                                <span class="btn btn-sm btn-danger"> Tắt</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                @if (item.IsNew)
+                                {
+                                    <span class="btn btn-sm btn-info mb-1" style="width: 60px;">Mới</span>
+                                }
+                                @if (item.IsHot)
+                                {
+                                    <span class="btn btn-sm btn-danger mb-1" style="width: 60px;">Hot</span>
+                                }
+                                @if (item.IsSale)
+                                {
+                                    <span class="btn btn-sm btn-warning mb-1" style="width: 60px;">Sale</span>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <button type="button" class="btn btn-sm btn-info mb-1 btnViewDetail" data-id="@item.Id" style="width: 70px;">
+                                    <i class="fas fa-info"></i> Xem
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning mb-1 btnEditDetail" data-id="@item.Id" style="width: 70px;">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger mb-1 btnDeleteDetail" data-id="@item.Id" data-name="@item.Name" style="width: 70px;">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Phiên Bản Sản Phẩm -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" role="dialog" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel">Thêm phiên bản sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="productDetailForm" enctype="multipart/form-data">
+                    <input type="hidden" id="productDetailId" name="Id" value="0" />
+                    <input type="hidden" id="productId" name="ProductId" value="@Model.Id" />
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Tên phiên bản <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="Name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="code">Mã sản phẩm</label>
+                                <input type="text" class="form-control" id="code" name="Code">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="price">Giá</label>
+                                <input type="number" class="form-control" id="price" name="Price" step="0.01">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="quantity">Số lượng</label>
+                                <input type="number" class="form-control" id="quantity" name="Quantity">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="colorName">Tên màu</label>
+                                <input type="text" class="form-control" id="colorName" name="ColorName">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="colorCode">Mã màu</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="colorCode" name="ColorCode">
+                                    <div class="input-group-append">
+                                        <input type="color" class="form-control" id="colorPicker" style="width: 50px; padding: 0;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isActive" name="IsActive" checked value="true">
+                                <label class="form-check-label" for="isActive">Hoạt động</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isNew" name="IsNew" value="true">
+                                <label class="form-check-label" for="isNew">Mới</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isHot" name="IsHot" value="true">
+                                <label class="form-check-label" for="isHot">Hot</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isSale" name="IsSale" value="true">
+                                <label class="form-check-label" for="isSale">Sale</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label for="formFile">Hình ảnh</label>
+                        <input type="file" class="form-control-file" id="formFile" name="FormFile">
+                        <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+                            <img id="imagePreview" src="" alt="Preview" class="img-fluid" style="max-width: 200px;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h5>Thuộc tính sản phẩm</h5>
+                        <hr>
+                        <div id="attributesContainer">
+                            @foreach (var attr in productAttributes)
+                            {
+                                <div class="form-group">
+                                    <label for="attr_@attr.Id">@attr.Name</label>
+                                    <input type="hidden" name="ProductDetailAttributes[@(productAttributes.IndexOf(attr))].ProductAttributeId" value="@attr.Id">
+                                    <input type="hidden" name="ProductDetailAttributes[@(productAttributes.IndexOf(attr))].ProductAttributeName" value="@attr.Name">
+                                    <input type="text" class="form-control" id="attr_@attr.Id" name="ProductDetailAttributes[@(productAttributes.IndexOf(attr))].Value">
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnSaveProductDetail">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xem Chi Tiết -->
+<div class="modal fade" id="viewDetailModal" tabindex="-1" role="dialog" aria-labelledby="viewDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDetailModalLabel">Chi tiết phiên bản sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="viewDetailContent">
+                <!-- Nội dung sẽ được động thông qua Ajax -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xác Nhận Xóa -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa phiên bản sản phẩm "<span id="deleteItemName"></span>"?</p>
+                <p class="text-danger">Lưu ý: Thao tác này không thể hoàn tác!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmDelete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/ProductDetail.js"></script>
+}

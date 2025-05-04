@@ -59,6 +59,26 @@ namespace WebApi.Controllers.Admin
             }
         }
 
+        [HttpGet("category/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<ProductAttribute>>> GetByCategory(int categoryId)
+        {
+            try
+            {
+                var productAttributes = await _productAttributeService.GetByCategoryIdAsync(categoryId);
+                if (productAttributes == null)
+                {
+                    throw new Exception("No product attributes found for this category.");
+                }
+                var productAttributeDtos = _mapper.Map<IEnumerable<IndexProductAttributeDto>>(productAttributes)
+                    ?? throw new Exception("Error");
+                return Ok(productAttributeDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponse { Message = ex.Message });
+            }
+        }
+
         // POST: api/ProductAttributeAdminApi
         [HttpPost]
         public async Task<ActionResult<ProductAttribute>> Create([FromBody] AddProductAttributeDto productAttributeDto)

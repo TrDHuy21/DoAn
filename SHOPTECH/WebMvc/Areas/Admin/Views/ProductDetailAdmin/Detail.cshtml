@@ -1,0 +1,223 @@
+﻿@model Application.Dtos.ProductDetailDtos.DetailProductDetailDto
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin chi tiết sản phẩm</h3>
+            <div class="card-tools">
+                <a href="@Url.Action("Index")" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-sm btn-primary">
+                    <i class="fas fa-edit"></i> Sửa
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Thông tin cơ bản</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th style="width: 30%">Mã sản phẩm</th>
+                                        <td>@Model.Code</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tên sản phẩm</th>
+                                        <td>@Model.ProductName</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Số lượng</th>
+                                        <td>@(Model.Quantity ?? 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Giá</th>
+                                        <td>@((Model.Price?.ToString("N0") ?? "0") + "đ")</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Màu sắc</th>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(Model.ColorName))
+                                            {
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(Model.ColorCode))
+                                                    {
+                                                        <div style="width: 20px; height: 20px; background-color: @Model.ColorCode; margin-right: 5px; border: 1px solid #ddd;"></div>
+                                                    }
+                                                    <span>@Model.ColorName</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Không có thông tin</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Trạng thái</th>
+                                        <td>
+                                            <div class="d-flex flex-wrap">
+                                                @if (Model.IsNew == true)
+                                                {
+                                                    <span class="badge badge-info mr-1" style="width: 60px;">Mới</span>
+                                                }
+                                                @if (Model.IsHot == true)
+                                                {
+                                                    <span class="badge badge-danger mr-1" style="width: 60px;">Hot</span>
+                                                }
+                                                @if (Model.IsSale == true)
+                                                {
+                                                    <span class="badge badge-warning mr-1" style="width: 60px;">Sale</span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Hình ảnh chính</h4>
+                        </div>
+                        <div class="card-body text-center">
+                            @if (Model.Image != null)
+                            {
+                                var base64String = Convert.ToBase64String(Model.Image.Data);
+                                var imageSrc = $"data:{Model.Image.Type};base64,{base64String}";
+                                <img src="@imageSrc" alt="Hình ảnh" class="img-fluid" style="max-width: 300px;" />
+                            }
+                            else
+                            {
+                                <div class="text-center p-5 bg-light">
+                                    <i class="fas fa-image fa-5x text-muted"></i>
+                                    <p class="mt-3 text-muted">Không có hình ảnh</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thư viện hình ảnh -->
+            
+            @* <div class="card mt-4"> *@
+            @*     <div class="card-header"> *@
+            @*         <h4>Thư viện hình ảnh</h4> *@
+            @*     </div> *@
+            @*     <div class="card-body"> *@
+            @*         @if (Model.ProductDetailImages != null && Model.ProductDetailImages.Any()) *@
+            @*         { *@
+            @*             <div class="row"> *@
+            @*                 @foreach (var img in Model.ProductDetailImages) *@
+            @*                 { *@
+            @*                     <div class="col-md-3 col-sm-6 mb-4"> *@
+            @*                         <div class="card"> *@
+            @*                             <div class="card-body text-center"> *@
+            @*                                 @{ *@
+            @*                                     var base64String = Convert.ToBase64String(img.Data); *@
+            @*                                     var imageSrc = $"data:{img.Type};base64,{base64String}"; *@
+            @*                                 } *@
+            @*                                 <img src="@imageSrc" alt="Hình ảnh sản phẩm" class="img-fluid" style="height: 150px; object-fit: contain;" /> *@
+            @*                             </div> *@
+            @*                             <div class="card-footer"> *@
+            @*                                 <div class="d-flex justify-content-between"> *@
+            @*                                     <small>@img.Name</small> *@
+            @*                                     <a href="#" class="text-danger" onclick="deleteImage(@img.Id)"> *@
+            @*                                         <i class="fas fa-trash"></i> *@
+            @*                                     </a> *@
+            @*                                 </div> *@
+            @*                             </div> *@
+            @*                         </div> *@
+            @*                     </div> *@
+            @*                 } *@
+            @*             </div> *@
+            @*         } *@
+            @*         else *@
+            @*         { *@
+            @*             <div class="text-center p-5 bg-light"> *@
+            @*                 <i class="fas fa-images fa-3x text-muted"></i> *@
+            @*                 <p class="mt-3 text-muted">Không có hình ảnh bổ sung</p> *@
+            @*             </div> *@
+            @*         } *@
+            @*     </div> *@
+            @* </div> *@
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                </a>
+                <div>
+                    <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Sửa
+                    </a>
+                    <button type="button" class="btn btn-danger" onclick="deleteProduct(@Model.Id)">
+                        <i class="fas fa-trash"></i> Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteProduct(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+                $.ajax({
+                    url: '@Url.Action("Delete")/' + id,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            toastr.success('Xóa sản phẩm thành công');
+                            setTimeout(function () {
+                                window.location.href = '@Url.Action("Index")';
+                            }, 1000);
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('Đã xảy ra lỗi khi xóa sản phẩm');
+                    }
+                });
+            }
+        }
+
+        function deleteImage(imageId) {
+            if (confirm("Bạn có chắc chắn muốn xóa hình ảnh này?")) {
+                $.ajax({
+                    url: '@Url.Action("DeleteImage")/' + imageId,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            toastr.success('Xóa hình ảnh thành công');
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('Đã xảy ra lỗi khi xóa hình ảnh');
+                    }
+                });
+            }
+        }
+    </script>
+}

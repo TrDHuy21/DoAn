@@ -18,5 +18,6 @@ namespace Application.Service.Interface
         Task<IEnumerable<Product>?> GetAllAsync();
         Task<PageResultDto<IndexProductDto>?> GetPageResultAsync(int pageIndex, int pageSize);
         Task<Product?> ChangeActiveAsync(int id, bool isActive);
+
     }
 }

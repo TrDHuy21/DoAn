@@ -19,5 +19,6 @@ namespace Application.Service.Interface
         Task<ProductAttribute?> ChangeActiveAsync(int id, bool isActive);
         Task<ProductAttribute?> ChangeDisplayAsync(int id, bool isDisplay);
         Task<ProductAttribute?> ChangeFilterAsync(int id, bool canFilter);
+        Task<IEnumerable<ProductAttribute>> GetByCategoryIdAsync(int categoryId);
     }
 }

@@ -1,0 +1,292 @@
+﻿@model Application.Dtos.ProductDetailDtos.AddProductDetailDto
+@{
+    ViewData["Title"] = "Thêm mới chi tiết sản phẩm";
+    var productList = ViewData["DataProductList"] as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
+    var productAttributeList = ViewData["ProductAttributeList"] as List<SelectListItem> ?? new List<SelectListItem>();
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thêm mới chi tiết sản phẩm</h3>
+            <div class="card-tools">
+                <a href="@Url.Action("Index")" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <!-- Thông tin chung -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Thông tin chung</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="ProductId" class="control-label">Sản phẩm <span class="text-danger">*</span></label>
+                                            <select asp-for="ProductId" class="form-control select2" asp-items="productList">
+                                                <option value="">-- Chọn sản phẩm --</option>
+                                            </select>
+                                            <span asp-validation-for="ProductId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Name" class="control-label">Tên chi tiết <span class="text-danger">*</span></label>
+                                            <input asp-for="Name" class="form-control" />
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Code" class="control-label">Mã sản phẩm</label>
+                                            <div class="input-group">
+                                                <input asp-for="Code" class="form-control" />
+                                                <div class="input-group-append">
+                                                    <button type="button" id="generateCode" class="btn btn-outline-secondary">
+                                                        <i class="fas fa-sync"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <span asp-validation-for="Code" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Price" class="control-label">Giá</label>
+                                            <input asp-for="Price" class="form-control" />
+                                            <span asp-validation-for="Price" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Quantity" class="control-label">Số lượng</label>
+                                            <input asp-for="Quantity" class="form-control" type="number" min="0" />
+                                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="ColorName" class="control-label">Tên màu</label>
+                                            <input asp-for="ColorName" class="form-control" />
+                                            <span asp-validation-for="ColorName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="ColorCode" class="control-label">Mã màu</label>
+                                            <div class="input-group">
+                                                <input asp-for="ColorCode" class="form-control" type="color" />
+                                                <span asp-validation-for="ColorCode" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Trạng thái</label>
+                                            <div class="d-flex">
+                                                <div class="custom-control custom-checkbox mr-4">
+                                                    <input asp-for="IsNew" class="custom-control-input" />
+                                                    <label asp-for="IsNew" class="custom-control-label">Mới</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox mr-4">
+                                                    <input asp-for="IsHot" class="custom-control-input" />
+                                                    <label asp-for="IsHot" class="custom-control-label">Hot</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input asp-for="IsSale" class="custom-control-input" />
+                                                    <label asp-for="IsSale" class="custom-control-label">Sale</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Thuộc tính sản phẩm -->
+                                <div class="attribute-section mt-4">
+                                    <h5>Thuộc tính sản phẩm <button type="button" class="btn btn-sm btn-success" id="addAttribute"><i class="fas fa-plus"></i></button></h5>
+                                    <div id="attributesContainer">
+                                        @if (Model?.ProductDetailAttributes != null && Model.ProductDetailAttributes.Any())
+                                        {
+                                            @for (int i = 0; i < Model.ProductDetailAttributes.Count; i++)
+                                            {
+                                                <div class="attribute-item card mb-2">
+                                                    <div class="card-body p-2">
+                                                        <div class="row">
+                                                            <div class="col-md-5">
+                                                                <select name="ProductDetailAttributes[@i].ProductAttributeId" class="form-control attribute-select">
+                                                                    <option value="">-- Chọn thuộc tính --</option>
+                                                                    @foreach (var attr in productAttributeList)
+                                                                    {
+                                                                        if (attr.Value == Model.ProductDetailAttributes[i].ProductAttributeId.ToString()) {
+																			<option value="@attr.Value" selected>@attr.Text</option>
+                                                                        }
+                                                                        else {
+																			<option value="@attr.Value">@attr.Text</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-5">
+                                                                <input type="text" name="ProductDetailAttributes[@i].Value" class="form-control" value="@Model.ProductDetailAttributes[i].Value" placeholder="Giá trị" />
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-danger btn-sm remove-attribute"><i class="fas fa-trash"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hình ảnh -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Hình ảnh</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <div class="text-center mb-3">
+                                        <img id="preview" src="/images/no-image.png" alt="Xem trước" class="img-fluid" style="max-height: 250px; width: auto;" />
+                                    </div>
+                                    <div class="custom-file">
+                                        <input asp-for="FormFile" type="file" class="custom-file-input" id="imageInput" accept="image/*" />
+                                        <label class="custom-file-label" for="imageInput">Chọn hình ảnh</label>
+                                    </div>
+                                    <span asp-validation-for="FormFile" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            // Xử lý select2
+            $('.select2').select2({
+                theme: 'bootstrap4'
+            });
+
+            // Xử lý xem trước hình ảnh
+            $("#imageInput").change(function () {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                    $('.custom-file-label').text(this.files[0].name);
+                }
+            });
+
+            // Tạo mã sản phẩm ngẫu nhiên
+            $('#generateCode').click(function () {
+                var randomCode = 'PRD-' + Math.floor(Math.random() * 10000).toString().padStart(5, '0');
+                $('#Code').val(randomCode);
+            });
+
+            // Template cho thuộc tính mới
+            function getAttributeTemplate(index) {
+                var template = `
+                <div class="attribute-item card mb-2">
+                    <div class="card-body p-2">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <select name="ProductDetailAttributes[${index}].ProductAttributeId" class="form-control attribute-select">
+                                    <option value="">-- Chọn thuộc tính --</option>
+                                    @foreach (var attr in productAttributeList)
+                                    {
+                                        <option value="@attr.Value">@attr.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" name="ProductDetailAttributes[${index}].Value" class="form-control" placeholder="Giá trị" />
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-danger btn-sm remove-attribute"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                return template;
+            }
+
+            // Thêm thuộc tính mới
+            $("#addAttribute").click(function () {
+                var index = $("#attributesContainer .attribute-item").length;
+                $("#attributesContainer").append(getAttributeTemplate(index));
+                initializeAttributeSelect();
+            });
+
+            // Xóa thuộc tính
+            $(document).on('click', '.remove-attribute', function () {
+                $(this).closest('.attribute-item').remove();
+                reorderAttributes();
+            });
+
+            // Khởi tạo select trong thuộc tính
+            function initializeAttributeSelect() {
+                $('.attribute-select').select2({
+                    theme: 'bootstrap4',
+                    placeholder: "Chọn thuộc tính",
+                    allowClear: true
+                });
+            }
+
+            // Sắp xếp lại indices của thuộc tính
+            function reorderAttributes() {
+                $("#attributesContainer .attribute-item").each(function (index) {
+                    $(this).find("[name^='ProductDetailAttributes[']").each(function () {
+                        var name = $(this).attr("name");
+                        var newName = name.replace(/ProductDetailAttributes\[\d+\]/g, `ProductDetailAttributes[${index}]`);
+                        $(this).attr("name", newName);
+                    });
+                });
+            }
+
+            // Khởi tạo select2 cho thuộc tính có sẵn
+            initializeAttributeSelect();
+        });
+    </script>
+}
