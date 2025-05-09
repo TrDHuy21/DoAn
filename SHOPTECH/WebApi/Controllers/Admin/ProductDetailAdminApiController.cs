@@ -54,6 +54,12 @@ namespace WebApi.Controllers.Admin
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Lỗi: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
                 return BadRequest(new ErrorResponse()
                 {
                     Message = ex.Message

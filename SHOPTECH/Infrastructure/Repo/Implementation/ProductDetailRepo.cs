@@ -21,6 +21,8 @@ namespace Infrastructure.Repo.Implementation
             var entity = await _context.Set<ProductDetail>()
                 .Include(b => b.Image)
                 .Include(c => c.Product)
+                .Include(pd => pd.ProductDetailAttributes)
+                    .ThenInclude(pda => pda.ProductAttribute)
                 .FirstAsync(c => c.Id == id);
 
             return entity;

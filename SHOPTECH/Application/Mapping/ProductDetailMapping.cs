@@ -32,7 +32,6 @@ namespace Application.Mapping
                     {
                         Value = pda.Value,
                         ProductDetailId = pda.ProductDetailId,
-                        ProductDetailName = s.Name,
                         ProductAttributeId = pda.ProductAttributeId,
                         ProductAttributeName = pda.ProductAttribute.Name 
                     }

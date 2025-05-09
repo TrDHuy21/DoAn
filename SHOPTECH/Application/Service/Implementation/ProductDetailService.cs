@@ -131,7 +131,7 @@ namespace Application.Service.Implementation
             try
             {
                 var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(id);
-
+                await _unitOfWork.LoadCollectionAsync(productDetail, productDetail => productDetail.ProductDetailAttributes); 
                 if (productDetail == null)
                 {
                     throw new Exception("Brand not found");
