@@ -1,0 +1,238 @@
+﻿:root {
+    --primary-color: #d70018;
+    --secondary-color: #333;
+    --light-bg: #f8f9fa;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.top-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 0;
+    font-size: 0.85rem;
+}
+
+.main-header {
+    background-color: var(--primary-color);
+    padding: 10px 0;
+}
+
+.navbar-brand img {
+    height: 40px;
+}
+
+.search-form {
+    position: relative;
+    width: 100%;
+}
+
+    .search-form input {
+        border-radius: 20px;
+        padding-right: 40px;
+    }
+
+    .search-form button {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        border: none;
+        background: transparent;
+        color: var(--primary-color);
+    }
+
+.navbar-nav .nav-link {
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+.header-icons a {
+    color: white;
+    font-size: 1.2rem;
+    margin-left: 15px;
+    position: relative;
+}
+
+.badge-notification {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.6rem;
+    background-color: #ffbd00;
+    color: black;
+}
+
+.category-menu {
+    background: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.category-item {
+    text-align: center;
+    padding: 10px;
+    transition: all 0.3s;
+}
+
+    .category-item:hover {
+        transform: translateY(-5px);
+    }
+
+.category-image {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
+    display: block;
+    object-fit: contain;
+}
+
+.category-name {
+    font-size: 0.85rem;
+    color: #333;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    height: 100%;
+}
+
+    .product-card:hover {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        transform: translateY(-5px);
+    }
+
+.product-image {
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+    .product-image img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+.product-info {
+    padding: 15px;
+}
+
+.product-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.product-price {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.product-old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.promotion-tag {
+    display: inline-block;
+    background-color: #ffbd00;
+    color: black;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+
+.banner {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    position: relative;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 60px;
+        background-color: var(--primary-color);
+    }
+
+footer {
+    background-color: white;
+    padding: 30px 0;
+    margin-top: 30px;
+}
+
+.footer-title {
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+    .footer-links li {
+        margin-bottom: 8px;
+    }
+
+    .footer-links a {
+        color: #666;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+.hotline {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 767px) {
+    .header-icons {
+        margin-top: 10px;
+    }
+
+    .category-slider {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+    }
+}

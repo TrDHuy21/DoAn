@@ -1,0 +1,77 @@
+﻿using Application.Dtos.ProductDetailDtos;
+using Application.Service.Interface;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+
+namespace WebApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductDetailApiController : ControllerBase
+    {
+        private readonly IProductDetailService _productDetailService;
+        private readonly IMapper _mapper;
+
+        public ProductDetailApiController(IProductDetailService productDetailService, IMapper mapper)
+        {
+            _productDetailService = productDetailService;
+            _mapper = mapper;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var productDetail = await _productDetailService.GetByIdAsync(id);
+                if (productDetail == null)
+                {
+                    return NotFound(new { Message = "Product detail not found." });
+                }
+                var productDetailDto = _mapper.Map<IndexProductDetailDto>(productDetail);
+                return Ok(productDetailDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("category/{categoryName}/page/{index}")]
+        public async Task<IActionResult> GetPageResultWithFilter(string categoryName, int index = 1, int size = 10, [FromQuery] Dictionary<string, string> queryParams = null)
+        {
+            try
+            {
+                var pageResultDto = await _productDetailService.GetPageResultWithFilterAsync(categoryName,index, size, queryParams);
+                if (pageResultDto == null)
+                {
+                    return NotFound(new { Message = "No product details found." });
+                }
+                return Ok(pageResultDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("category/{categoryName}")]
+        public async Task<IActionResult> GetWithFilter(string categoryName, [FromQuery] Dictionary<string, string> queryParams = null)
+        {
+            try
+            {
+                var productDetails = await _productDetailService.GetWithFilterAsync(categoryName, queryParams);
+                if (productDetails == null)
+                {
+                    return NotFound(new { Message = "No product details found." });
+                }
+                var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
+                return Ok(productDetailDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+    }
+}

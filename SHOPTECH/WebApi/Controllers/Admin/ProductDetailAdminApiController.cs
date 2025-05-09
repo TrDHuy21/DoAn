@@ -1,10 +1,10 @@
 ﻿using Application.Dtos.ProductDetailDtos;
 using Application.Dtos;
-using Application.Service.Implementation;
 using AutoMapper;
 using Domain.Enity;
 using Microsoft.AspNetCore.Mvc;
 using Application.Models;
+using Application.Service.Interface;
 
 namespace WebApi.Controllers.Admin
 {

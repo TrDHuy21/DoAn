@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos;
@@ -149,7 +150,7 @@ namespace Application.Service.Implementation
         {
             try
             {
-                var pageResultDto = await _unitOfWork.Categories.GetAll()
+                var pageResultDto = await _unitOfWork.ProductDetails.GetAll()
                  .Include(x => x.Image)
                  .ToPagedResultAsync(
                     pageIndex,
@@ -265,6 +266,169 @@ namespace Application.Service.Implementation
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public async Task<PageResultDto<IndexProductDetailDto>?> GetPageResultWithFilterAsync(string categoryName, int pageIndex, int pageSize, Dictionary<string, string> queryParams)
+        {
+            try
+            {
+                var productDetails = await GetWithFilterAsync(categoryName, queryParams);
+
+                // Thực hiện phân trang và mapping
+                var pageResultDto = productDetails.ToPagedResult(
+                    pageIndex,
+                    pageSize,
+                    productDetails => _mapper.Map<List<IndexProductDetailDto>>(productDetails)
+                );
+
+                return pageResultDto;
+            }
+            catch (Exception ex)
+            {
+                // Nên log lỗi cụ thể thay vì throw chung chung
+                throw new Exception("Error getting product details", ex);
+            }
+        }
+
+        public async Task<IEnumerable<ProductDetail>?> GetWithFilterAsync(string categoryName, Dictionary<string, string> queryParams)
+        {
+            try
+            {
+                // Tạo một query ban đầu
+                var query = _unitOfWork.ProductDetails.GetAll()
+                    .Include(x => x.Image)
+                    .Where(pd => pd.Product.Category.UrlName== categoryName);
+
+                // In ra query gốc để debug
+                Console.WriteLine("Query ban đầu: " + query.ToQueryString());
+
+                // Xử lý lọc từ queryParams
+                if (queryParams != null && queryParams.Count > 0)
+                {
+                    // Tạo danh sách các điều kiện lọc để kết hợp sau
+                    var conditions = new List<Expression<Func<ProductDetail, bool>>>();
+
+                    // Xử lý các điều kiện lọc thuộc tính
+                    foreach (var param in queryParams)
+                    {
+                        string filterName = param.Key.ToLower().Trim();  // Chuẩn hóa key
+                        string filterValue = param.Value;
+
+                        // Bỏ qua các tham số đặc biệt để xử lý riêng sau
+                        if (filterName == "min_price" || filterName == "max_price" ||
+                            filterName == "ishot" || filterName == "isnew" ||
+                            filterName == "issale" || filterName == "order" ||
+                            filterName == "dir")
+                        {
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(filterValue))
+                        {
+                            var values = filterValue.Split(',').Select(v => v.Trim()).ToList();
+
+                            // Lọc theo từng thuộc tính
+                            query = query.Where(p => p.ProductDetailAttributes.Any(
+                                pda => pda.ProductAttribute.UrlName == filterName &&
+                                       values.Contains(pda.Value)));
+
+                            // In ra query sau mỗi điều kiện lọc để debug
+                            Console.WriteLine($"Query sau lọc {filterName}: " + query.ToQueryString());
+                        }
+                    }
+
+                    // Xử lý lọc theo giá
+                    if (queryParams.TryGetValue("min_price", out var minPriceStr) &&
+                        !string.IsNullOrEmpty(minPriceStr) &&
+                        decimal.TryParse(minPriceStr, out var minPrice))
+                    {
+                        query = query.Where(p => p.Price >= minPrice);
+                        Console.WriteLine("Query sau lọc min_price: " + query.ToQueryString());
+                    }
+
+                    if (queryParams.TryGetValue("max_price", out var maxPriceStr) &&
+                        !string.IsNullOrEmpty(maxPriceStr) &&
+                        decimal.TryParse(maxPriceStr, out var maxPrice))
+                    {
+                        query = query.Where(p => p.Price <= maxPrice);
+                        Console.WriteLine("Query sau lọc max_price: " + query.ToQueryString());
+                    }
+
+                    // Xử lý các trường boolean
+                    // Chú ý: Trong URL, các giá trị boolean thường là "true" hoặc "false" (chữ thường)
+                    if (queryParams.TryGetValue("ishot", out var isHotStr) &&
+                        !string.IsNullOrEmpty(isHotStr))
+                    {
+                        bool isHot = isHotStr.ToLower() == "true";
+                        query = query.Where(p => p.isHot == isHot);
+                        Console.WriteLine("Query sau lọc isHot: " + query.ToQueryString());
+                    }
+
+                    if (queryParams.TryGetValue("isnew", out var isNewStr) &&
+                        !string.IsNullOrEmpty(isNewStr))
+                    {
+                        bool isNew = isNewStr.ToLower() == "true";
+                        query = query.Where(p => p.isNew == isNew);
+                        Console.WriteLine("Query sau lọc isNew: " + query.ToQueryString());
+                    }
+
+                    if (queryParams.TryGetValue("issale", out var isSaleStr) &&
+                        !string.IsNullOrEmpty(isSaleStr))
+                    {
+                        bool isSale = isSaleStr.ToLower() == "true";
+                        query = query.Where(p => p.isSale == isSale);
+                        Console.WriteLine("Query sau lọc isSale: " + query.ToQueryString());
+                    }
+
+                    // Xử lý sắp xếp
+                    // Sửa lỗi trong đoạn code gốc: "   " -> "order"
+                    string order = string.Empty;
+                    string dir = string.Empty;
+
+                    queryParams.TryGetValue("order", out order);  // Sửa từ "   " thành "order"
+                    queryParams.TryGetValue("dir", out dir);
+
+                    if (!string.IsNullOrEmpty(order) && !string.IsNullOrEmpty(dir))
+                    {
+                        switch (order.ToLower())
+                        {
+                            case "name":
+                                query = dir.ToLower() == "asc" ? query.OrderBy(p => p.Name) : query.OrderByDescending(p => p.Name);
+                                break;
+                            case "price":
+                                query = dir.ToLower() == "asc" ? query.OrderBy(p => p.Price) : query.OrderByDescending(p => p.Price);
+                                break;
+                            default:
+                                // Mặc định sắp xếp theo ID để đảm bảo có kết quả ổn định
+                                query = dir.ToLower() == "asc" ? query.OrderBy(p => p.Id) : query.OrderByDescending(p => p.Id);
+                                break;
+                        }
+                        Console.WriteLine("Query sau sắp xếp: " + query.ToQueryString());
+                    }
+                    else
+                    {
+                        // Mặc định sắp xếp theo ID nếu không có tham số sắp xếp
+                        query = query.OrderBy(p => p.Id);
+                    }
+                }
+
+                Console.WriteLine("Query cuối cùng: " + query.ToQueryString());
+
+                // Thực thi query và trả về kết quả
+                var result = await query.ToListAsync();
+                Console.WriteLine($"Số lượng kết quả: {result.Count}");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
+                throw new Exception("Error getting product details", ex);
             }
         }
     }

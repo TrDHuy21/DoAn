@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Application.Dtos.UserDtos;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
 
@@ -24,6 +25,15 @@ namespace WebMvc.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ParialHeader()
+        {
+            //get user from cookie
+            DetailUserDto user = null;
+
+            return PartialView("_ParialHeader", user);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

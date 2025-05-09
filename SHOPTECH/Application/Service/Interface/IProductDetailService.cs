@@ -8,7 +8,7 @@ using Application.Dtos;
 using Domain.Enity;
 using Application.Dtos.ProductDetailDtos;
 
-namespace Application.Service.Implementation
+namespace Application.Service.Interface
 {
     public interface IProductDetailService
     {
@@ -18,9 +18,9 @@ namespace Application.Service.Implementation
         Task<ProductDetail?> GetByIdAsync(int id);
         Task<IEnumerable<ProductDetail>?> GetAllAsync();
         Task<PageResultDto<IndexProductDetailDto>?> GetPageResultAsync(int pageIndex, int pageSize);
+        Task<PageResultDto<IndexProductDetailDto>?> GetPageResultWithFilterAsync(string categoryName, int pageIndex, int pageSize, Dictionary<string, string> queryParams);
         Task<ProductDetail?> ChangeActive(int id, bool isActive);
-
         Task<IEnumerable<ProductDetail>?> GetByProductIdAsync(int productId);
-
+        Task<IEnumerable<ProductDetail>?> GetWithFilterAsync(string categoryName, Dictionary<string, string> queryParams);
     }
 }

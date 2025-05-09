@@ -7,6 +7,7 @@ using Application.Dtos.BrandDtos;
 using Application.Dtos.CategoryDtos;
 using Application.Dtos.ImageDtos;
 using Application.Dtos.ProductAttributeDtos;
+using Application.Helper;
 using AutoMapper;
 using Domain.Enity;
 
@@ -15,7 +16,9 @@ namespace Application.Mapping
     public class CategoryMapping : Profile
     {
         public CategoryMapping() {
-            CreateMap<AddCategoryDto, Category>();
+            CreateMap<AddCategoryDto, Category>()
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+
 
             CreateMap<Category, IndexCategoryDto>()
                 .ForMember(t => t.Image, x => x.MapFrom(s => s.Image != null ? new ImageFileDto
@@ -60,7 +63,9 @@ namespace Application.Mapping
             CreateMap<UpdateCategoryDto, Category>()
                 .ForMember(t => t.Image, o => o.Ignore())
                 .ForMember(t => t.ImageId, o => o.Ignore())
-                .ForMember(t => t.ProductAttributes, o => o.Ignore());
+                .ForMember(t => t.ProductAttributes, o => o.Ignore())
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+
         }
     }
 }

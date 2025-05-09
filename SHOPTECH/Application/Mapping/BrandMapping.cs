@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos.BrandDtos;
 using Application.Dtos.ImageDtos;
+using Application.Helper;
 using AutoMapper;
 using Domain.Enity;
 
@@ -14,7 +15,9 @@ namespace Application.Mapping
     {
         public BrandMapping()
         {
-            CreateMap<AddBrandDto, Brand>();
+            CreateMap<AddBrandDto, Brand>()
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+
 
             CreateMap<Brand, IndexBrandDto>()
                 .ForMember(t => t.Image, x => x.MapFrom(s => s.Image != null ? new ImageFileDto
@@ -45,7 +48,9 @@ namespace Application.Mapping
 
             CreateMap<UpdateBrandDto, Brand>()
                 .ForMember(t => t.Image, o => o.Ignore())
-                .ForMember(t => t.ImageId, o => o.Ignore());
+                .ForMember(t => t.ImageId, o => o.Ignore())
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+
         }
     }
 }

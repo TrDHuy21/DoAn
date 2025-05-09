@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos.ImageDtos;
 using Application.Dtos.ProductDtos;
+using Application.Helper;
 using AutoMapper;
 using Domain.Enity;
 
@@ -30,7 +31,8 @@ namespace Application.Mapping
                    Type = s.MainImage.Type,
                } : null));
 
-            CreateMap<AddProductDto, Product>();
+            CreateMap<AddProductDto, Product>()
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
 
             CreateMap<Product, UpdateProductDto>()
                 .ForMember(t => t.MainImage, x => x.MapFrom(s => s.MainImage != null ? new ImageFileDto
@@ -39,18 +41,12 @@ namespace Application.Mapping
                     Name = s.MainImage.Name,
                     Data = s.MainImage.Data,
                     Type = s.MainImage.Type
-                } : null)); 
+                } : null));
 
             CreateMap<UpdateProductDto, Product>()
                 .ForMember(t => t.MainImage, o => o.Ignore())
-                .ForMember(t => t.MainImageId, o => o.Ignore());
-
-
-
-
-
-
-
+                .ForMember(t => t.MainImageId, o => o.Ignore())
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
         }
     }
 }
