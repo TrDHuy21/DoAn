@@ -1,0 +1,30 @@
+﻿<!-- Thương hiệu -->
+@model IEnumerable<Application.Dtos.BrandDtos.IndexBrandDto>
+
+@if (Model != null && Model.Any())
+{
+	<div class="container mt-4">
+		<div class="bg-white p-3 rounded">
+			<div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-2">
+				@foreach (var item in Model)
+				{
+					<a class="col text-center text-decoration-none text-center d-block">
+						@if (item.Image != null && item.Image.Data != null)
+						{
+							var base64String = Convert.ToBase64String(item.Image.Data);
+							var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+							<img src="@imageSrc" alt="@item.Name" class="img-fluid category-image" />
+						}
+						else
+						{
+							<div class="placeholder-image">
+								<i class="bi bi-image text-muted"></i>
+							</div>
+						}
+					</a>
+				}
+				)
+			</div>
+		</div>
+	</div>
+}

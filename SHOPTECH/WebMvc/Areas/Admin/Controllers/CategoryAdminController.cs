@@ -26,8 +26,8 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(CommonUrl.BRAND_ADMIN_PAGE(pageIndex, pageSize));
-                var pageResult = await _httpClient.GetFromJsonAsync<PageResultDto<IndexCategoryDto>>(CommonUrl.CATEGORY_ADMIN_PAGE(pageIndex, pageSize));
+                var response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN_PAGE(pageIndex, pageSize));
+                var pageResult = await _httpClient.GetFromJsonAsync<PageResultDto<IndexCategoryDto>>(AdminApiString.CATEGORY_ADMIN_PAGE(pageIndex, pageSize));
                 return View(pageResult);
 
             }
@@ -42,7 +42,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var category = await _httpClient.GetFromJsonAsync<DetailCategoryDto>(CommonUrl.CATEGORY_ADMIN(id));
+                var category = await _httpClient.GetFromJsonAsync<DetailCategoryDto>(AdminApiString.CATEGORY_ADMIN(id));
                 if (category != null)
                 {
                     return View(category);
@@ -80,9 +80,9 @@ namespace WebMvc.Areas.Admin.Controllers
                     multiContent.Create(addCategoryDto);
 
                     // Gửi request
-                    Console.WriteLine($"Sending request to: {CommonUrl.CATEGORY_ADMIN()}");
+                    Console.WriteLine($"Sending request to: {AdminApiString.CATEGORY_ADMIN()}");
                     Console.WriteLine($"Content type: {multiContent.Headers.ContentType}");
-                    var response = await _httpClient.PostAsync(CommonUrl.CATEGORY_ADMIN(), multiContent);
+                    var response = await _httpClient.PostAsync(AdminApiString.CATEGORY_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -108,7 +108,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(CommonUrl.CATEGORY_ADMIN(id));
+                var response = await _httpClient.GetAsync(AdminApiString.CATEGORY_ADMIN(id));
                 //check response error
                 if (!response.IsSuccessStatusCode)
                 {
@@ -142,7 +142,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 {
                     multiContent.Create(categoryDto);
                     // Gửi request
-                    var response = await _httpClient.PutAsync(CommonUrl.CATEGORY_ADMIN(), multiContent);
+                    var response = await _httpClient.PutAsync(AdminApiString.CATEGORY_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -168,7 +168,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(CommonUrl.CATEGORY_ADMIN(id));
+                var response = await _httpClient.DeleteAsync(AdminApiString.CATEGORY_ADMIN(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -191,7 +191,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.PutAsync(CommonUrl.CATEGORY_ADMIN_CHANGE_ACTIVE(id, isActive), null);
+                var response = await _httpClient.PutAsync(AdminApiString.CATEGORY_ADMIN_CHANGE_ACTIVE(id, isActive), null);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();

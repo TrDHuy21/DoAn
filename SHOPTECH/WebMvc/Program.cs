@@ -28,7 +28,8 @@ namespace WebMvc
             builder.Services.AddSwaggerGen();
 
             // start configuration
-            WebMvc.Models.CommonUrl.Initialize(builder.Configuration);
+            WebMvc.Models.AdminApiString.Initialize(builder.Configuration);
+            WebMvc.Models.CustomerApiString.Initialize(builder.Configuration);
 
             var app = builder.Build();
 

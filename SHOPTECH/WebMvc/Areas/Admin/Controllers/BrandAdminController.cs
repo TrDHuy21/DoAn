@@ -29,7 +29,7 @@ namespace WebMvc.Areas.Admin.Controllers
             try
             {
                 //request to API server
-                var response = await _httpClient.GetAsync(CommonUrl.BRAND_ADMIN_PAGE(pageIndex, pageSize));
+                var response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN_PAGE(pageIndex, pageSize));
 
                 //check response
                 if (!response.IsSuccessStatusCode)
@@ -55,7 +55,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(CommonUrl.BRAND_ADMIN(id));
+                var response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN(id));
 
                 //check response
                 if (!response.IsSuccessStatusCode)
@@ -98,7 +98,7 @@ namespace WebMvc.Areas.Admin.Controllers
                     multiContent.Create(addBrandDto);
 
                     // Gửi request
-                    var response = await _httpClient.PostAsync(CommonUrl.BRAND_ADMIN(), multiContent);
+                    var response = await _httpClient.PostAsync(AdminApiString.BRAND_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -125,8 +125,8 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                Console.WriteLine(CommonUrl.BRAND_ADMIN(id));
-                var brand = await _httpClient.GetFromJsonAsync<UpdateBrandDto>(CommonUrl.BRAND_ADMIN(id));
+                Console.WriteLine(AdminApiString.BRAND_ADMIN(id));
+                var brand = await _httpClient.GetFromJsonAsync<UpdateBrandDto>(AdminApiString.BRAND_ADMIN(id));
 
                 if (brand == null)
                 {
@@ -157,7 +157,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 {
                     multiContent.Create(brandDto);
                     // Gửi request
-                    var response = await _httpClient.PutAsync(CommonUrl.BRAND_ADMIN(), multiContent);
+                    var response = await _httpClient.PutAsync(AdminApiString.BRAND_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -183,7 +183,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(CommonUrl.BRAND_ADMIN(id));
+                var response = await _httpClient.DeleteAsync(AdminApiString.BRAND_ADMIN(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -207,8 +207,8 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                Console.WriteLine(CommonUrl.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive));
-                var response = await _httpClient.PutAsync(CommonUrl.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive), null);
+                Console.WriteLine(AdminApiString.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive));
+                var response = await _httpClient.PutAsync(AdminApiString.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive), null);
 
                 if (!response.IsSuccessStatusCode)
                 {

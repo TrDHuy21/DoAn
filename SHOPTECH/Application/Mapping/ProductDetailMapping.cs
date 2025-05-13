@@ -39,6 +39,7 @@ namespace Application.Mapping
 
             CreateMap<UpdateProductDetailDto, ProductDetail>()
                 .ForMember(dest => dest.ProductDetailAttributes, opt => opt.Ignore())
+                .ForMember(dest => dest.Image, opt => opt.Ignore())
                 .ForMember(dest => dest.ImageId, opt => opt.Ignore())
                 .ForMember(dest => dest.Product, opt => opt.Ignore())
                 .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));

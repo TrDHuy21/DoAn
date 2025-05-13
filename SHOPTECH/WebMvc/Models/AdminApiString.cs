@@ -2,7 +2,7 @@
 
 namespace WebMvc.Models
 {
-    public static class CommonUrl
+    public static class AdminApiString
     {
 
         private static IConfiguration _configuration;
@@ -12,7 +12,7 @@ namespace WebMvc.Models
         public static void Initialize(IConfiguration configuration)
         {
             _configuration = configuration;
-            BASE_URL = _configuration["API"];
+            BASE_URL = _configuration["ApiServerIp"] + "/api";
         }
 
         // Base URL for the API

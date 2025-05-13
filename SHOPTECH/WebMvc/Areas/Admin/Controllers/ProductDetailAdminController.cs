@@ -28,7 +28,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(CommonUrl.PRODUCT_DETAIL_ADMIN(id));
+                var response = await _httpClient.GetAsync(AdminApiString.PRODUCT_DETAIL_ADMIN(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception("Product detail not found.");

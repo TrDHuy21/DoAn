@@ -32,7 +32,7 @@ namespace WebMvc.Controllers
             {
                 try
                 {
-                    var response = await _httpClient.PostAsJsonAsync(CommonUrl.LOGIN_URL, loginDto);
+                    var response = await _httpClient.PostAsJsonAsync(AdminApiString.LOGIN_URL, loginDto);
                     if (response.IsSuccessStatusCode)
                     {
                         var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();

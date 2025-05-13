@@ -1,49 +1,41 @@
-﻿<!-- Top Header -->
-<div class="top-header">
+﻿@model IEnumerable<Application.Dtos.CategoryDtos.IndexCategoryDto>
+<link rel="stylesheet" href="~/css/CategoryMenu.css" />
+
+<!-- Categories Menu -->
+<section class="categories-section py-4">
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <small>Hệ thống cửa hàng toàn quốc | Liên hệ: <strong>1800.2097</strong></small>
-            </div>
-            <div class="col-md-6 text-end">
-                <small>Tin tức | Tuyển dụng | Tra cứu đơn hàng</small>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End Top Header -->
-<!-- Main Header -->
-<header class="main-header sticky-top">
-    <div class="container">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="/api/placeholder/180/40" alt="CellphoneS Logo">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarMain">
-                    <form class="search-form mx-lg-4 my-2 my-lg-0">
-                        <input class="form-control" type="search" placeholder="Bạn cần tìm gì hôm nay?">
-                        <button type="submit"><i class="fas fa-search"></i></button>
-                    </form>
-                    <div class="header-icons ms-auto d-flex align-items-center">
-                        <a href="#" class="position-relative">
-                            <i class="fas fa-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">2</span>
-                        </a>
-                        <a href="#" class="position-relative">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">5</span>
-                        </a>
-                        <a href="#">
-                            <i class="fas fa-user"></i>
+        @if (Model != null && Model.Any())
+        {
+            <div class="row category-slider flex-nowrap flex-md-wrap overflow-auto pb-2">
+                @foreach (var category in Model)
+                {
+                    <div class="col-3 col-md-2 col-lg-1 mb-3">
+                        <a href="@Url.Action("GetByCategory", "ProductDetail")" class="category-item text-decoration-none text-center d-block">
+                            <div class="category-image-container mb-2 d-flex align-items-center justify-content-center">
+                                @if (category.Image != null && category.Image.Data != null)
+                                {
+                                    var base64String = Convert.ToBase64String(category.Image.Data);
+                                    var imageSrc = $"data:{category.Image.Type};base64,{base64String}";
+                                    <img src="@imageSrc" alt="@category.Name" class="img-fluid category-image" />
+                                }
+                                else
+                                {
+                                    <div class="placeholder-image">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="category-name small fw-medium text-truncate">@category.Name</div>
                         </a>
                     </div>
-                </div>
+                }
             </div>
-        </nav>
+        }
+        else
+        {
+            <div class="text-center py-4">
+                <p class="text-muted">No categories available</p>
+            </div>
+        }
     </div>
-</header>
-<!-- End Main Header -->
+</section>

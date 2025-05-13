@@ -32,7 +32,7 @@ namespace WebMvc.Areas.Admin.Controllers
             try
             {
                 //request to API server
-                var response = await _httpClient.GetAsync(CommonUrl.PRODUCT_ADMIN_PAGE(pageIndex, pageSize));
+                var response = await _httpClient.GetAsync(AdminApiString.PRODUCT_ADMIN_PAGE(pageIndex, pageSize));
                 //check response
                 if (!response.IsSuccessStatusCode)
                 {
@@ -58,7 +58,7 @@ namespace WebMvc.Areas.Admin.Controllers
             try
             {
                 //get product
-                var response = await _httpClient.GetAsync(CommonUrl.PRODUCT_ADMIN(id));
+                var response = await _httpClient.GetAsync(AdminApiString.PRODUCT_ADMIN(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -67,7 +67,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 var product = await response.Content.ReadFromJsonAsync<DetailProductDto>() ?? throw new Exception("error");
 
                 //get product detail of this product
-                response = await _httpClient.GetAsync(CommonUrl.PRODUCT_DETAIL_ADMIN_PRODUCT(id));
+                response = await _httpClient.GetAsync(AdminApiString.PRODUCT_DETAIL_ADMIN_PRODUCT(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -77,7 +77,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 ViewData["ProductDetails"] = productDetails;
 
                 //get product detail of this product
-                response = await _httpClient.GetAsync(CommonUrl.PRODUCT_ATTRIBUTE_ADMIN_CATEGORY(product.CategoryId));
+                response = await _httpClient.GetAsync(AdminApiString.PRODUCT_ATTRIBUTE_ADMIN_CATEGORY(product.CategoryId));
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -99,7 +99,7 @@ namespace WebMvc.Areas.Admin.Controllers
         public async Task<IActionResult >Add()
         {
             //get category
-            var response = await _httpClient.GetAsync(CommonUrl.CATEGORY_ADMIN());
+            var response = await _httpClient.GetAsync(AdminApiString.CATEGORY_ADMIN());
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Lỗi trong quá trình lấy danh sách danh mục");
@@ -108,7 +108,7 @@ namespace WebMvc.Areas.Admin.Controllers
             ViewData["Categories"] = categories;
 
             //get brand
-            response = await _httpClient.GetAsync(CommonUrl.BRAND_ADMIN());
+            response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN());
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Lỗi trong quá trình lấy danh sách thương hiệu");
@@ -132,7 +132,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 using(var multiContent = new MultipartFormDataContent())
                 {
                     multiContent.Create(addProductDto);
-                    var response = await _httpClient.PostAsync(CommonUrl.PRODUCT_ADMIN(), multiContent);
+                    var response = await _httpClient.PostAsync(AdminApiString.PRODUCT_ADMIN(), multiContent);
                     //check response
                     if (!response.IsSuccessStatusCode)
                     {
@@ -160,7 +160,7 @@ namespace WebMvc.Areas.Admin.Controllers
             try
             {
                 //get category
-                var response = await _httpClient.GetAsync(CommonUrl.CATEGORY_ADMIN());
+                var response = await _httpClient.GetAsync(AdminApiString.CATEGORY_ADMIN());
                 if(!response.IsSuccessStatusCode)
                 {
                     throw new Exception("Lỗi trong quá trình lấy danh sách danh mục");
@@ -169,7 +169,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 ViewData["Categories"] = categories;
 
                 //get brand
-                response = await _httpClient.GetAsync(CommonUrl.BRAND_ADMIN());
+                response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN());
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception("Lỗi trong quá trình lấy danh sách thương hiệu");
@@ -178,7 +178,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 ViewData["Brands"] = brands;
 
                 //get product
-                response = await _httpClient.GetAsync(CommonUrl.PRODUCT_ADMIN(id));
+                response = await _httpClient.GetAsync(AdminApiString.PRODUCT_ADMIN(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -216,7 +216,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 using(var multiContent = new MultipartFormDataContent())
                 {
                     multiContent.Create(updateProductDto);
-                    var response = await _httpClient.PutAsync(CommonUrl.PRODUCT_ADMIN(), multiContent);
+                    var response = await _httpClient.PutAsync(AdminApiString.PRODUCT_ADMIN(), multiContent);
                     //check response
                     if (!response.IsSuccessStatusCode)
                     {
@@ -240,7 +240,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(CommonUrl.PRODUCT_ADMIN(id));
+                var response = await _httpClient.DeleteAsync(AdminApiString.PRODUCT_ADMIN(id));
                 //check response
                 if (!response.IsSuccessStatusCode)
                 {
@@ -263,7 +263,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync(CommonUrl.PRODUCT_ADMIN_CHANGE_ACTIVE(id, isActive), id);
+                var response = await _httpClient.PutAsJsonAsync(AdminApiString.PRODUCT_ADMIN_CHANGE_ACTIVE(id, isActive), id);
                 //check response
                 if (!response.IsSuccessStatusCode)
                 {
