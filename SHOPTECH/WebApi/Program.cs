@@ -52,6 +52,7 @@ namespace WebApi
             builder.Services.AddTransient<IProductAttributeService, ProductAttributeService>();
             builder.Services.AddTransient<IProductService, ProductService>();
             builder.Services.AddTransient<IProductDetailService , ProductDetailService>();
+            builder.Services.AddTransient<IProductDetailAttributeService, ProductDetailAttributeService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

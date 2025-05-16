@@ -1,0 +1,136 @@
+﻿@using Application.Dtos.CategoryDtos
+@using Application.Dtos.ImageDtos
+@using Application.Dtos.ProductDetailAttributeDtos
+@using Application.Dtos.ProductDetailDtos
+
+@{
+    var productDetail = ViewData["productDetail"] as DetailProductDetailDto
+        ?? new DetailProductDetailDto();
+
+    var productDetailAttribute = productDetail.ProductDetailAttributes
+        ?? new List<ProductDetailAttributeDto>();
+
+    var otherProductDetail = ViewData["otherProductDetail"] as List<DetailProductDetailDto>
+        ?? new List<DetailProductDetailDto>();
+
+    string categoryName = ViewData["categoryName"] as string
+        ?? string.Empty;
+
+	List<ImageFileDto> images = ViewData["Images"] as List<ImageFileDto>
+		?? new List<ImageFileDto>();
+}
+
+<link href="~/css/ProductDetailInfo.css" rel="stylesheet" />
+
+<div class="container mt-4 mb-5">
+
+	<!-- thông tin sản phẩm -->
+	<div class="row">
+		<!-- Product Images Section -->
+		<div class="col-md-6 position-relative">
+			<i class="far fa-heart wish-icon"></i>
+			<img src="/assets/img/product/product-b-1.jpg" id="main-product-image" class="img-fluid product-main-image mb-3 w-100" alt="Tecno Camon 40">
+
+			<div class="row">
+				<div class="col-12 text-center">
+					<div class="d-flex justify-content-center" id="thumbnail-container">
+						<img src="/assets/img/product/product-b-2.jpg" class="thumbnail-image selected-thumbnail mx-2" data-color="Xanh" alt="Tecno Camon 40 Xanh">
+						<img src="/assets/img/product/product-b-3.jpg" class="thumbnail-image mx-2" data-color="Trắng" alt="Tecno Camon 40 Trắng">
+						<img src="/assets/img/product/product-b-4.jpg" class="thumbnail-image mx-2" data-color="Đen" alt="Tecno Camon 40 Đen">
+						<div class="thumbnail-image mx-2 d-flex align-items-center justify-content-center">
+							<i class="fas fa-cog"></i>
+						</div>
+						<div class="thumbnail-image mx-2 d-flex align-items-center justify-content-center">
+							<i class="fas fa-info-circle"></i>
+						</div>
+					</div>
+					<div class="mt-2">
+						<span id="thumbnail-label" class="small">Xanh</span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- Product Info Section -->
+		<div class="col-md-6">
+			<h1 class="h3 mb-3">@productDetail.Name</h1>
+			<h3 class="mb-1">Màu sắc: @productDetail.ColorName</h3>
+
+			<div class="mb-3">
+				<span class="h3 text-danger me-2">@productDetail.Price</span>
+				<span class="price-old">@productDetail.Price</span>
+				<span class="discount-badge">-13%</span>
+			</div>
+
+			<div class="mb-4">
+				<p class="mb-2">Lựa chọn phiên bản</p>
+				<div class="d-flex flex-wrap">
+					@foreach(var item in otherProductDetail) {
+						<button class="btn variant-btn p-2">
+							<div class="d-flex align-items-center mb-2">
+								@if (item.Image != null) {
+									var base64String = Convert.ToBase64String(item.Image.Data);
+									var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+									<img src="@imageSrc" alt="@item.Name" class="img-fluid"/>
+								}
+								@* <img src="/assets/img/product/product-b-4.jpg" class="me-2" alt="Camon 40 Pro" width="60"> *@
+							</div>
+							<span>@item.Name</span><br>
+							@foreach (var att in item.ProductDetailAttributes ?? new List<ProductDetailAttributeDto>())
+							{
+								<span class="badge bg-light text-dark border me-2 mb-2 p-2">(@att.Value)</span>
+							}
+							<br/>
+							<strong>@item.Price</strong>
+						</button>
+					}
+
+				</div>
+			</div>
+
+
+			<div class="d-flex mb-3">
+				<button class="btn btn-outline-danger me-2">
+					<i class="fas fa-cart-plus"></i>
+				</button>
+				<button class="btn btn-danger flex-grow-1">
+					MUA NGAY
+					<small class="d-block">(Giao tận nhà hoặc nhận tại cửa hàng)</small>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Thông số kĩ thuật -->
+	<div class="row">
+		<div class="col-12">
+			<h2 class="h4">Thông số kỹ thuật</h2>
+			<table class="table table-striped specs-table">
+				<tbody>
+					@foreach (var item in productDetailAttribute)
+					{
+						<tr>
+							<th>@item.ProductAttributeName</th>
+							<td>@item.Value</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- sản phẩm khác -->
+	<div class="row">
+		@await Component.InvokeAsync("StatusFilteredProduct", new {categoryName = categoryName, filter="ishot", name = "Các sản đang hot khác"})
+	</div>
+
+	<div class="row">
+		@await Component.InvokeAsync("StatusFilteredProduct", new {categoryName = categoryName, filter="isnew", name = "Các sản mới"})
+	</div>
+
+	<div class="row">
+		@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = categoryName, filter = "issale", name = "Các sản đang giảm giá" })
+	</div>
+</div>
+

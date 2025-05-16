@@ -32,7 +32,7 @@ namespace Application.Mapping
                } : null));
 
             CreateMap<AddProductDto, Product>()
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
             CreateMap<Product, UpdateProductDto>()
                 .ForMember(t => t.MainImage, x => x.MapFrom(s => s.MainImage != null ? new ImageFileDto
@@ -46,7 +46,7 @@ namespace Application.Mapping
             CreateMap<UpdateProductDto, Product>()
                 .ForMember(t => t.MainImage, o => o.Ignore())
                 .ForMember(t => t.MainImageId, o => o.Ignore())
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
         }
     }
 }

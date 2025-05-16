@@ -217,5 +217,79 @@ namespace Application.Service.Implementation
                 throw ex;
             }
         }
+
+        public async Task<List<FilterMenuDto>> GetFilterMenu(string categoryName)
+        {
+            // Lấy tất cả ProductAttributes của category, kèm theo ProductDetailAttributes
+            var filterMenus = await _unitOfWork.ProductAttributes.GetAll()
+                .Include(x => x.ProductDetailAttributes)
+                .Where(x => x.Category.UrlName == categoryName)
+                .Select(attribute => new FilterMenuDto
+                {
+                    Name = attribute.Name,
+                    UrlName = attribute.UrlName,
+                    // Lấy tất cả giá trị không trùng lặp từ ProductDetailAttributes
+                    Values = attribute.ProductDetailAttributes
+                    .Select(detail => detail.Value)
+                    .Distinct()
+                    .ToList(),
+                    UrlValues = attribute.ProductDetailAttributes
+                    .Select(detail => detail.UrlValue)
+                    .Distinct()
+                    .ToList()
+                })
+                .ToListAsync();
+
+            return filterMenus;
+        }
+
+        public async Task<List<FilterMenuDto>> GetCurrentFilter(string categoryName, Dictionary<string, string> queryParams)
+        {
+            if (queryParams == null)
+            {
+                return new List<FilterMenuDto>();
+            }
+
+            // Lấy danh sách các thuộc tính trùng khớp với category và có trong queryParams
+            var query = _unitOfWork.ProductAttributes.GetAll()
+                .Include(x => x.ProductDetailAttributes)
+                .Where(x => x.Category.UrlName == categoryName)
+                .Where(x => queryParams.Keys.Contains(x.UrlName));
+
+            var attributes = await query.ToListAsync();
+
+            var currentFilter = new List<FilterMenuDto>();
+
+            // Xử lý từng thuộc tính để tạo FilterMenuDto
+            foreach (var attribute in attributes)
+            {
+                if (queryParams.TryGetValue(attribute.UrlName, out string filterValues))
+                {
+                    // Tách chuỗi giá trị từ queryParams (giả sử giá trị được phân tách bằng dấu phẩy)
+                    var filterValuesList = filterValues.Split(',').Select(v => v.Trim()).ToList();
+
+                    // Tạo FilterMenuDto cho thuộc tính hiện tại
+                    var filterMenu = new FilterMenuDto
+                    {
+                        Name = attribute.Name,
+                        UrlName = attribute.UrlName,
+                        Values = attribute.ProductDetailAttributes
+                            .Where(detail => filterValuesList.Contains(detail.UrlValue))
+                            .Select(detail => detail.Value)
+                            .Distinct()
+                            .ToList(),
+                        UrlValues = attribute.ProductDetailAttributes
+                            .Where(detail => filterValuesList.Contains(detail.UrlValue))
+                            .Select(detail => detail.UrlValue)
+                            .Distinct()
+                            .ToList(),
+                    };
+
+                    currentFilter.Add(filterMenu);
+                }
+            }
+
+            return currentFilter;
+        }
     }
 }

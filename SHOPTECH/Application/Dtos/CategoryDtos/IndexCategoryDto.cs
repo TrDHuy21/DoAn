@@ -11,6 +11,7 @@ namespace Application.Dtos.CategoryDtos
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+        public string? UrlName { get; set; }
         public string? Description { get; set; }
         public ImageFileDto? Image { get; set; }
         public bool IsActive { get; set; }

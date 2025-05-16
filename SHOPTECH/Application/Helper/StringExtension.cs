@@ -10,16 +10,17 @@ namespace Application.Helper
 {
     public static class StringExtension
     {
-        public static string GenerateFilterName(this string str, string replaceSpace)
+        public static string ChuanHoa(this string str, string replaceSpace)
         {
+            
             if (string.IsNullOrEmpty(str))
                 return string.Empty;
 
+            // Loại bỏ dấu tiếng Việt
+            str = RemoveDiacritics(str);
+
             // Chuyển thành chữ thường
             string result = str.ToLower();
-
-            // Loại bỏ dấu tiếng Việt
-            result = RemoveDiacritics(result);
 
             // Thay thế khoảng trắng bằng dấu "_"
             result = Regex.Replace(result, @"\s+", replaceSpace);
@@ -29,21 +30,31 @@ namespace Application.Helper
 
             return result;
         }
-        private static string RemoveDiacritics(string text)
+        private static string RemoveDiacritics(string str)
         {
-            string normalizedString = text.Normalize(NormalizationForm.FormD);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            foreach (char c in normalizedString)
+            string[] VietnameseSigns = {
+                "aAeEoOuUiIdDyY",
+                "áàạảãâấầậẩẫăắằặẳẵ",
+                "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ",
+                "éèẹẻẽêếềệểễ",
+                "ÉÈẸẺẼÊẾỀỆỂỄ",
+                "óòọỏõôốồộổỗơớờợởỡ",
+                "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ",
+                "úùụủũưứừựửữ",
+                "ÚÙỤỦŨƯỨỪỰỬỮ",
+                "íìịỉĩ",
+                "ÍÌỊỈĨ",
+                "đ",
+                "Đ",
+                "ýỳỵỷỹ",
+                "ÝỲỴỶỸ"
+                };
+            for (int i = 1; i < VietnameseSigns.Length; i++)
             {
-                UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
+                for (int j = 0; j < VietnameseSigns[i].Length; j++)
+                    str = str.Replace(VietnameseSigns[i][j], VietnameseSigns[0][i - 1]);
             }
-
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+            return str;
         }
     }
 }

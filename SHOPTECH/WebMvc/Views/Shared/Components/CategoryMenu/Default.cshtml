@@ -1,16 +1,22 @@
-﻿@model IEnumerable<Application.Dtos.CategoryDtos.IndexCategoryDto>
+﻿@using Application.Dtos.CategoryDtos
+
+@{
+    var categories = ViewData["Categories"] as List<IndexCategoryDto>
+        ?? new List<IndexCategoryDto>();
+}
+
 <link rel="stylesheet" href="~/css/CategoryMenu.css" />
 
 <!-- Categories Menu -->
 <section class="categories-section py-4">
     <div class="container">
-        @if (Model != null && Model.Any())
+        @if (categories.Any())
         {
             <div class="row category-slider flex-nowrap flex-md-wrap overflow-auto pb-2">
-                @foreach (var category in Model)
+                @foreach (var category in categories)
                 {
                     <div class="col-3 col-md-2 col-lg-1 mb-3">
-                        <a href="@Url.Action("GetByCategory", "ProductDetail")" class="category-item text-decoration-none text-center d-block">
+                        <a href="@Url.RouteUrl("productCategory", new {categoryName = category.UrlName})" class="category-item text-decoration-none text-center d-block">
                             <div class="category-image-container mb-2 d-flex align-items-center justify-content-center">
                                 @if (category.Image != null && category.Image.Data != null)
                                 {

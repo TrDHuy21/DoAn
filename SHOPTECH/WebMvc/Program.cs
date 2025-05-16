@@ -36,11 +36,11 @@ namespace WebMvc
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-              
+
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            } 
+            }
             else
             {
                 app.UseSwagger();
@@ -60,6 +60,16 @@ namespace WebMvc
             app.MapControllerRoute(
                name: "Admin",
                pattern: "{area=Admin}/{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
+                name: "productCategory",
+                pattern: "productdetail/{categoryName}",
+                defaults: new { controller = "ProductDetail", action = "ListProductDetailWithCategory" });
+
+            app.MapControllerRoute(
+                name: "productdetail",
+                pattern: "productdetail/info/{id}",
+                defaults: new { controller = "ProductDetail", action = "Info" });
 
             app.MapControllerRoute(
                 name: "default",

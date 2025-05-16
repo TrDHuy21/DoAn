@@ -3,7 +3,7 @@
 
 @model Application.Dtos.CategoryDtos.DetailCategoryDto
 @{
-    var baseUrl = Configuration["API"];
+    var baseUrl = Configuration["ApiServerIp"] + "/api";
     ViewData["Title"] = "Chi tiết danh mục";
 }
 

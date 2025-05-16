@@ -47,12 +47,12 @@ namespace WebMvc.Areas.Admin.Controllers
         }
 
         [HttpGet("{productId}")]
-        public async Task<IActionResult> Create(int productId)
+        public IActionResult Create(int productId)
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Create(AddProductDetailDto productDetail)
         {
             if (ModelState.IsValid)
@@ -63,12 +63,12 @@ namespace WebMvc.Areas.Admin.Controllers
             return View(productDetail);
         }
 
-        [HttpGet]
+        [HttpGet("edit/{id}")]
         public IActionResult Edit(int id)
         {
             return View(id);
         }
-        [HttpPost]
+        [HttpPost("edit")]
         public IActionResult Edit(int id, UpdateProductDetailDto productDetail)
         {
             if (ModelState.IsValid)
@@ -79,7 +79,7 @@ namespace WebMvc.Areas.Admin.Controllers
             return View(productDetail);
         }
 
-        [HttpGet]
+        [HttpGet("delete/{id}")]
         public IActionResult Delete(int id)
         {
             // Call the service to delete the product detail

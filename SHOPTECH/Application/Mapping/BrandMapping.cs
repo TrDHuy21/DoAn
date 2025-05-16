@@ -16,7 +16,7 @@ namespace Application.Mapping
         public BrandMapping()
         {
             CreateMap<AddBrandDto, Brand>()
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
 
             CreateMap<Brand, IndexBrandDto>()
@@ -49,7 +49,7 @@ namespace Application.Mapping
             CreateMap<UpdateBrandDto, Brand>()
                 .ForMember(t => t.Image, o => o.Ignore())
                 .ForMember(t => t.ImageId, o => o.Ignore())
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
         }
     }

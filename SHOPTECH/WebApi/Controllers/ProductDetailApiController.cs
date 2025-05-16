@@ -28,14 +28,22 @@ namespace WebApi.Controllers
                 {
                     return NotFound(new { Message = "Product detail not found." });
                 }
-                var productDetailDto = _mapper.Map<IndexProductDetailDto>(productDetail);
+                var productDetailDto = _mapper.Map<DetailClientProductDetail>(productDetail);
                 return Ok(productDetailDto);
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                if(ex.InnerException != null)
+                {
+                    Console.WriteLine(ex.InnerException);
+                }
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+
 
         [HttpGet("category/{categoryName}/page/{index}")]
         public async Task<IActionResult> GetPageResultWithFilter(string categoryName, int index = 1, int size = 10, [FromQuery] Dictionary<string, string> queryParams = null)

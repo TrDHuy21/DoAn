@@ -2,6 +2,30 @@
     ViewData["Title"] = "Home Page";
 }
 
+<div class="row mt-4">
+    <div class="col-lg-8 mb-3">
+        <div class="banner">
+            <img src="~/Image/Banner/chinh.webp" alt="Banner chính" class="img-fluid w-100">
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="row">
+            <div class="col-6 col-lg-12 mb-3">
+                <div class="banner">
+                    <img src="~/Image/Banner/phu1.png" alt="Banner phụ 1" class="img-fluid w-100">
+                </div>
+            </div>
+            <div class="col-6 col-lg-12 mb-3">
+                <div class="banner">
+                    <img src="~/Image/Banner/phu1.png" alt="Banner phụ 2" class="img-fluid w-100">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @await Component.InvokeAsync("CategoryMenu")
-@await Component.InvokeAsync("StatusFilteredProduct", new {categoryName = "laptop", filter = "ishot", name = "Laptop nổi bật"})
+@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "laptop", filter = "ishot", name = "Laptop nổi bật" })
+@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "dien_thoai", name = "Điện thoại nổi bật" })
+@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "camera", name = "Camera" })
 

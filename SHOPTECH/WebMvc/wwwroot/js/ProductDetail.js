@@ -398,5 +398,4 @@
     });
 
     // Thêm nút chọn từ các mã màu phổ biến
-    addCommonColorPalette();
 });

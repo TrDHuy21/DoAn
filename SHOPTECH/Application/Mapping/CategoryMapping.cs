@@ -17,7 +17,7 @@ namespace Application.Mapping
     {
         public CategoryMapping() {
             CreateMap<AddCategoryDto, Category>()
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
 
             CreateMap<Category, IndexCategoryDto>()
@@ -64,7 +64,7 @@ namespace Application.Mapping
                 .ForMember(t => t.Image, o => o.Ignore())
                 .ForMember(t => t.ImageId, o => o.Ignore())
                 .ForMember(t => t.ProductAttributes, o => o.Ignore())
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
         }
     }

@@ -9,7 +9,7 @@ namespace Domain.Enity
     public class ProductDetailAttribute
     {
         public string? Value { get; set; }
-
+        public string? UrlValue { get; set; }
 
         public int? ImageId { get; set; }
         public ImageFile? Image { get; set; }

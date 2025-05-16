@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Dtos.ProductDetailDtos;
+using Microsoft.AspNetCore.Mvc;
+using WebMvc.Models;
 
 namespace WebMvc.Controllers
 {
@@ -17,13 +19,54 @@ namespace WebMvc.Controllers
             return View();
         }
 
-        [HttpGet("{category}")]
-        public async Task<IActionResult> GetListProductDetailWithCategory(string category, Dictionary<string, string> queryParams = null)
+        [HttpGet("ProductDetail/{categoryName}")]
+        public async Task<IActionResult> ListProductDetailWithCategory([FromRoute]string categoryName, [FromQuery]Dictionary<string, string> queryParams = null)
         {
-            ViewData["Category"] = category;
+            try
+            {
+                var response = await _httpClient.GetAsync(CustomerApiString.PRODUCT_DETAIL_FILTER(categoryName, queryParams));
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Failed to load product details.");
+                }
+                var productDetails = await response.Content.ReadFromJsonAsync<IEnumerable<IndexProductDetailDto>>()
+                    ?? throw new Exception("Failed to load product details.");
+                ViewData["ProductDetails"] = productDetails;
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                Console.WriteLine(ex.Message);
+                
+            }
+            ViewData["CategoryName"] = categoryName;
             ViewData["QueryParams"] = queryParams;
             return View();
         }
-       
+
+        [HttpGet("ProductDetail/info/{id}")]
+        public async Task<IActionResult> Info(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(CustomerApiString.PRODUCT_DETAIL(id));
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Failed to load product details.");
+                }
+                var productDetail = await response.Content.ReadFromJsonAsync<DetailClientProductDetail>()
+                    ?? throw new Exception("Failed to load product details.");
+
+                ViewData["productDetail"] = productDetail;
+                ViewData["categoryName"] = productDetail.CategoryUrlName;
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                Console.WriteLine(ex.Message);
+
+            }
+            return View();
+        }
     }
 }

@@ -63,7 +63,8 @@ namespace Application.Service.Implementation
                         {
                             ProductDetailId = productDetail.Id,
                             ProductAttributeId = productAttribute.ProductAttributeId,
-                            Value = productAttribute.Value
+                            Value = productAttribute.Value,
+                            UrlValue = productAttribute?.Value?.ChuanHoa("_")
                         };
                         await _unitOfWork.ProductDetailAttributes.AddAsync(productDetailAttribute);
                     }
@@ -132,6 +133,9 @@ namespace Application.Service.Implementation
             {
                 var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(id);
                 await _unitOfWork.LoadCollectionAsync(productDetail, productDetail => productDetail.ProductDetailAttributes); 
+                await _unitOfWork.LoadReferenceAsync(productDetail, productDetail => productDetail.Product);
+                await _unitOfWork.LoadReferenceAsync(productDetail.Product, product => product.Category);
+
                 if (productDetail == null)
                 {
                     throw new Exception("Brand not found");
@@ -173,14 +177,11 @@ namespace Application.Service.Implementation
                     throw new ArgumentNullException(nameof(productDetailDto), "productDetailDto cannot be null");
                 }
 
-                var productDetail = await GetByIdAsync(productDetailDto.Id);
+                var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(productDetailDto.Id);
                 if (productDetail == null)
                 {
                     throw new KeyNotFoundException($"Product detail with ID {productDetailDto.Id} not found");
                 }
-
-                var product = await _unitOfWork.Products.GetByIdAsync(productDetailDto.ProductId ?? 0)
-                    ?? throw new Exception("Product not found");
 
                 // Bắt đầu transaction
                 await _unitOfWork.BeginTransactionAsync();
@@ -201,6 +202,17 @@ namespace Application.Service.Implementation
                     }
 
                     productDetail.ImageId = imageFile.Id;
+                }
+
+                foreach (var productDetailAttributeDto in productDetailDto.ProductDetailAttributes)
+                {
+                    var productDetailAttribute = await _unitOfWork.ProductDetailAttributes.GetByIdAsync((productDetail.Id, productDetailAttributeDto.ProductAttributeId));
+                    if (productDetailAttribute != null)
+                    {
+                        // Cập nhật thuộc tính
+                        productDetailAttribute.Value = productDetailAttributeDto.Value;
+                        productDetailAttribute.UrlValue = productDetailAttributeDto?.Value?.ChuanHoa("_");
+                    }
                 }
 
                 // Cập nhật các thuộc tính cơ bản như UpdatedAt, UpdatedBy
@@ -295,27 +307,21 @@ namespace Application.Service.Implementation
         {
             try
             {
-                // Tạo một query ban đầu
                 var query = _unitOfWork.ProductDetails.GetAll()
                     .Include(x => x.Image)
                     .Where(pd => pd.Product.Category.UrlName== categoryName);
 
-                // In ra query gốc để debug
-                Console.WriteLine("Query ban đầu: " + query.ToQueryString());
-
                 // Xử lý lọc từ queryParams
                 if (queryParams != null && queryParams.Count > 0)
                 {
-                    // Tạo danh sách các điều kiện lọc để kết hợp sau
-                    var conditions = new List<Expression<Func<ProductDetail, bool>>>();
 
                     // Xử lý các điều kiện lọc thuộc tính
                     foreach (var param in queryParams)
                     {
-                        string filterName = param.Key.ToLower().Trim();  // Chuẩn hóa key
+                        string filterName = param.Key.ToLower().Trim();  
                         string filterValue = param.Value;
 
-                        // Bỏ qua các tham số đặc biệt để xử lý riêng sau
+                        // Bỏ qua các tham số
                         if (filterName == "min_price" || filterName == "max_price" ||
                             filterName == "ishot" || filterName == "isnew" ||
                             filterName == "issale" || filterName == "order" ||
@@ -328,13 +334,9 @@ namespace Application.Service.Implementation
                         {
                             var values = filterValue.Split(',').Select(v => v.Trim()).ToList();
 
-                            // Lọc theo từng thuộc tính
                             query = query.Where(p => p.ProductDetailAttributes.Any(
                                 pda => pda.ProductAttribute.UrlName == filterName &&
-                                       values.Contains(pda.Value)));
-
-                            // In ra query sau mỗi điều kiện lọc để debug
-                            Console.WriteLine($"Query sau lọc {filterName}: " + query.ToQueryString());
+                                       values.Contains(pda.UrlValue)));
                         }
                     }
 
@@ -355,8 +357,7 @@ namespace Application.Service.Implementation
                         Console.WriteLine("Query sau lọc max_price: " + query.ToQueryString());
                     }
 
-                    // Xử lý các trường boolean
-                    // Chú ý: Trong URL, các giá trị boolean thường là "true" hoặc "false" (chữ thường)
+                    // ishot, issale, isnew
                     if (queryParams.TryGetValue("ishot", out var isHotStr) &&
                         !string.IsNullOrEmpty(isHotStr))
                     {
@@ -382,11 +383,10 @@ namespace Application.Service.Implementation
                     }
 
                     // Xử lý sắp xếp
-                    // Sửa lỗi trong đoạn code gốc: "   " -> "order"
                     string order = string.Empty;
                     string dir = string.Empty;
 
-                    queryParams.TryGetValue("order", out order);  // Sửa từ "   " thành "order"
+                    queryParams.TryGetValue("order", out order);  
                     queryParams.TryGetValue("dir", out dir);
 
                     if (!string.IsNullOrEmpty(order) && !string.IsNullOrEmpty(dir))
@@ -408,14 +408,11 @@ namespace Application.Service.Implementation
                     }
                     else
                     {
-                        // Mặc định sắp xếp theo ID nếu không có tham số sắp xếp
                         query = query.OrderBy(p => p.Id);
                     }
                 }
 
-                Console.WriteLine("Query cuối cùng: " + query.ToQueryString());
 
-                // Thực thi query và trả về kết quả
                 var result = await query.ToListAsync();
                 Console.WriteLine($"Số lượng kết quả: {result.Count}");
                 return result;

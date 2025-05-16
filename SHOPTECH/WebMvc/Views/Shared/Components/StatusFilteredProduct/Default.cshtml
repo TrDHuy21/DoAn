@@ -7,26 +7,7 @@
 		<div class="row">
 			@foreach (var item in Model)
 			{
-				<div class="col-6 col-md-4 col-lg-3 mb-3">
-					<div class="product-card">
-						<div class="product-image">
-							@if (item.Image != null)
-							{
-								var base64String = Convert.ToBase64String(item.Image.Data);
-								var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
-								<img src="@imageSrc" alt="Image" style="width: auto; height: auto;" />
-							}
-						</div>
-						<div class="product-info">
-							@* <div class="promotion-tag">Giảm @item.DiscountPrice</div> *@
-							<div class="promotion-tag">10%</div>
-							<h3 class="product-title">@item.Name</h3>
-							<div class="product-price">@item.Price</div>
-							@* <div class="product-old-price">@item.OldPrice</div> *@
-							<div class="product-old-price">9999999</div>
-						</div>
-					</div>
-				</div>
+				@await Component.InvokeAsync("CardProductDetail", new { productDetail = item })
 			}
 		</div>
 	</section>

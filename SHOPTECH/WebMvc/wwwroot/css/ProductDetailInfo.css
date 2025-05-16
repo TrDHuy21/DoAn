@@ -1,0 +1,135 @@
+﻿.product-main-image {
+    max-height: 450px;
+    object-fit: contain;
+}
+
+.thumbnail-image {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    height: 80px;
+    padding: 2px;
+    object-fit: contain;
+}
+
+.selected-thumbnail {
+    border: 2px solid #28a745;
+}
+
+.variant-btn {
+    border: 1px solid #ddd;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.variant-selected {
+    border: 2px solid #28a745;
+}
+
+    .variant-selected:after {
+        content: "✓";
+        position: absolute;
+        top: 0;
+        right: 5px;
+        color: #28a745;
+        font-weight: bold;
+    }
+
+.color-option {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+.color-selected {
+    border: 2px solid #28a745;
+}
+
+.color-label {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 0.9rem;
+}
+
+.price-old {
+    text-decoration: line-through;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.discount-badge {
+    background-color: #ff6a00;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+.special-price {
+    border: 1px solid #28a745;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.special-price-title {
+    font-size: 0.9rem;
+}
+
+.wish-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+    .wish-icon:hover {
+        color: #ff6a00;
+    }
+
+.benefits-icon {
+    color: #28a745;
+    font-size: 1.1rem;
+    margin-right: 10px;
+}
+
+.promo-section {
+    background-color: #fff3f3;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+.promo-title {
+    color: #ff6a00;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.promo-item {
+    margin-bottom: 5px;
+}
+
+.promo-badge {
+    display: inline-block;
+    background-color: #ff6a00;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.bonus-points {
+    color: #ff6a00;
+    font-weight: bold;
+}
+

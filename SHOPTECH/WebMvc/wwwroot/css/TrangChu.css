@@ -70,28 +70,13 @@ body {
     color: black;
 }
 
-.category-menu {
-    background: white;
-    padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+.categories-menu .category-list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.category-item {
-    text-align: center;
-    padding: 10px;
-    transition: all 0.3s;
-}
-
-    .category-item:hover {
-        transform: translateY(-5px);
-    }
-
-.category-image {
-    width: 50px;
-    height: 50px;
-    margin: 0 auto 10px;
-    display: block;
-    object-fit: contain;
+.categories-menu .category-list-group-item:hover {
+    background-color: #f8f9fa;
 }
 
 .category-name {

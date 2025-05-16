@@ -14,11 +14,11 @@ namespace Application.Mapping
     {
         public ProductAttributeMapping() {
             CreateMap<AddProductAttributeDto, ProductAttribute>()
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
             CreateMap<UpdateProductAttributeDto, ProductAttribute>()
                 .ForMember(t => t.CategoryId, o => o.Ignore())
-                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.GenerateFilterName("_")));
+                .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));
 
 
             CreateMap<ProductAttribute, UpdateProductAttributeDto>();

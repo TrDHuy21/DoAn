@@ -1,4 +1,6 @@
-﻿namespace WebMvc.Models
+﻿using System.Linq;
+
+namespace WebMvc.Models
 {
     public static class CustomerApiString
     {
@@ -18,11 +20,31 @@
         public static string PRODUCT_DETAIL_PRODUCT(int productId) => PRODUCT_DETAIL() + "/product/" + productId;
         public static string PRODUCT_DETAIL_FILTER(string categoryName, Dictionary<string, string> queryParams)
         {
-            string queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            string queryString = string.Empty;
+            if (queryParams != null)
+            {
+                queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            }
             return PRODUCT_DETAIL() + "/category/" + categoryName + "?" + queryString;
         }
 
         //category
         public static string CATEGORY() => BASE_URL + "/CategoryApi";
+
+
+        //brand
+        public static string BRAND() => BASE_URL + "/BrandApi";
+
+        //filermenu
+        public static string Filtermenu(string categoryName) => BASE_URL + "/ProductAttributeApi/filtermenu/"+categoryName;
+        public static string CurrentFilter(string categoryName, Dictionary<string, string> queryParams)
+        {
+            string queryString = string.Empty;
+            if (queryParams != null)
+            {
+                queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            }
+            return BASE_URL + "/ProductAttributeApi/currentfilter/" + categoryName +"?" + queryString;
+        }
     }
 }
