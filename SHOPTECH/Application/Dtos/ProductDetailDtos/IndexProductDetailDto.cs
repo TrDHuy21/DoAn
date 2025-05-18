@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos.ImageDtos;
+using Application.Dtos.ProductDetailAttributeDtos;
 
 namespace Application.Dtos.ProductDetailDtos
 {
@@ -22,6 +23,8 @@ namespace Application.Dtos.ProductDetailDtos
         public bool IsHot { get; set; }
         public bool  IsSale { get; set; }
         public bool IsActive { get; set; }
+
+        public IEnumerable<ProductDetailAttributeDto> ProductDetailAttributes { get; set; } 
 
     }
 }

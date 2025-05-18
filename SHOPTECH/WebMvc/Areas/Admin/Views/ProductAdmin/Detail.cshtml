@@ -5,11 +5,12 @@
 
 @{
     ViewData["Title"] = "Info";
-    var productDetails = (ViewData["ProductDetails"] as IEnumerable<IndexProductDetailDto>) 
-        ?? new List<IndexProductDetailDto>();
+    var productDetails = ViewData["ProductDetails"] == null ? new List<IndexProductDetailDto>() :
+         ViewData["ProductDetails"] as IEnumerable<IndexProductDetailDto>;
+
     // Thêm list attributes cho category này
-    var productAttributes = (ViewData["ProductAttributes"] as List<IndexProductAttributeDto>) 
-        ?? new List<IndexProductAttributeDto>();
+    var productAttributes = ViewData["ProductAttributes"] == null ? new List<IndexProductAttributeDto>() :
+        ViewData["ProductAttributes"] as List<IndexProductAttributeDto>;
 }
 <!-- product -->
 <div class="card">

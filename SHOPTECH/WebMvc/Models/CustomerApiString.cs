@@ -14,10 +14,14 @@ namespace WebMvc.Models
             BASE_URL = _configuration["ApiServerIp"] + "/api";
         }
 
+        //product
+        public static string PRODUCT() => BASE_URL + "/ProductApi";
+        public static string PRODUCT_IMAGES(int id) => BASE_URL + "/ProductApi/images/"+id;
+
         //product detail
         public static string PRODUCT_DETAIL() => BASE_URL + "/ProductDetailApi";
         public static string PRODUCT_DETAIL(int id) => PRODUCT_DETAIL() + "/" + id;
-        public static string PRODUCT_DETAIL_PRODUCT(int productId) => PRODUCT_DETAIL() + "/product/" + productId;
+        public static string OTHER_PRODUCT_DETAIL_PRODUCT(int productId) => PRODUCT_DETAIL() + "/product/other/" + productId;
         public static string PRODUCT_DETAIL_FILTER(string categoryName, Dictionary<string, string> queryParams)
         {
             string queryString = string.Empty;

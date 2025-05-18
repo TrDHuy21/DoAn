@@ -18,7 +18,16 @@ namespace Application.Mapping
     {
         public ProductDetailMapping()
         {
-            CreateMap<ProductDetail, IndexProductDetailDto>();
+            CreateMap<ProductDetail, IndexProductDetailDto>()
+                .ForMember(t => t.ProductDetailAttributes, o=> o.MapFrom(s => s.ProductDetailAttributes.Select(
+                    pda => new ProductDetailAttributeDto
+                    {
+                        Value = pda.Value,
+                        ProductDetailId = pda.ProductDetailId,
+                        ProductAttributeId = pda.ProductAttributeId,
+                        ProductAttributeName = pda.ProductAttribute.Name
+                    }
+                    )));
 
 
             CreateMap<ProductDetail, DetailProductDetailDto>()

@@ -428,5 +428,27 @@ namespace Application.Service.Implementation
                 throw new Exception("Error getting product details", ex);
             }
         }
+
+        public async Task<IEnumerable<ProductDetail>> GetOtherByProductIdAsync(int productDetailId)
+        {
+            var productDetail = await _unitOfWork.ProductDetails.GetAll()
+                .FirstOrDefaultAsync(x => x.Id == productDetailId);
+             
+
+            //san pham cung loai
+            var otherPoductDetails = await _unitOfWork.ProductDetails.GetAll()
+                .Include(x => x.Image)
+                .Where(x => x.ProductId == productDetail.ProductId)
+                .ToListAsync();
+
+            //attribute 
+            await _unitOfWork.ProductDetailAttributes.GetAll()
+                .Include(x => x.ProductAttribute)
+                .Where(x => x.ProductAttribute.IsDisplay)
+                .Where(x => otherPoductDetails.Select(x => x.Id).Contains(x.ProductDetailId))
+                .ToListAsync();
+
+            return otherPoductDetails;
+        }
     }
 }

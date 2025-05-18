@@ -1,11 +1,9 @@
 ﻿ @using Application.Dtos.ProductAttributeDtos
 @{
-	var productAttributes = ViewData["ProductAttributes"] as List<FilterMenuDto>
-		?? new List<FilterMenuDto>();
-	var queryParams = ViewData["QueryParams"] as List<FilterMenuDto>
-		?? new List<FilterMenuDto>();
+	var productAttributes = ViewData["ProductAttributes"] != null ? ViewData["ProductAttributes"] as List<FilterMenuDto> : new List<FilterMenuDto>();
+	var queryParams = ViewData["QueryParams"] != null ? ViewData["QueryParams"] as List<FilterMenuDto>: new List<FilterMenuDto>();
 	var currentUrl = Context.Request.Path;
-	var categoryName = ViewData["CategoryName"] as string;
+	var categoryName = ViewData["CategoryName"] != null  ? ViewData["CategoryName"] as string : string.Empty;
 }
 
 <!-- Chọn theo tiêu chí -->

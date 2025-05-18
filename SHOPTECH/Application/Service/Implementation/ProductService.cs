@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos;
+using Application.Dtos.ImageDtos;
 using Application.Dtos.ProductDtos;
 using Application.Helper;
 using Application.Service.Interface;
@@ -158,6 +159,57 @@ namespace Application.Service.Implementation
                     throw new Exception("Not found");
                 }
                 return product;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<ImageFileDto>> GetImages(int id)
+        {
+            // get mainimage, Product.Images
+            // image of productdetail
+
+            try
+            {
+                var listImage = new List<ImageFileDto>();
+                var product = await _unitOfWork.Products.GetAll()
+                                    .Include(x => x.MainImage)
+                                    .Include(x => x.ProductImages)
+                                    .Include(x => x.ProductDetails)
+                                        .ThenInclude(x => x.Image)
+                                    .FirstOrDefaultAsync(x => x.Id == id);
+                if (product == null)
+                {
+                    throw new Exception("Not found");
+                }
+
+                if (product.MainImage != null)
+                {
+                    listImage.Add(_mapper.Map<ImageFileDto>(product.MainImage));
+                }
+
+                if (product.ProductImages != null)
+                {
+                    foreach (var item in product.ProductImages)
+                    {
+                        listImage.Add(_mapper.Map<ImageFileDto>(item));
+                    }
+                }
+
+                if (product.ProductDetails != null)
+                {
+                    foreach (var item in product.ProductDetails)
+                    {
+                        if (item.Image != null)
+                        {
+                            listImage.Add(_mapper.Map<ImageFileDto>(item.Image));
+                        }
+                    }
+                }
+
+                return listImage;
             }
             catch (Exception ex)
             {

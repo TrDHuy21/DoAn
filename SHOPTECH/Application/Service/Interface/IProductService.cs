@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Dtos.ProductDtos;
 using Application.Dtos;
 using Domain.Enity;
+using Application.Dtos.ImageDtos;
 
 namespace Application.Service.Interface
 {
@@ -18,6 +19,6 @@ namespace Application.Service.Interface
         Task<IEnumerable<Product>?> GetAllAsync();
         Task<PageResultDto<IndexProductDto>?> GetPageResultAsync(int pageIndex, int pageSize);
         Task<Product?> ChangeActiveAsync(int id, bool isActive);
-
+        Task<List<ImageFileDto>> GetImages(int id);
     }
 }

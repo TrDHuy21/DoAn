@@ -43,6 +43,43 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpGet("product/{productId}")]
+        public async Task<IActionResult> GetByProductId(int productId)
+        {
+            try
+            {
+                var productDetails = await _productDetailService.GetByProductIdAsync(productId);
+                if (productDetails == null)
+                {
+                    return NotFound(new { Message = "No product details found." });
+                }
+                var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
+                return Ok(productDetailDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        [HttpGet("product/other/{productDetailId}")]
+        public async Task<IActionResult> GetOtherByProductId(int productDetailId)
+        {
+            try
+            {
+                var productDetails = await _productDetailService.GetOtherByProductIdAsync(productDetailId);
+                if (productDetails == null)
+                {
+                    return NotFound(new { Message = "No product details found." });
+                }
+                var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
+                return Ok(productDetailDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
 
 
         [HttpGet("category/{categoryName}/page/{index}")]
