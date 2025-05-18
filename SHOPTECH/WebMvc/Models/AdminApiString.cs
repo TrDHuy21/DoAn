@@ -19,7 +19,7 @@ namespace WebMvc.Models
         //get from appsettings.json
 
         //login
-        public static string LOGIN_URL = BASE_URL + "/login";
+        public static string LOGIN_URL() => BASE_URL + "/login";
 
         // brand admin 
         public static string BRAND_ADMIN() => BASE_URL + "/BrandAdminApi";

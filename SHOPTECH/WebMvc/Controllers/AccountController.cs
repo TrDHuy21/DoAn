@@ -10,17 +10,23 @@ using WebMvc.Models;
 
 namespace WebMvc.Controllers
 {
-    public class LoginController : Controller
+    public class AccountController : Controller
     {
         private readonly HttpClient _httpClient;
 
-        public LoginController(HttpClient httpClient)
+        public AccountController(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
         [HttpGet]
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Login()
         {
             return View();
         }
@@ -32,17 +38,21 @@ namespace WebMvc.Controllers
             {
                 try
                 {
-                    var response = await _httpClient.PostAsJsonAsync(AdminApiString.LOGIN_URL, loginDto);
+                    Console.WriteLine(AdminApiString.LOGIN_URL());
+                    var response = await _httpClient.PostAsJsonAsync(AdminApiString.LOGIN_URL(), loginDto);
                     if (response.IsSuccessStatusCode)
                     {
                         var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
-
-                        var cookieOptions = new CookieOptions();
-                        Response.Cookies.Append("Jwt", tokenResponse?.Token ?? "", cookieOptions);
+                            
+                        Response.Cookies.Append("Jwt", tokenResponse?.Token ?? "", new CookieOptions
+                        {
+                            HttpOnly = true,
+                            SameSite = SameSiteMode.Lax
+                        });
 
                         // Kiểm tra vai trò và điều hướng tương ứng
                         var roleClaim = JwtHelper.GetClaim(tokenResponse, "role");
-                        if (roleClaim == "Admin" || roleClaim == "Saler")
+                        if (roleClaim == "Admin")
                         {
                             return RedirectToAction("Index", "Home", new { area = "Admin" });
                         }
@@ -53,21 +63,17 @@ namespace WebMvc.Controllers
                     }
                     else
                     {
-
-                        string errorMessage = "Login failed";
-                        ModelState.AddModelError(string.Empty, errorMessage);
-                        return View("Index", loginDto);
+                        TempData["ErrorMessage"] = "Login failed. Please check your account and password";
                     }
-
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.StackTrace);
-                    return BadRequest("error");
+                    TempData["ErrorMessage"] = "Login failed";
+                    return BadRequest(ex);
                 }
             }
-
-            return View("Index", loginDto);
+            return View("Login", loginDto);
         }
 
         [HttpGet]
@@ -75,10 +81,16 @@ namespace WebMvc.Controllers
         {
             try
             {
-                Response.Cookies.Delete("Jwt");
+                 Response.Cookies.Delete("Jwt");
             }
             catch { }
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }   
     }
 }

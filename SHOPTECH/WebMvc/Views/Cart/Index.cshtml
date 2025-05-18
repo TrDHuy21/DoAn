@@ -1,0 +1,29 @@
+﻿@{
+    // Lấy thông tin user từ Context.User
+    var userId = User.FindFirst("sub")?.Value;
+    var username = User.FindFirst("name")?.Value;
+    var email = User.FindFirst("email")?.Value;
+    var roles = User.FindAll("role").Select(c => c.Value).ToList();
+}
+
+<h1>Thông tin người dùng</h1>
+<div>
+    <p>ID: @userId</p>
+    <p>Tên đăng nhập: @username</p>
+    <p>Email: @email</p>
+    <p>Vai trò:</p>
+    <ul>
+        @foreach (var role in roles)
+        {
+            <li>@role</li>
+        }
+    </ul>
+</div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="admin-panel">
+        <h2>Bảng điều khiển Admin</h2>
+        <!-- Nội dung dành cho Admin -->
+    </div>
+}

@@ -1,3 +1,11 @@
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using WebMvc.Config;
+using WebMvc.Middleware;
+
 namespace WebMvc
 {
     public class Program
@@ -22,6 +30,57 @@ namespace WebMvc
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
+
+
+            // cấu hình jwwt
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("Jwt key missing;"));
+            if (key.Length < 32)
+            {
+                throw new InvalidOperationException("Jwt key must be at least 32 characters long;");
+            }
+
+            // Thêm xác thực JWT
+            builder.Services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+             .AddJwtBearer(options =>
+             {
+                 options.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidateLifetime = true,
+                     ValidateIssuerSigningKey = true,
+                     ValidIssuer = jwtSettings["Issuer"],
+                     ValidAudience = jwtSettings["Audience"],
+                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("Jwt key missing;"))),
+                 };
+                 options.Events = new JwtBearerEvents
+                 {
+                     OnAuthenticationFailed = context =>
+                     {
+                         Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                         return Task.CompletedTask;
+                     },
+                     OnMessageReceived = context =>
+                     {
+                         var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                         Console.WriteLine($"Token received by middleware: {token}");
+                         return Task.CompletedTask;
+                     }
+                 };
+
+             });
+            // Thêm phân quyền dựa trên role
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("RequireSalerRole", policy => policy.RequireRole("Saler"));
+                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("Customer"));
+            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -53,13 +112,15 @@ namespace WebMvc
             app.UseRouting();
 
             app.UseCors(MyAllowSpecificOrigins);
+            app.UseMiddleware<JwtMiddleware>();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllerRoute(
                name: "Admin",
-               pattern: "{area=Admin}/{controller=Home}/{action=Index}/{id?}");
+               pattern: "{area}/{controller=Home}/{action=Index}/{id?}");
 
             app.MapControllerRoute(
                 name: "productCategory",

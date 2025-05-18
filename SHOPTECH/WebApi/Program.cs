@@ -105,7 +105,7 @@ namespace WebApi
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("RequireSalerRole", policy => policy.RequireRole("Saler"));
-                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
+                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("Customer"));
             });
 
 

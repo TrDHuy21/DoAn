@@ -1,4 +1,8 @@
-﻿<!-- Top Header -->
+﻿@{
+    var user = ViewData["User"] as UserViewModel;
+}
+
+<!-- Top Header -->
 <div class="top-header">
     <div class="container">
         <div class="row">
@@ -18,7 +22,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img src="~/Image/LogoShopTech.png" alt="CellphoneS Logo">
+                    <img src="~/Image/LogoShopTech.png" alt="Logo">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                     <span class="navbar-toggler-icon"></span>
@@ -40,6 +44,15 @@
                         <a href="#">
                             <i class="fas fa-user"></i>
                         </a>
+						@if (user != null)
+						{
+							<a asp-action="Logout" asp-controller="Account" class="btn btn-danger">Đăng xuất</a>
+						}
+						else
+						{
+                            <a asp-action="Login" asp-controller="Account" class="btn btn-primary">Đăng nhập</a>
+						})
+                       <span></span>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Application.Dtos.UserDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
 
@@ -16,6 +17,7 @@ namespace WebMvc.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Index()
         {
             return View();
