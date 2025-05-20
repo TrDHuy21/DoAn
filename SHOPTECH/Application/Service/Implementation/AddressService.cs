@@ -43,12 +43,12 @@ namespace Application.Service.Implementation
             return result;
         }
 
-        public async Task<IEnumerable<DistrictDto>> GetDistrictByProvinceIdAsync(int provinceId)
+        public async Task<IEnumerable<DistrictDto>> GetDistrictByProvinceIdAsync(string provinceId)
         {
             IEnumerable<DistrictDto> result;
             try
             {
-                var districts = await _unitOfWork.Districts.FindAsync(d => d.ProvinceId == provinceId);
+                var districts = await _unitOfWork.Districts.FindAsync(d => d.ProvinceId.Equals(provinceId) );
                 result = _mapper.Map<IEnumerable<DistrictDto>>(districts);
             }
             catch (Exception ex)
@@ -59,12 +59,12 @@ namespace Application.Service.Implementation
             return result;
         }
 
-        public async Task<IEnumerable<WardDto>> GetWardByDistrictIdAsync(int districtId)
+        public async Task<IEnumerable<WardDto>> GetWardByDistrictIdAsync(string districtId)
         {
             IEnumerable<WardDto> result;
             try
             {
-                var wards = await _unitOfWork.Wards.FindAsync(d => d.DistrictId == districtId);
+                var wards = await _unitOfWork.Wards.FindAsync(d => d.DistrictId.Equals(districtId));
                 result = _mapper.Map<IEnumerable<WardDto>>(wards);
             }
             catch (Exception ex)

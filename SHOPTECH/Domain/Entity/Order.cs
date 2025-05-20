@@ -10,6 +10,8 @@ namespace Domain.Enity
     {
         public int Id { get; set; }
         public string? Address { get; set; }
+        public string? Phone { get; set; }
+        public string? Name { get; set; }
         public string? status { get; set; }
         public DateTime? OrderDate { get; set; }
         public string? TrackingCode { get; set; }
@@ -24,7 +26,7 @@ namespace Domain.Enity
         public User? Customer { get; set; }
 
         // ward
-        public int WardId { get; set; }
+        public string WardId { get; set; }
         public Ward? Ward { get; set; }
 
         public IEnumerable<OrderDetail>? OrderDetails { get; set; }

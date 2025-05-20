@@ -23,5 +23,6 @@ namespace Application.Service.Interface
         Task<IEnumerable<ProductDetail>?> GetByProductIdAsync(int productId);
         Task<IEnumerable<ProductDetail>?> GetWithFilterAsync(string categoryName, Dictionary<string, string> queryParams);
         Task<IEnumerable<ProductDetail>> GetOtherByProductIdAsync(int productDetailId);
+        Task<IEnumerable<ProductDetail>> GetCheckout(IEnumerable<int> productDetailIds);
     }
 }

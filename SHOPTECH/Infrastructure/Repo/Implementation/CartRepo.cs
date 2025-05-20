@@ -15,5 +15,11 @@ namespace Infrastructure.Repo.Implementation
         {
         }
 
+        public override async Task<Cart?> GetByIdAsync((int, int) id)
+        {
+            var cart = await _context.Carts.FindAsync(id.Item1, id.Item2);
+            return cart;
+        }
+
     }
 }

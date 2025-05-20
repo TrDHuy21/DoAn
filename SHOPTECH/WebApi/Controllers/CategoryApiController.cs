@@ -25,6 +25,7 @@ namespace WebApi.Controllers
             try
             {
                 var categories = await _categoryService.GetAllAsync();
+                categories = categories.Where(c => c.IsActive);
                 var categoryDtos = _mapper.Map<IEnumerable<IndexCategoryDto>>(categories);
                 return Ok(categoryDtos);
             }

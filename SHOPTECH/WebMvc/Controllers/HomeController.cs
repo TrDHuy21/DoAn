@@ -17,7 +17,6 @@ namespace WebMvc.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public IActionResult Index()
         {
             return View();

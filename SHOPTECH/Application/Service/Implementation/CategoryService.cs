@@ -75,7 +75,6 @@ namespace Application.Service.Implementation
             {
                 await _unitOfWork.BeginTransactionAsync();
 
-                // Tìm brand cần vô hiệu hóa
                 var category = await _unitOfWork.Categories
                     .GetAll()
                     .Include(b => b.Products)
@@ -86,17 +85,17 @@ namespace Application.Service.Implementation
                     throw new KeyNotFoundException($"Brand with ID {id} not found");
                 }
 
-                // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
                 category.IsActive = isActive;
-
-                // Vô hiệu hóa tất cả sản phẩm thuộc brand này
-                //foreach (var product in brand.Products)
-                //{
-                //    product.IsActive = isActive;
-                //}
-                // sau sẽ kiểm tra isactive của brand và category khi select sản phẩm
-
-
+                foreach(var p in category.Products ?? new List<Product>())
+                {
+                    p.IsActive = isActive;
+                    await _unitOfWork.LoadCollectionAsync(p, p => p.ProductDetails);
+                    foreach(var pd in p.ProductDetails ?? new List<ProductDetail>())
+                    {
+                        pd.IsActive = isActive;
+                    }
+                }
+                
                 // Cập nhật brand
                 BaseEntityService<Category>.Update(category);
                 await _unitOfWork.SaveChangeAsync();

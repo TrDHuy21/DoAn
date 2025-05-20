@@ -245,11 +245,8 @@ namespace Application.Service.Implementation
                     throw new KeyNotFoundException($"Brand with ID {id} not found");
                 }
 
-                // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
                 productDetail.IsActive = isActive;
-
-
-
+                  
                 // Cập nhật brand
                 BaseEntityService<ProductDetail>.Update(productDetail);
                 await _unitOfWork.SaveChangeAsync();
@@ -286,6 +283,7 @@ namespace Application.Service.Implementation
             try
             {
                 var productDetails = await GetWithFilterAsync(categoryName, queryParams);
+
 
                 // Thực hiện phân trang và mapping
                 var pageResultDto = productDetails.ToPagedResult(
@@ -444,11 +442,29 @@ namespace Application.Service.Implementation
             //attribute 
             await _unitOfWork.ProductDetailAttributes.GetAll()
                 .Include(x => x.ProductAttribute)
-                .Where(x => x.ProductAttribute.IsDisplay)
+                .Where(x => x.ProductAttribute.IsDisplay && x.ProductAttribute.IsActive)
                 .Where(x => otherPoductDetails.Select(x => x.Id).Contains(x.ProductDetailId))
                 .ToListAsync();
 
             return otherPoductDetails;
+        }
+
+        public async Task<IEnumerable<ProductDetail>> GetCheckout(IEnumerable<int> productDetailIds)
+        {
+            try
+            {
+                var productDetails = await _unitOfWork.ProductDetails.GetAll()
+                    .Include(x => x.Image)
+                    .Where(x => productDetailIds.Contains(x.Id))
+                    .ToListAsync();
+                return productDetails;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                throw new Exception("Error getting checkout product details", ex);
+            }
         }
     }
 }

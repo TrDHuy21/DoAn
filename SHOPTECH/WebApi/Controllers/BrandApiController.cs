@@ -29,7 +29,13 @@ namespace WebApi.Controllers
             try
             {
                 var result = await _brandService.GetByIdAsync(id);
+
                 if (result == null)
+                {
+                    throw new Exception("No brands found.");
+                }
+
+                if (!result.IsActive)
                 {
                     throw new Exception("No brands found.");
                 }
@@ -53,10 +59,12 @@ namespace WebApi.Controllers
             try
             {
                 var result = await _brandService.GetAllAsync();
+                
                 if(result == null)
                 {
                     throw new Exception("No brands found.");
                 }
+                result = result.Where(b => b.IsActive);
 
                 var brandDtos = _mapper.Map<IEnumerable<IndexBrandDto>>(result);
                 return Ok(brandDtos);

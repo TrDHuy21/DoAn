@@ -1,10 +1,14 @@
 ﻿using System.Text;
+using Application.Service.Implementation;
+using Application.Service.Interface;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using WebMvc.Config;
 using WebMvc.Middleware;
+using WebMvc.Service.Implementation;
+using WebMvc.Service.Interface;
 
 namespace WebMvc
 {
@@ -30,6 +34,8 @@ namespace WebMvc
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddTransient<IApiService, ApiService>();
+
 
 
             // cấu hình jwwt
@@ -60,9 +66,23 @@ namespace WebMvc
                  };
                  options.Events = new JwtBearerEvents
                  {
+                     OnChallenge = context =>
+                     {
+                         context.HandleResponse();
+                         context.Response.Redirect("/Account/Login");
+                         return Task.CompletedTask;
+                     },
+
                      OnAuthenticationFailed = context =>
                      {
                          Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                         context.Response.Redirect("/account/login");
+                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                         return Task.CompletedTask;
+                     },
+                     OnForbidden = context =>
+                     {
+                         context.Response.Redirect("/account/accessdenied");
                          return Task.CompletedTask;
                      },
                      OnMessageReceived = context =>
@@ -79,7 +99,7 @@ namespace WebMvc
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("RequireSalerRole", policy => policy.RequireRole("Saler"));
-                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("Customer"));
+                options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -121,16 +141,6 @@ namespace WebMvc
             app.MapControllerRoute(
                name: "Admin",
                pattern: "{area}/{controller=Home}/{action=Index}/{id?}");
-
-            app.MapControllerRoute(
-                name: "productCategory",
-                pattern: "productdetail/{categoryName}",
-                defaults: new { controller = "ProductDetail", action = "ListProductDetailWithCategory" });
-
-            app.MapControllerRoute(
-                name: "productdetail",
-                pattern: "productdetail/info/{id}",
-                defaults: new { controller = "ProductDetail", action = "Info" });
 
             app.MapControllerRoute(
                 name: "default",

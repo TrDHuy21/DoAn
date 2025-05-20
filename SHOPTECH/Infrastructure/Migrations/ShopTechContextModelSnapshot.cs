@@ -106,17 +106,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enity.District", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProvinceId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProvinceId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -164,17 +161,24 @@ namespace Infrastructure.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TrackingCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WardId")
-                        .HasColumnType("int");
+                    b.Property<string>("WardId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("status")
                         .HasColumnType("nvarchar(max)");
@@ -380,11 +384,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enity.Province", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -459,8 +460,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("WardId")
-                        .HasColumnType("int");
+                    b.Property<string>("WardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -475,14 +476,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enity.Ward", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("DistrictId")
-                        .HasColumnType("int");
+                    b.Property<string>("DistrictId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

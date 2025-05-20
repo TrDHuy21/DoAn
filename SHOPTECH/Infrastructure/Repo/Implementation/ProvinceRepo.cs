@@ -9,7 +9,7 @@ using Infrastructure.Repo.Interface;
 
 namespace Infrastructure.Repo.Implementation
 {
-    public class ProvinceRepo : GenericRepo<Province, int>, IProvinceRepo
+    public class ProvinceRepo : GenericRepo<Province, string>, IProvinceRepo
     {
        public ProvinceRepo(ShopTechContext dbContext) : base(dbContext)
         {

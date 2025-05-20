@@ -3,6 +3,7 @@ using Application.Models;
 using Application.Service.Implementation;
 using Application.Service.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,8 @@ namespace WebApi.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class ProductAdminApiController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -120,8 +123,8 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        [HttpPatch("{id}/active")]
-        public async Task<IActionResult> ChangeActive(int id, [FromBody] bool isActive)
+        [HttpPut("ChangeActive/{id}")]
+        public async Task<IActionResult> ChangeActive(int id, bool isActive)
         {
             try
             {

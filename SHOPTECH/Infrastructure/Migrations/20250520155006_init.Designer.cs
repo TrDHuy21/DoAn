@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ShopTechContext))]
-    [Migration("20250427070352_delete_create_update_at_by")]
-    partial class delete_create_update_at_by
+    [Migration("20250520155006_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -92,6 +96,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UrlName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ImageId");
@@ -101,17 +109,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enity.District", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProvinceId")
-                        .HasColumnType("int");
+                    b.Property<string>("ProvinceId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -159,17 +164,24 @@ namespace Infrastructure.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TrackingCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WardId")
-                        .HasColumnType("int");
+                    b.Property<string>("WardId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("status")
                         .HasColumnType("nvarchar(max)");
@@ -226,7 +238,14 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("MainImageId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -235,6 +254,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("MainImageId");
 
                     b.ToTable("Product", (string)null);
                 });
@@ -247,7 +268,10 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<bool>("CanFilter")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -256,10 +280,14 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsDisplay")
+                    b.Property<bool>("IsDisplay")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -281,7 +309,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Color")
+                    b.Property<string>("ColorCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ColorName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -305,6 +336,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("UrlName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("isHot")
                         .HasColumnType("bit");
@@ -335,6 +370,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("ImageId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UrlValue")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
@@ -349,11 +387,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enity.Province", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -421,11 +456,15 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UrlName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("WardId")
-                        .HasColumnType("int");
+                    b.Property<string>("WardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -440,14 +479,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enity.Ward", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("DistrictId")
-                        .HasColumnType("int");
+                    b.Property<string>("DistrictId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -593,16 +629,24 @@ namespace Infrastructure.Migrations
                         .WithMany("Products")
                         .HasForeignKey("CategoryId");
 
+                    b.HasOne("Domain.Enity.ImageFile", "MainImage")
+                        .WithMany("Products")
+                        .HasForeignKey("MainImageId");
+
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
+
+                    b.Navigation("MainImage");
                 });
 
             modelBuilder.Entity("Domain.Enity.ProductAttribute", b =>
                 {
                     b.HasOne("Domain.Enity.Category", "Category")
                         .WithMany("ProductAttributes")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });
@@ -742,6 +786,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("ProductDetails");
 
                     b.Navigation("ProductImages");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Domain.Enity.Order", b =>

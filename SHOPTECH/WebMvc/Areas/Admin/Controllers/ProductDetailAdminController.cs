@@ -1,20 +1,25 @@
 ﻿using Application.Dtos.ProductDetailDtos;
+using Application.Models;
 using Domain.Enity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
+using WebMvc.Service.Interface;
 
 namespace WebMvc.Areas.Admin.Controllers
 {
     [Area("Admin")]
 
     [Route("Admin/[controller]")]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class ProductDetailAdminController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IApiService _apiService;
 
-        public ProductDetailAdminController(HttpClient httpClient)
+        public ProductDetailAdminController(IApiService apiService)
         {
-            _httpClient = httpClient;
+            _apiService = apiService;
         }
 
         [HttpGet]
@@ -28,7 +33,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(AdminApiString.PRODUCT_DETAIL_ADMIN(id));
+                var response = await _apiService.GetAsync(AdminApiString.PRODUCT_DETAIL_ADMIN(id));
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception("Product detail not found.");
@@ -86,5 +91,27 @@ namespace WebMvc.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet("Active/{id}")]
+        public async Task<IActionResult> Active(int id, bool isActive)
+        {
+            try
+            {
+                var response = await _apiService.PutAsync(AdminApiString.PRODUCT_DETAIL_ADMIN_CHANGE_ACTIVE(id, isActive), id);
+                //check response
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                // check content
+                TempData["SuccessMessage"] = "Thay đổi trạng thái sản phẩm thành công!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return Redirect(Request.Headers["Referer"].ToString()); // Quay lại trang trước
+
+        }
     }
 }

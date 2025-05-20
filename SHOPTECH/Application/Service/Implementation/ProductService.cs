@@ -97,15 +97,13 @@ namespace Application.Service.Implementation
                     throw new KeyNotFoundException($"Brand with ID {id} not found");
                 }
 
-                // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
                 product.IsActive = isActive;
 
-                // Vô hiệu hóa tất cả productdetail thuộc product này
-                //foreach (var productdetail in product.ProductDetails)
-                //{
-                //    productdetail.IsActive = isActive;
-                //}
-              
+                foreach (var productdetail in product.ProductDetails)
+                {
+                    productdetail.IsActive = isActive;
+                }
+
 
                 // Cập nhật brand
                 BaseEntityService<Product>.Update(product);
@@ -179,7 +177,7 @@ namespace Application.Service.Implementation
                                     .Include(x => x.ProductImages)
                                     .Include(x => x.ProductDetails)
                                         .ThenInclude(x => x.Image)
-                                    .FirstOrDefaultAsync(x => x.Id == id);
+                                    .FirstOrDefaultAsync(x => x.Id == id && x.IsActive);
                 if (product == null)
                 {
                     throw new Exception("Not found");

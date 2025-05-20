@@ -38,6 +38,7 @@ namespace WebApi.Controllers
             try
             {
                 var productAttributes = await _productDetailAttributeService.GetAllAsync();
+
                 var productAttributeDtos = _mapper.Map<IEnumerable<ProductDetailAttribute>>(productAttributes);
                 return Ok(productAttributeDtos);
             }

@@ -224,6 +224,7 @@ namespace Application.Service.Implementation
             var filterMenus = await _unitOfWork.ProductAttributes.GetAll()
                 .Include(x => x.ProductDetailAttributes)
                 .Where(x => x.Category.UrlName == categoryName)
+                .Where(attribute => attribute.IsActive && attribute.CanFilter)
                 .Select(attribute => new FilterMenuDto
                 {
                     Name = attribute.Name,

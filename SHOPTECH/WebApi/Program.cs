@@ -5,9 +5,11 @@ using Application.Service.Interface;
 using Infrastructure.Context;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using WebApi.Middleware;
 
 namespace WebApi
 {
@@ -16,6 +18,8 @@ namespace WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddHttpContextAccessor();
 
             // cors config
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -53,6 +57,7 @@ namespace WebApi
             builder.Services.AddTransient<IProductService, ProductService>();
             builder.Services.AddTransient<IProductDetailService , ProductDetailService>();
             builder.Services.AddTransient<IProductDetailAttributeService, ProductDetailAttributeService>();
+            builder.Services.AddTransient<ICartService, CartService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -105,7 +110,7 @@ namespace WebApi
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("RequireSalerRole", policy => policy.RequireRole("Saler"));
-                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("Customer"));
+                options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
             });
 
 
@@ -119,6 +124,8 @@ namespace WebApi
             }
 
             app.UseCors(MyAllowSpecificOrigins);
+            app.UseMiddleware<JwtMiddleware>();
+
             app.UseAuthentication();
             app.UseAuthorization();
 

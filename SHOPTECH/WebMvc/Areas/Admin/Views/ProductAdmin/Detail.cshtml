@@ -137,11 +137,15 @@
                         <td>
                             @if (item.IsActive)
                             {
-                                <span class="btn btn-sm btn-success"> Bật</span>
+                                <a href="@Url.Action("Active", "ProductDetailAdmin", new { id = item.Id, isActive = false })" class="btn btn-success" data-toggle="tooltip" title="Bật">
+                                    Bật
+                                </a>
                             }
                             else
                             {
-                                <span class="btn btn-sm btn-danger"> Tắt</span>
+                                <a href="@Url.Action("Active", "ProductDetailAdmin", new { id = item.Id, isActive = true })" class="btn btn-danger" data-toggle="tooltip" title="Tắt">
+                                    Tắt
+                                </a>
                             }
                         </td>
                         <td>

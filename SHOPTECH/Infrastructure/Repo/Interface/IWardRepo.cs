@@ -7,7 +7,7 @@ using Domain.Enity;
 
 namespace Infrastructure.Repo.Interface
 {
-    public interface IWardRepo :  IGenericRepo<Ward, int>
+    public interface IWardRepo :  IGenericRepo<Ward, string>
     {
        
 

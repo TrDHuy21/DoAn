@@ -8,19 +8,26 @@ using Application.Helper;
 using Application.Models;
 using Domain.Enity;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
+using WebMvc.Service.Interface;
 
 namespace WebMvc.Areas.Admin.Controllers
 {
     [Area("Admin")]
 
     [Route("Admin/[controller]")]
+
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class BrandAdminController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IApiService _apiService;
 
-        public BrandAdminController(HttpClient httpClient)
+        public BrandAdminController(HttpClient httpClient, IApiService apiService)
         {
             _httpClient = httpClient;
+            _apiService = apiService;
         }
 
         [HttpGet]
@@ -29,7 +36,7 @@ namespace WebMvc.Areas.Admin.Controllers
             try
             {
                 //request to API server
-                var response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN_PAGE(pageIndex, pageSize));
+                var response = await _apiService.GetAsync(AdminApiString.BRAND_ADMIN_PAGE(pageIndex, pageSize));
 
                 //check response
                 if (!response.IsSuccessStatusCode)
@@ -55,7 +62,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN(id));
+                var response = await _apiService.GetAsync(AdminApiString.BRAND_ADMIN(id));
 
                 //check response
                 if (!response.IsSuccessStatusCode)
@@ -98,7 +105,7 @@ namespace WebMvc.Areas.Admin.Controllers
                     multiContent.Create(addBrandDto);
 
                     // Gửi request
-                    var response = await _httpClient.PostAsync(AdminApiString.BRAND_ADMIN(), multiContent);
+                    var response = await _apiService.PostAsync(AdminApiString.BRAND_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -125,9 +132,14 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                Console.WriteLine(AdminApiString.BRAND_ADMIN(id));
-                var brand = await _httpClient.GetFromJsonAsync<UpdateBrandDto>(AdminApiString.BRAND_ADMIN(id));
+                var response = await _apiService.GetAsync(AdminApiString.BRAND_ADMIN(id));
 
+                if(!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                var brand = await response.Content.ReadFromJsonAsync<UpdateBrandDto>();
                 if (brand == null)
                 {
                     throw new Exception("Brand not found");
@@ -157,7 +169,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 {
                     multiContent.Create(brandDto);
                     // Gửi request
-                    var response = await _httpClient.PutAsync(AdminApiString.BRAND_ADMIN(), multiContent);
+                    var response = await _apiService.PutAsync(AdminApiString.BRAND_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -183,7 +195,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(AdminApiString.BRAND_ADMIN(id));
+                var response = await _apiService.DeleteAsync(AdminApiString.BRAND_ADMIN(id), null);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -208,12 +220,12 @@ namespace WebMvc.Areas.Admin.Controllers
             try
             {
                 Console.WriteLine(AdminApiString.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive));
-                var response = await _httpClient.PutAsync(AdminApiString.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive), null);
+                var response = await _apiService.PutAsync(AdminApiString.BRAND_ADMIN_CHANGE_ACTIVE(id, isActive), null);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                    throw new Exception(errorResponse?.Message);
+                    throw new Exception(errorResponse?.Message); 
                 }
                 
                 TempData["SuccessMessage"] = "Thay đổi trạng thái thương hiệu thành công!";

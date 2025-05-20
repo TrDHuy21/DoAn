@@ -215,16 +215,15 @@ namespace Application.Service.Implementation
 
                 // Đánh dấu brand không hoạt động thay vì xóa hoàn toàn
                 brand.IsActive = isActive;
-
-                // Vô hiệu hóa tất cả sản phẩm thuộc brand này
-                //foreach (var product in brand.Products)
-                //{
-
-                //    product.IsActive = isActive;
-                //}
-                // sau sẽ kiểm tra isactive của brand và category khi select sản phẩm
-
-
+                foreach (var p in brand.Products)
+                {
+                    p.IsActive = isActive;
+                    await _unitOfWork.LoadCollectionAsync(p, p => p.ProductDetails);
+                    foreach (var pd in p.ProductDetails ?? new List<ProductDetail>())
+                    {
+                        pd.IsActive = isActive;
+                    }
+                }
 
                 // Cập nhật brand
                 BaseEntityService<Brand>.Update(brand);

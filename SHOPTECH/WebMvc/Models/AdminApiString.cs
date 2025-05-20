@@ -37,6 +37,9 @@ namespace WebMvc.Models
         public static string PRODUCT_ATTRIBUTE_ADMIN() => BASE_URL + "/ProductAttributeAdminApi";
         public static string PRODUCT_ATTRIBUTE_ADMIN(int id) => PRODUCT_ATTRIBUTE_ADMIN() + "/" + id;
         public static string PRODUCT_ATTRIBUTE_ADMIN_CATEGORY(int categoryId) => PRODUCT_ATTRIBUTE_ADMIN() + "/category/" + categoryId;
+        public static string PRODUCT_ATTRIBUTE_ADMIN_CHANGE_ACTIVE(int categoryId, bool isActive) => PRODUCT_ATTRIBUTE_ADMIN() + "/changeactive/" + categoryId + "?isActive=" + isActive;
+        public static string PRODUCT_ATTRIBUTE_ADMIN_CHANGE_DISPLAY(int categoryId, bool isDisplay) => PRODUCT_ATTRIBUTE_ADMIN() + "/changedisplay/" + categoryId + "?isDisplay=" + isDisplay;
+        public static string PRODUCT_ATTRIBUTE_ADMIN_CHANGE_FILTER(int categoryId, bool canFilter) => PRODUCT_ATTRIBUTE_ADMIN() + "/changefilter/" + categoryId + "?canFilter=" + canFilter;
 
 
         // product admin

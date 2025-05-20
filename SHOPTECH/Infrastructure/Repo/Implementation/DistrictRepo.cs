@@ -9,7 +9,7 @@ using Infrastructure.Repo.Interface;
 
 namespace Infrastructure.Repo.Implementation
 {
-    public class DistrictRepo : GenericRepo<District, int>, IDistrictRepo
+    public class DistrictRepo : GenericRepo<District, string>, IDistrictRepo
     {
         public DistrictRepo(ShopTechContext dbContext) : base(dbContext)
         {

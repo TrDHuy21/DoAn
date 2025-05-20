@@ -28,6 +28,11 @@ namespace WebApi.Controllers
                 {
                     return NotFound(new { Message = "Product detail not found." });
                 }
+
+                if (!productDetail.IsActive)
+                {
+                    return NotFound(new { Message = "Product detail not found." });
+                }
                 var productDetailDto = _mapper.Map<DetailClientProductDetail>(productDetail);
                 return Ok(productDetailDto);
             }
@@ -53,6 +58,7 @@ namespace WebApi.Controllers
                 {
                     return NotFound(new { Message = "No product details found." });
                 }
+                productDetails = productDetails.Where(pd => pd.IsActive);
                 var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
                 return Ok(productDetailDtos);
             }
@@ -71,6 +77,7 @@ namespace WebApi.Controllers
                 {
                     return NotFound(new { Message = "No product details found." });
                 }
+                productDetails = productDetails.Where(pd => pd.IsActive);
                 var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
                 return Ok(productDetailDtos);
             }
@@ -80,6 +87,24 @@ namespace WebApi.Controllers
             }
         }
 
+        [HttpGet("checkout")]
+        public async Task<IActionResult> GetCheckout([FromQuery] IEnumerable<int> productDetailIds)
+        {
+            try
+            {
+                var productDetails = await _productDetailService.GetCheckout(productDetailIds);
+                if (productDetails == null)
+                {
+                    return NotFound(new { Message = "No product details found." });
+                }
+                var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
+                return Ok(productDetailDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
 
 
         [HttpGet("category/{categoryName}/page/{index}")]
@@ -92,6 +117,8 @@ namespace WebApi.Controllers
                 {
                     return NotFound(new { Message = "No product details found." });
                 }
+
+                pageResultDto.Items = pageResultDto.Items.Where(i => i.IsActive);
                 return Ok(pageResultDto);
             }
             catch (Exception ex)
@@ -110,6 +137,9 @@ namespace WebApi.Controllers
                 {
                     return NotFound(new { Message = "No product details found." });
                 }
+
+                productDetails = productDetails.Where(pd => pd.IsActive);
+
                 var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
                 return Ok(productDetailDtos);
             }

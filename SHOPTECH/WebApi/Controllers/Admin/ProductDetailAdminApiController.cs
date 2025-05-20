@@ -5,11 +5,14 @@ using Domain.Enity;
 using Microsoft.AspNetCore.Mvc;
 using Application.Models;
 using Application.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class ProductDetailAdminApiController : ControllerBase
     {
         private readonly IProductDetailService _productDetailService;
@@ -177,8 +180,9 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        [HttpPut("{id}/active")]
-        public async Task<ActionResult<ProductDetail>> ChangeActive(int id, [FromBody] bool isActive)
+        [HttpPut("ChangeActive/{id}")]
+
+        public async Task<ActionResult<ProductDetail>> ChangeActive(int id, bool isActive)
         {
             try
             {

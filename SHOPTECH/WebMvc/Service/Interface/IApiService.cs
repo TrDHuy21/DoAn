@@ -4,7 +4,9 @@ namespace WebMvc.Service.Interface
 {
     public interface IApiService
     {
-        public Task<T> GetFromApiAsync<T>(string endpoint);
-        public Task<T> PostToApiAsync<T>(string endpoint, object data);
+        public Task<HttpResponseMessage> GetAsync(string endpoint);
+        public Task<HttpResponseMessage> PostAsync(string endpoint, object data);
+        public Task<HttpResponseMessage> PutAsync(string endpoint, object data);
+        public Task<HttpResponseMessage> DeleteAsync(string endpoint, object data);
     }
 }

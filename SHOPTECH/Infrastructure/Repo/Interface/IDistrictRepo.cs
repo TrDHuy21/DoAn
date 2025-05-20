@@ -7,7 +7,7 @@ using Domain.Enity;
 
 namespace Infrastructure.Repo.Interface
 {
-    public interface IDistrictRepo : IGenericRepo<District, int>
+    public interface IDistrictRepo : IGenericRepo<District, string>
     {
       
     }

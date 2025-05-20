@@ -1,0 +1,13 @@
+﻿.categories-menu .category-list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .categories-menu .category-list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+.category-name {
+    font-size: 0.85rem;
+    color: #333;
+}

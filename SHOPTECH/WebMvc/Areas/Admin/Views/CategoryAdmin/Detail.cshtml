@@ -224,6 +224,9 @@
 		var baseUrl = @Html.Raw(Json.Serialize(baseUrl));
 
         $(document).ready(function() {
+
+
+
             // Khởi tạo DataTable
             $('#attributeTable').DataTable({
             });
@@ -337,6 +340,7 @@
                 type: method,
                 contentType: "application/json",
                 data: JSON.stringify(formData),
+                     
                 success: function(response) {
                     $("#attributeModal").modal("hide");
                     toastr.success(`Thuộc tính đã được ${isUpdate ? "cập nhật" : "thêm"} thành công!`);
@@ -373,22 +377,22 @@
 
         // Thay đổi trạng thái thuộc tính
         function changeAttributeStatus(id, type, value) {
-            let url = baseUrl;
+            let url = "http://localhost:5048/Admin/ProductAttributeAdmin";
             switch(type) {
                 case "display":
-                    url += `/ProductAttributeAdminApi/ChangeDisplay/${id}`;
+                    url += `/ChangeDisplay/${id}`;
                     break;
                 case "active":
-                    url += `/ProductAttributeAdminApi/ChangeActive/${id}`;
+                    url += `/ChangeActive/${id}`;
                     break;
                 case "filter":
-                    url += `/ProductAttributeAdminApi/ChangeFilter/${id}`;
+                    url += `/ChangeFilter/${id}`;
                     break;
             }
 
             $.ajax({
                 url: url,
-                type: "PATCH",
+                type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(value),
                 success: function() {

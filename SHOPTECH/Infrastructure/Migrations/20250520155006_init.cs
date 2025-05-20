@@ -30,8 +30,7 @@ namespace Infrastructure.Migrations
                 name: "Province",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -53,13 +52,56 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "District",
+                name: "Brand",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Brand", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Brand_ImageFile_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "ImageFile",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Category_ImageFile_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "ImageFile",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "District",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProvinceId = table.Column<int>(type: "int", nullable: true)
+                    ProvinceId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -72,196 +114,16 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ward",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DistrictId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ward", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ward_District_DistrictId",
-                        column: x => x.DistrictId,
-                        principalTable: "District",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AdressDetail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Cccd = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RoleId = table.Column<int>(type: "int", nullable: true),
-                    ImageId = table.Column<int>(type: "int", nullable: true),
-                    WardId = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_User_ImageFile_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "ImageFile",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_User_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_User_User_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_User_User_UpdatedBy",
-                        column: x => x.UpdatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_User_Ward_WardId",
-                        column: x => x.WardId,
-                        principalTable: "Ward",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Brand",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageId = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Brand", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Brand_ImageFile_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "ImageFile",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Brand_User_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Brand_User_UpdatedBy",
-                        column: x => x.UpdatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Category",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageId = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Category_ImageFile_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "ImageFile",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Category_User_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Category_User_UpdatedBy",
-                        column: x => x.UpdatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TrackingCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    WardId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Order_User_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_User_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Order_Ward_WardId",
-                        column: x => x.WardId,
-                        principalTable: "Ward",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Product",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    MainImageId = table.Column<int>(type: "int", nullable: true),
                     BrandId = table.Column<int>(type: "int", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    UrlName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -279,14 +141,9 @@ namespace Infrastructure.Migrations
                         principalTable: "Category",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Product_User_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Product_User_UpdatedBy",
-                        column: x => x.UpdatedBy,
-                        principalTable: "User",
+                        name: "FK_Product_ImageFile_MainImageId",
+                        column: x => x.MainImageId,
+                        principalTable: "ImageFile",
                         principalColumn: "Id");
                 });
 
@@ -296,13 +153,11 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsDisplay = table.Column<bool>(type: "bit", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    IsDisplay = table.Column<bool>(type: "bit", nullable: false),
+                    CanFilter = table.Column<bool>(type: "bit", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    UrlName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -313,16 +168,25 @@ namespace Infrastructure.Migrations
                         name: "FK_ProductAttribute_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Category",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ward",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DistrictId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ward", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductAttribute_User_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ProductAttribute_User_UpdatedBy",
-                        column: x => x.UpdatedBy,
-                        principalTable: "User",
+                        name: "FK_Ward_District_DistrictId",
+                        column: x => x.DistrictId,
+                        principalTable: "District",
                         principalColumn: "Id");
                 });
 
@@ -338,13 +202,12 @@ namespace Infrastructure.Migrations
                     isNew = table.Column<bool>(type: "bit", nullable: true),
                     isHot = table.Column<bool>(type: "bit", nullable: true),
                     isSale = table.Column<bool>(type: "bit", nullable: true),
+                    ColorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ColorCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     ImageId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<int>(type: "int", nullable: true),
-                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    UrlName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -360,16 +223,6 @@ namespace Infrastructure.Migrations
                         name: "FK_ProductDetail_Product_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Product",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ProductDetail_User_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ProductDetail_User_UpdatedBy",
-                        column: x => x.UpdatedBy,
-                        principalTable: "User",
                         principalColumn: "Id");
                 });
 
@@ -397,53 +250,44 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cart",
+                name: "User",
                 columns: table => new
                 {
-                    ProductDetailId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AdressDetail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cccd = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoleId = table.Column<int>(type: "int", nullable: true),
+                    ImageId = table.Column<int>(type: "int", nullable: true),
+                    WardId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cart", x => new { x.ProductDetailId, x.UserId });
+                    table.PrimaryKey("PK_User", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cart_ProductDetail_ProductDetailId",
-                        column: x => x.ProductDetailId,
-                        principalTable: "ProductDetail",
+                        name: "FK_User_ImageFile_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "ImageFile",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Cart_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrderDetail",
-                columns: table => new
-                {
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    ProductDetailId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderDetail", x => new { x.OrderId, x.ProductDetailId });
+                        name: "FK_User_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_OrderDetail_Order_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Order",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderDetail_ProductDetail_ProductDetailId",
-                        column: x => x.ProductDetailId,
-                        principalTable: "ProductDetail",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_User_Ward_WardId",
+                        column: x => x.WardId,
+                        principalTable: "Ward",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -453,6 +297,7 @@ namespace Infrastructure.Migrations
                     ProductDetailId = table.Column<int>(type: "int", nullable: false),
                     ProductAttributeId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UrlValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -499,10 +344,92 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Brand_CreatedBy",
-                table: "Brand",
-                column: "CreatedBy");
+            migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    ProductDetailId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => new { x.ProductDetailId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_Cart_ProductDetail_ProductDetailId",
+                        column: x => x.ProductDetailId,
+                        principalTable: "ProductDetail",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Cart_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TrackingCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    WardId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_User_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "User",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_User_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "User",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_Ward_WardId",
+                        column: x => x.WardId,
+                        principalTable: "Ward",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetail",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    ProductDetailId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetail", x => new { x.OrderId, x.ProductDetailId });
+                    table.ForeignKey(
+                        name: "FK_OrderDetail_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetail_ProductDetail_ProductDetailId",
+                        column: x => x.ProductDetailId,
+                        principalTable: "ProductDetail",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Brand_ImageId",
@@ -510,29 +437,14 @@ namespace Infrastructure.Migrations
                 column: "ImageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Brand_UpdatedBy",
-                table: "Brand",
-                column: "UpdatedBy");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Cart_UserId",
                 table: "Cart",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_CreatedBy",
-                table: "Category",
-                column: "CreatedBy");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Category_ImageId",
                 table: "Category",
                 column: "ImageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Category_UpdatedBy",
-                table: "Category",
-                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_District_ProvinceId",
@@ -570,34 +482,14 @@ namespace Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_CreatedBy",
+                name: "IX_Product_MainImageId",
                 table: "Product",
-                column: "CreatedBy");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Product_UpdatedBy",
-                table: "Product",
-                column: "UpdatedBy");
+                column: "MainImageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductAttribute_CategoryId",
                 table: "ProductAttribute",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductAttribute_CreatedBy",
-                table: "ProductAttribute",
-                column: "CreatedBy");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductAttribute_UpdatedBy",
-                table: "ProductAttribute",
-                column: "UpdatedBy");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductDetail_CreatedBy",
-                table: "ProductDetail",
-                column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductDetail_ImageId",
@@ -608,11 +500,6 @@ namespace Infrastructure.Migrations
                 name: "IX_ProductDetail_ProductId",
                 table: "ProductDetail",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductDetail_UpdatedBy",
-                table: "ProductDetail",
-                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductDetailAttribute_ImageId",
@@ -635,11 +522,6 @@ namespace Infrastructure.Migrations
                 column: "ImageFileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_CreatedBy",
-                table: "User",
-                column: "CreatedBy");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_User_ImageId",
                 table: "User",
                 column: "ImageId");
@@ -648,11 +530,6 @@ namespace Infrastructure.Migrations
                 name: "IX_User_RoleId",
                 table: "User",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_UpdatedBy",
-                table: "User",
-                column: "UpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_WardId",
@@ -693,19 +570,10 @@ namespace Infrastructure.Migrations
                 name: "ProductDetail");
 
             migrationBuilder.DropTable(
-                name: "Product");
-
-            migrationBuilder.DropTable(
-                name: "Brand");
-
-            migrationBuilder.DropTable(
-                name: "Category");
-
-            migrationBuilder.DropTable(
                 name: "User");
 
             migrationBuilder.DropTable(
-                name: "ImageFile");
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "Role");
@@ -714,7 +582,16 @@ namespace Infrastructure.Migrations
                 name: "Ward");
 
             migrationBuilder.DropTable(
+                name: "Brand");
+
+            migrationBuilder.DropTable(
+                name: "Category");
+
+            migrationBuilder.DropTable(
                 name: "District");
+
+            migrationBuilder.DropTable(
+                name: "ImageFile");
 
             migrationBuilder.DropTable(
                 name: "Province");

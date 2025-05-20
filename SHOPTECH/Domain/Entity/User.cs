@@ -25,7 +25,7 @@ namespace Domain.Enity
         public ImageFile? Image { get; set; }
 
         //address
-        public int? WardId { get; set; }
+        public string? WardId { get; set; }
         public Ward? Ward { get; set; }
 
         //order

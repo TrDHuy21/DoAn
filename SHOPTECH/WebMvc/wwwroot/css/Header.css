@@ -1,0 +1,56 @@
+﻿:root {
+    --primary-color: #d70018;
+    --secondary-color: #333;
+    --light-bg: #f8f9fa;
+}
+.top-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 0;
+    font-size: 0.85rem;
+}
+
+.main-header {
+    background-color: var(--primary-color);
+    padding: 10px 0;
+}
+
+.navbar-brand img {
+    height: 40px;
+}
+
+.search-form {
+    position: relative;
+    width: 100%;
+}
+
+    .search-form input {
+        border-radius: 20px;
+        padding-right: 40px;
+    }
+
+    .search-form button {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        border: none;
+        background: transparent;
+        color: var(--primary-color);
+    }
+
+.navbar-nav .nav-link {
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+.header-icons a {
+    color: white;
+    font-size: 1.2rem;
+    margin-left: 15px;
+    position: relative;
+}

@@ -5,6 +5,7 @@ using Application.Service.Implementation;
 using Application.Service.Interface;
 using AutoMapper;
 using Domain.Enity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,8 @@ namespace WebApi.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class CategoryAdminApiController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

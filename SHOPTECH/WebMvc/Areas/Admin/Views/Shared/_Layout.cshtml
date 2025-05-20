@@ -252,5 +252,17 @@
     @RenderSection("Scripts", required: false)
 
     @await Html.PartialAsync("_ToastrNotifications")
+    <script>
+            $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true // Gửi cookie cho các yêu cầu cross-origin
+            },
+            error: function(xhr) {
+                const response = xhr.responseJSON;
+                toastr.error(response?.message || "Đã xảy ra lỗi khi thực hiện yêu cầu!");
+            }
+        });
+    </script>
 </body>
+
 </html>

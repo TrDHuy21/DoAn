@@ -16,23 +16,23 @@
 </head>
 <body>
     <!-- Banner --> 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="banner">
-                    <img src="" alt="Banner MSI">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="banner">
-                    <img src="" alt="Banner Office">
-                </div>
-            </div>
-        </div>
-    </div>
+    @* <div class="container mt-4"> *@
+    @*     <div class="row"> *@
+    @*         <div class="col-md-6"> *@
+    @*             <div class="banner"> *@
+    @*                 <img src="" alt="Banner MSI"> *@
+    @*             </div> *@
+    @*         </div> *@
+    @*         <div class="col-md-6"> *@
+    @*             <div class="banner"> *@
+    @*                 <img src="" alt="Banner Office"> *@
+    @*             </div> *@
+    @*         </div> *@
+    @*     </div> *@
+    @* </div> *@
 
     <!-- Thương hiệu -->
-    @await Component.InvokeAsync("BrandMenu")
+    @* @await Component.InvokeAsync("BrandMenu") *@
 
     <!-- filter menu-->
     @await Component.InvokeAsync("FilterMenu", new { categoryName = @categoryName, queryParams = @queryParams })

@@ -42,7 +42,7 @@ namespace Application.Dtos.UserDtos
         public ImageFileDto? Image { get; set; }
 
         //address
-        public int? WardId { get; set; }
+        public string? WardId { get; set; }
         public Ward? Ward { get; set; }
 
 

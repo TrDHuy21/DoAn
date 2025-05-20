@@ -87,7 +87,7 @@
 								<div class="card-body">
 									@if (item.Id != productDetail.Id)
 									{
-										<a class="btn variant-btn w-100 d-flex align-items-center" href="@Url.RouteUrl("productdetail", new { id = item.Id })">
+										<a class="btn variant-btn w-100 d-flex align-items-center" href="@Url.Action( "info", "productdetail", new {id = item.Id})">
 											@if (item.Image != null)
 											{
 												var base64String = Convert.ToBase64String(item.Image.Data);
@@ -127,9 +127,12 @@
 
 
 			<div class="d-flex mb-3">
-				<button class="btn btn-outline-danger me-2">
-					<i class="fas fa-cart-plus"></i>
-				</button>
+				<form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+					<input type="hidden" name="productDetailId" value="@productDetail.Id" />
+					<button type="submit" class="btn btn-outline-danger me-2">
+						<i class="fas fa-cart-plus"></i>
+					</button>
+				</form>
 				<button class="btn btn-danger flex-grow-1">
 					MUA NGAY
 					<small class="d-block">(Giao tận nhà hoặc nhận tại cửa hàng)</small>

@@ -4,6 +4,7 @@ using Application.Models;
 using Application.Service.Interface;
 using AutoMapper;
 using Domain.Enity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,8 @@ namespace WebApi.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class BrandAdminApiController : ControllerBase
     {
         private readonly IBrandService _brandService;

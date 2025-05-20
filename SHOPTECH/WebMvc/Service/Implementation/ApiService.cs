@@ -1,4 +1,11 @@
-﻿using WebMvc.Service.Interface;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using System;
+using WebMvc.Service.Interface;
 
 namespace WebMvc.Service.Implementation
 {
@@ -13,33 +20,80 @@ namespace WebMvc.Service.Implementation
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<T> GetFromApiAsync<T>(string endpoint)
+        public async Task<HttpResponseMessage> GetAsync(string endpoint)
         {
             var request = CreateRequestWithAuth(HttpMethod.Get, endpoint);
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            return await _httpClient.SendAsync(request);
         }
 
-        public async Task<T> PostToApiAsync<T>(string endpoint, object data)
+        public async Task<HttpResponseMessage> PostAsync(string endpoint, object data)
         {
             var request = CreateRequestWithAuth(HttpMethod.Post, endpoint);
-            request.Content = JsonContent.Create(data);
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+
+            if (data != null)
+            {
+                if (data is MultipartFormDataContent multipartContent)
+                {
+                    request.Content = multipartContent;
+                }
+                else
+                {
+                    var json = JsonConvert.SerializeObject(data);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+            }
+
+            return await _httpClient.SendAsync(request);
+        }
+
+        public async Task<HttpResponseMessage> PutAsync(string endpoint, object data)
+        {
+            var request = CreateRequestWithAuth(HttpMethod.Put, endpoint);
+
+            if (data != null)
+            {
+                if (data is MultipartFormDataContent multipartContent)
+                {
+                    request.Content = multipartContent;
+                }
+                else
+                {
+                    var json = JsonConvert.SerializeObject(data);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+            }
+
+            return await _httpClient.SendAsync(request);
+        }
+
+        public async Task<HttpResponseMessage> DeleteAsync(string endpoint, object data)
+        {
+            var request = CreateRequestWithAuth(HttpMethod.Delete, endpoint);
+
+            if (data != null)
+            {
+                if (data is MultipartFormDataContent multipartContent)
+                {
+                    request.Content = multipartContent;
+                }
+                else
+                {
+                    var json = JsonConvert.SerializeObject(data);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+            }
+
+            return await _httpClient.SendAsync(request);
         }
 
         private HttpRequestMessage CreateRequestWithAuth(HttpMethod method, string endpoint)
         {
             var request = new HttpRequestMessage(method, endpoint);
-
             // Tự động thêm JWT từ cookie vào Authorization header
-            if (_httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("JwtToken", out var token))
+            if (_httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("Jwt", out var token))
             {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-
             return request;
         }
     }

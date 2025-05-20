@@ -3,8 +3,10 @@ using Application.Dtos.BrandDtos;
 using Application.Dtos.CategoryDtos;
 using Application.Helper;
 using Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
+using WebMvc.Service.Interface;
 
 namespace WebMvc.Areas.Admin.Controllers
 {
@@ -12,13 +14,15 @@ namespace WebMvc.Areas.Admin.Controllers
     [Area("Admin")]
 
     [Route("Admin/[controller]")]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class CategoryAdminController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IApiService _apiService;
 
-        public CategoryAdminController(HttpClient httpClient)
+        public CategoryAdminController(IApiService apiService)
         {
-            _httpClient = httpClient;
+            _apiService = apiService;
         }
 
         [HttpGet]
@@ -26,15 +30,21 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(AdminApiString.BRAND_ADMIN_PAGE(pageIndex, pageSize));
-                var pageResult = await _httpClient.GetFromJsonAsync<PageResultDto<IndexCategoryDto>>(AdminApiString.CATEGORY_ADMIN_PAGE(pageIndex, pageSize));
-                return View(pageResult);
+                var response = await _apiService.GetAsync(AdminApiString.CATEGORY_ADMIN_PAGE(pageIndex, pageSize));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                var pageResult = await response.Content.ReadFromJsonAsync<PageResultDto<IndexCategoryDto>>() ?? throw new Exception("error");
 
+                return View(pageResult);
             }
             catch (Exception ex)
             {
-                return View(null);
+                TempData["ErrorMessage"] = "Đã xảy ra lỗi";
             }
+            return View(null);
         }
 
         [HttpGet("detail/{id}")]
@@ -42,15 +52,15 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var category = await _httpClient.GetFromJsonAsync<DetailCategoryDto>(AdminApiString.CATEGORY_ADMIN(id));
-                if (category != null)
+                var response = await _apiService.GetAsync(AdminApiString.CATEGORY_ADMIN(id));
+                if (!response.IsSuccessStatusCode)
                 {
-                    return View(category);
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
                 }
-                else
-                {
-                    return NotFound("Category not found.");
-                }
+                var category = await response.Content.ReadFromJsonAsync<DetailCategoryDto>() ?? throw new Exception("error");
+
+                return View(category);
             }
             catch (Exception ex)
             {
@@ -82,7 +92,7 @@ namespace WebMvc.Areas.Admin.Controllers
                     // Gửi request
                     Console.WriteLine($"Sending request to: {AdminApiString.CATEGORY_ADMIN()}");
                     Console.WriteLine($"Content type: {multiContent.Headers.ContentType}");
-                    var response = await _httpClient.PostAsync(AdminApiString.CATEGORY_ADMIN(), multiContent);
+                    var response = await _apiService.PostAsync(AdminApiString.CATEGORY_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -108,7 +118,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync(AdminApiString.CATEGORY_ADMIN(id));
+                var response = await _apiService.GetAsync(AdminApiString.CATEGORY_ADMIN(id));
                 //check response error
                 if (!response.IsSuccessStatusCode)
                 {
@@ -142,7 +152,7 @@ namespace WebMvc.Areas.Admin.Controllers
                 {
                     multiContent.Create(categoryDto);
                     // Gửi request
-                    var response = await _httpClient.PutAsync(AdminApiString.CATEGORY_ADMIN(), multiContent);
+                    var response = await _apiService.PutAsync(AdminApiString.CATEGORY_ADMIN(), multiContent);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -168,7 +178,7 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(AdminApiString.CATEGORY_ADMIN(id));
+                var response = await _apiService.DeleteAsync(AdminApiString.CATEGORY_ADMIN(id), null);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -191,13 +201,13 @@ namespace WebMvc.Areas.Admin.Controllers
         {
             try
             {
-                var response = await _httpClient.PutAsync(AdminApiString.CATEGORY_ADMIN_CHANGE_ACTIVE(id, isActive), null);
+                var response = await _apiService.PutAsync(AdminApiString.CATEGORY_ADMIN_CHANGE_ACTIVE(id, isActive), null);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
                     throw new Exception(errorResponse?.Message);
                 }
-                TempData["SuccessMessage"] = "Thay đổi trạng thái thương hiệu thành công!";
+                TempData["SuccessMessage"] = "Thay đổi trạng thái danh mục thành công!";
             }
             catch (Exception ex)
             {

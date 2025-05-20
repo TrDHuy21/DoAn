@@ -21,7 +21,6 @@
 						<table class="table table-bordered table-hover" id="indexTable">
 							<thead class="thead-light">
 								<tr>
-									<th width="10%">ID</th>
 									<th width="15%">Hình ảnh</th>
 									<th width="20%">Tên danh mục</th>
 									<th width="30%">Mô tả</th>
@@ -35,7 +34,6 @@
 									@foreach (var item in Model.Items)
 									{
 										<tr>
-											<td>@item.Id</td>
 											<td class="text-center">
 												@if (item.Image != null)
 												{
@@ -56,28 +54,28 @@
 												}
 											</td>
 											<td class="text-center">
-
 												@if (item.IsActive)
 												{
-													<span class="btn btn-success"> Bật</span>
-													
+													<a href="@Url.Action("Active", "CategoryAdmin", new { id = item.Id, isActive = false })" class="btn btn-success" data-toggle="tooltip" title="Bật">
+														Bật
+													</a>
 												}
 												else
 												{
-													<span class="btn btn-danger"> Tắt</span>
+													<a href="@Url.Action("Active", "CategoryAdmin", new { id = item.Id, isActive = true })" class="btn btn-danger" data-toggle="tooltip" title="Tắt">
+														Tắt
+													</a>
 												}
-
-
 											</td>
 											<td class="text-center">
 												<div class="d-flex flex-column">
-													<a href="@Url.Action("Detail", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-info">
+													<a href="@Url.Action("Detail", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-info mb-1" style="width: 70px;">
 														<i class="fas fa-info"></i> Xem
 													</a>
-													<a href="@Url.Action("Update", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-warning">
+													<a href="@Url.Action("Update", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-warning mb-1" style="width: 70px;">
 														<i class="fas fa-edit"></i> Sửa
 													</a>
-													<a href="@Url.Action("Delete", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-danger">
+													<a href="@Url.Action("Delete", "CategoryAdmin", new {id = item.Id })" class="btn btn-sm btn-danger mb-1" style="width: 70px;">
 														<i class="fas fa-trash"></i> Xóa
 													</a>
 

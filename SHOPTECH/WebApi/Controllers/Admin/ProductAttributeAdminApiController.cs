@@ -3,6 +3,7 @@ using Application.Models;
 using Application.Service.Interface;
 using AutoMapper;
 using Domain.Enity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,8 @@ namespace WebApi.Controllers.Admin
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "RequireAdminRole")]
+
     public class ProductAttributeAdminApiController : ControllerBase
     {
         private readonly IProductAttributeService _productAttributeService;
@@ -136,9 +139,10 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PATCH: api/ProductAttributeAdminApi/ChangeActive/5
-        [HttpPatch("ChangeActive/{id}")]
-        public async Task<ActionResult<ProductAttribute>> ChangeActiveStatus(int id, [FromBody] bool isActive)
+        // PUT: api/ProductAttributeAdminApi/ChangeActive/5
+        [HttpPut("ChangeActive/{id}")]
+
+        public async Task<ActionResult<ProductAttribute>> ChangeActiveStatus(int id, bool isActive)
         {
             try
             {
@@ -155,9 +159,9 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PATCH: api/ProductAttributeAdminApi/ChangeDisplay/5
-        [HttpPatch("ChangeDisplay/{id}")]
-        public async Task<ActionResult<ProductAttribute>> ChangeDisplayStatus(int id, [FromBody] bool isDisplay)
+        // PUT: api/ProductAttributeAdminApi/ChangeDisplay/5
+        [HttpPut("ChangeDisplay/{id}")]
+        public async Task<ActionResult<ProductAttribute>> ChangeDisplayStatus(int id, bool isDisplay)
         {
             try
             {
@@ -175,13 +179,13 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        // PATCH: api/ProductAttributeAdminApi/ChangeFilter/5
-        [HttpPatch("ChangeFilter/{id}")]
-        public async Task<ActionResult<ProductAttribute>> ChangeFilterStatus(int id, [FromBody] bool isFilter)
+        // PUT: api/ProductAttributeAdminApi/ChangeFilter/5
+        [HttpPut("ChangeFilter/{id}")]
+        public async Task<ActionResult<ProductAttribute>> ChangeFilterStatus(int id, bool canFilter)
         {
             try
             {
-                var updatedProductAttribute = await _productAttributeService.ChangeFilterAsync(id, isFilter);
+                var updatedProductAttribute = await _productAttributeService.ChangeFilterAsync(id, canFilter);
                 return Ok(updatedProductAttribute.Id);
             }
             catch (KeyNotFoundException ex)

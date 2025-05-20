@@ -1,0 +1,126 @@
+﻿@using Application.Dtos.ProductDetailDtos
+@model Application.Dtos.OrderDtos.CreateOrderOnlineDto
+@{
+    ViewData["Title"] = "Checkout";
+    var checkoutItems = ViewData["checkoutItems"] != null ? ViewData["checkoutItems"] as List<CheckoutItem>
+        ?? new List<CheckoutItem>()
+        : new List<CheckoutItem>();
+}
+
+<h2>Checkout</h2>
+<h2>@checkoutItems.Count</h2>
+
+<form asp-action="SubmitOrder" method="post" id="checkoutForm">
+    <div>
+        <h4>Thông tin sản phẩm</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in checkoutItems)
+                {
+                    <tr>
+                        @{
+                            var base64String = Convert.ToBase64String(item.ProductDetail.Image.Data);
+                            var imageSrc = $"data:{item.ProductDetail.Image.Type};base64,{base64String}";
+                            <td><img src="@imageSrc" width="60" /></td> 
+                        }
+                        <td>@item.ProductDetail.Name</td>
+                        <td>@item.ProductDetail.Price.ToString("N0") ₫</td>
+                        <td>@item.Quantity</td>
+                    </tr>
+
+                    <!-- Hidden inputs for OrderDetailDto -->
+                    <input type="hidden" name="OrderDetails[@item.productDetailId].ProductDetailId" value="@item.ProductDetail.Id" />
+                    <input type="hidden" name="OrderDetails[@item.productDetailId].Price" value="@item.ProductDetail.Price" />
+                    <input type="hidden" name="OrderDetails[@item.productDetailId].Quantity" value="@item.Quantity" />
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h4>Thông tin giao hàng</h4>
+        <div class="form-group">
+            <label>Họ và tên</label>
+            <input asp-for="Name" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input asp-for="Phone" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Ghi chú</label>
+            <textarea asp-for="Note" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Tỉnh / Thành phố</label>
+            <select class="form-control" id="provinceSelect"></select>
+        </div>
+        <div class="form-group">
+            <label>Quận / Huyện</label>
+            <select class="form-control" id="districtSelect"></select>
+        </div>
+        <div class="form-group">
+            <label>Phường / Xã</label>
+            <select class="form-control" id="wardSelect" name="WardId"></select>
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ chi tiết</label>
+            <input class="form-control" name="Address" required />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Đặt hàng</button>
+</form>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Load provinces
+            $.get('/address/province', function (data) {
+                $('#provinceSelect').append($('<option>').text('--Chọn tỉnh--').val(''));
+                $.each(data, function (i, p) {
+                    $('#provinceSelect').append($('<option>').val(p.id).text(p.name));
+                });
+            });
+
+            // On province change
+            $('#provinceSelect').change(function () {
+                var provinceId = $(this).val();
+                $('#districtSelect').empty();
+                $('#wardSelect').empty();
+                if (provinceId) {
+                    $.get('/address/district', { provinceId: provinceId }, function (data) {
+                        $('#districtSelect').append($('<option>').text('--Chọn huyện--').val(''));
+                        $.each(data, function (i, d) {
+                            $('#districtSelect').append($('<option>').val(d.id).text(d.name));
+                        });
+                    });
+                }
+            });
+
+            // On district change
+            $('#districtSelect').change(function () {
+                var districtId = $(this).val();
+                $('#wardSelect').empty();
+                if (districtId) {
+                    $.get('/address/ward', { districtId: districtId }, function (data) {
+                        $('#wardSelect').append($('<option>').text('--Chọn xã--').val(''));
+                        $.each(data, function (i, w) {
+                            $('#wardSelect').append($('<option>').val(w.id).text(w.name));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

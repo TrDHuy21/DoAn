@@ -1,29 +1,332 @@
-﻿@{
-    // Lấy thông tin user từ Context.User
-    var userId = User.FindFirst("sub")?.Value;
-    var username = User.FindFirst("name")?.Value;
-    var email = User.FindFirst("email")?.Value;
-    var roles = User.FindAll("role").Select(c => c.Value).ToList();
+﻿`@using Application.Dtos.CartDtos
+@{
+	ViewData["Title"] = "Giỏ hàng của bạn";
+	var cartItems = ViewData["cartItems"] != null ? ViewData["cartItems"] as List<CartDto> : new List<CartDto>();
+}
+<h2>Giỏ hàng của bạn</h2>
+@if (cartItems.Any())
+{
+	<div class="cart-container">
+		<div class="mb-3">
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" id="selectAll">
+				<label class="form-check-label" for="selectAll">
+					<strong>Chọn tất cả</strong>
+				</label>
+			</div>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th width="5%">Chọn</th>
+					<th width="10%">Hình ảnh</th>
+					<th width="30%">Sản phẩm</th>
+					<th width="15%">Giá</th>
+					<th width="15%">Số lượng</th>
+					<th width="15%">Tổng</th>
+					<th width="10%">Xóa</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in cartItems)
+				{
+					<tr class="cart-item" data-id="@item.ProductDetailId" data-price="@item.Price" data-max-quantity="@item.AvailableQuantity">
+						<td>
+							<input type="checkbox" class="form-check-input item-select" name="selectedItems" value="@item.ProductDetailId">
+						</td>
+						@{
+							var base64String = Convert.ToBase64String(item.Image.Data);
+							var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+							<td><img src="@imageSrc" alt="@item.ProductName" class="img-thumbnail" style="width: 80px; height: auto;" /></td>
+						}
+						<td>@item.ProductName</td>
+						<td class="item-price">@item.Price.ToString("N0") đ</td>
+						<td>
+							<div class="quantity-control">
+								<button class="btn btn-sm btn-outline-secondary decrease-quantity">-</button>
+								<input type="number" class="form-control item-quantity mx-1" value="@item.Quantity" min="1" max="@item.AvailableQuantity" style="width: 60px; display: inline-block;">
+								<button class="btn btn-sm btn-outline-secondary increase-quantity">+</button>
+							</div>
+						</td>
+						<td class="item-total">@((item.Price * item.Quantity).ToString("N0")) đ</td>
+						<td>
+							<button type="button" class="btn btn-outline-danger remove-item" data-id="@item.ProductDetailId">
+								<i class="fas fa-trash"></i>
+							</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+	<div class="cart-summary">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="alert alert-info" role="alert">
+					<strong>Đã chọn: <span id="selectedCount">0</span> sản phẩm</strong>
+				</div>
+			</div>
+			<div class="col-md-6 text-end">
+				<h4>Tạm tính: <span id="total">0</span> đ</h4>
+				<button id="checkout-btn" class="btn btn-primary" disabled>Mua ngay</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal thông báo -->
+	<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="notificationModalLabel">Thông báo</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id="notificationMessage">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+else
+{
+	<div class="alert alert-info py-4 text-center">
+		<h3>Giỏ hàng của bạn chưa có sản phẩm nào</h3>
+		<a href="/" class="btn btn-primary mt-3">Tiếp tục mua sắm</a>
+	</div>
 }
 
-<h1>Thông tin người dùng</h1>
-<div>
-    <p>ID: @userId</p>
-    <p>Tên đăng nhập: @username</p>
-    <p>Email: @email</p>
-    <p>Vai trò:</p>
-    <ul>
-        @foreach (var role in roles)
-        {
-            <li>@role</li>
-        }
-    </ul>
-</div>
+<style>
+	.cart-container {
+		margin: 20px 0;
+	}
 
-@if (User.IsInRole("Admin"))
-{
-    <div class="admin-panel">
-        <h2>Bảng điều khiển Admin</h2>
-        <!-- Nội dung dành cho Admin -->
-    </div>
+	.cart-summary {
+		margin-top: 20px;
+		padding: 15px;
+		background-color: #f8f9fa;
+		border-radius: 5px;
+	}
+
+	.table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+		.table th, .table td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			vertical-align: middle;
+		}
+
+	.quantity-control {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.available-qty {
+		display: block;
+		margin-top: 5px;
+		font-size: 0.8em;
+	}
+</style>
+
+@section Scripts {
+	<script>
+		$(document).ready(function() {
+			// Khởi tạo tổng tiền
+			updateTotalPrice();
+			updateSelectedCount();
+
+			// Xử lý chọn tất cả
+			$("#selectAll").change(function() {
+				var isChecked = $(this).prop("checked");
+				$(".item-select").prop("checked", isChecked);
+				updateTotalPrice();
+				updateSelectedCount();
+			});
+
+			// Xử lý khi chọn từng mục
+			$(".item-select").change(function() {
+				updateTotalPrice();
+				updateSelectedCount();
+
+				// Kiểm tra xem có chọn tất cả không
+				var allChecked = $(".item-select:checked").length === $(".item-select").length;
+				$("#selectAll").prop("checked", allChecked);
+			});
+
+			// Xử lý khi thay đổi số lượng
+			$(".item-quantity").change(function() {
+				handleQuantityChange($(this));
+			});
+
+			// Xử lý nút tăng số lượng
+			$(".increase-quantity").click(function() {
+				var input = $(this).siblings(".item-quantity");
+				var currentValue = parseInt(input.val());
+				var maxValue = parseInt(input.attr("max"));
+
+				if (currentValue < maxValue) {
+					input.val(currentValue + 1);
+					handleQuantityChange(input);
+				} else {
+					showNotification("Số lượng đã đạt mức tối đa có sẵn!");
+				}
+			});
+
+			// Xử lý nút giảm số lượng
+			$(".decrease-quantity").click(function() {
+				var input = $(this).siblings(".item-quantity");
+				var currentValue = parseInt(input.val());
+
+				if (currentValue > 1) {
+					input.val(currentValue - 1);
+					handleQuantityChange(input);
+				}
+			});
+
+			// Xử lý xóa sản phẩm
+			$(".remove-item").click(function() {
+				var productDetailId = $(this).data("id");
+				var row = $(this).closest("tr");
+
+				$.ajax({
+					// url: '  http:localhost:5114/api/Cartapi/Remove',
+					// type: 'delete',
+					// data: { productDetailId: productDetailId },
+					url: '  cart/Remove/' + productDetailId,
+					type: 'post',
+					success: function(response) {
+							row.fadeOut(500, function() {
+								$(this).remove();
+								updateTotalPrice();
+								updateSelectedCount();
+
+								// Kiểm tra nếu giỏ hàng rỗng
+								if ($(".cart-item").length === 0) {
+									location.reload();
+								}
+							});
+							showNotification("Đã xóa sản phẩm khỏi giỏ hàng!");
+					},
+					error: function() {
+						showNotification("Đã xảy ra lỗi khi xóa sản phẩm!");
+					}
+				});
+			});
+
+			// Xử lý nút mua hàng
+			$("#checkout-btn").click(function() {
+				var selectedItems = [];
+
+				$(".item-select:checked").each(function() {
+					var row = $(this).closest("tr");
+					var productDetailId = row.data("id");
+					var quantity = parseInt(row.find(".item-quantity").val());
+
+					selectedItems.push({
+						ProductDetailId: productDetailId,
+						Quantity: quantity
+					});
+				});
+
+				if (selectedItems.length === 0) {
+					showNotification("Vui lòng chọn ít nhất một sản phẩm để mua hàng!");
+					return;
+				}
+
+				$.ajax({
+					url: '/Cart/Checkout',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(selectedItems),
+					success: function(response) {
+						document.open();
+						document.write(response);
+						document.close();
+					},
+					error: function() {
+						showNotification("Đã xảy ra lỗi khi xử lý đơn hàng!");
+					}
+				});
+			});
+
+			// Hàm xử lý khi thay đổi số lượng
+			function handleQuantityChange(input) {
+				var row = input.closest("tr");
+				var quantity = parseInt(input.val());
+				var maxQuantity = parseInt(row.data("max-quantity"));
+				var productDetailId = row.data("id");
+				var price = parseFloat(row.data("price"));
+
+				// Giới hạn số lượng
+				if (quantity < 1) {
+					quantity = 1;
+					input.val(1);
+				}
+
+				if (quantity > maxQuantity) {
+					quantity = maxQuantity;
+					input.val(maxQuantity);
+					showNotification("Số lượng đã được điều chỉnh xuống mức tối đa có sẵn!");
+				}
+
+				// Cập nhật tổng cho sản phẩm
+				var total = price * quantity;
+				row.find(".item-total").text(formatCurrency(total) + " đ");
+
+				// Cập nhật thông tin trên máy chủ với định dạng URL mới
+				$.ajax({
+					// url: 'http:localhost:5114/api/Cartapi/Change-Quantity/' + productDetailId + '?quantity=' + quantity,
+					// type: 'put',
+					 url: 'Cart/ChangeQuantity/' + productDetailId + '?quantity=' + quantity,
+					type: 'POST',
+					success: function(response) {
+						updateTotalPrice();
+					},
+					error: function() {
+						showNotification("Đã xảy ra lỗi khi cập nhật số lượng!");
+					}
+				});
+			}
+
+			// Hàm cập nhật tổng giá
+			function updateTotalPrice() {
+				var total = 0;
+				var hasSelected = false;
+
+				$(".item-select:checked").each(function() {
+					hasSelected = true;
+					var row = $(this).closest("tr");
+					var quantity = parseInt(row.find(".item-quantity").val());
+					var price = parseFloat(row.data("price"));
+					total += price * quantity;
+				});
+
+				$("#total").text(formatCurrency(total));
+				$("#checkout-btn").prop("disabled", !hasSelected);
+			}
+
+			function updateSelectedCount() {
+				var count = $(".item-select:checked").length;
+				$("#selectedCount").text(count);
+			}
+
+			// Hiển thị thông báo
+			function showNotification(message) {
+				$("#notificationMessage").text(message);
+				var modal = new bootstrap.Modal(document.getElementById('notificationModal'));
+				modal.show();
+			}
+
+			// Định dạng tiền tệ
+			function formatCurrency(value) {
+				return new Intl.NumberFormat('vi-VN').format(value);
+			}
+		});
+	</script>
 }

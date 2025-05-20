@@ -9,7 +9,7 @@ using Infrastructure.Repo.Interface;
 
 namespace Infrastructure.Repo.Implementation
 {
-    public class WardRepo : GenericRepo<Ward, int>, IWardRepo
+    public class WardRepo : GenericRepo<Ward, string>, IWardRepo
     {
        public WardRepo(ShopTechContext dbContext) : base(dbContext)
         {

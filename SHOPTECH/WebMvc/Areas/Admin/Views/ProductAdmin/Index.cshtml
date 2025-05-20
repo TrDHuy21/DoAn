@@ -1,7 +1,7 @@
 ﻿@model Application.Dtos.PageResultDto<Application.Dtos.ProductDtos.IndexProductDto>
 
 @{
-	ViewData["Title"] = "Quản lý danh hiệu";
+	ViewData["Title"] = "Quản lý sản ph";
 }
 
 <div class="container-fluid">
@@ -53,23 +53,26 @@
 											<td class="text-center">
 												@if (item.IsActive)
 												{
-													<span class="btn btn-success"> Bật</span>
-
+													<a href="@Url.Action("Active", "ProductAdmin", new { id = item.Id, isActive = false })" class="btn btn-success" data-toggle="tooltip" title="Bật">
+														Bật
+													</a>
 												}
 												else
 												{
-													<span class="btn btn-danger"> Tắt</span>
+													<a href="@Url.Action("Active", "ProductAdmin", new { id = item.Id, isActive = true })" class="btn btn-danger" data-toggle="tooltip" title="Tắt">
+														Tắt
+													</a>
 												}
 											</td>
 											<td class="text-center">
-												<div class="btn-group">
-													<a href="@Url.Action("Detail", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-info">
+												<div class="d-flex flex-column">
+													<a href="@Url.Action("Detail", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-info mb-1" style="width: 70px;">
 														<i class="fas fa-info"></i> Xem
 													</a>
-													<a href="@Url.Action("Update", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-warning">
+													<a href="@Url.Action("Update", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-warning mb-1" style="width: 70px;">
 														<i class="fas fa-edit"></i> Sửa
 													</a>
-													<a href="@Url.Action("Delete", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-danger">
+													<a href="@Url.Action("Delete", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-danger mb-1" style="width: 70px;">
 														<i class="fas fa-trash"></i> Xóa
 													</a>
 
