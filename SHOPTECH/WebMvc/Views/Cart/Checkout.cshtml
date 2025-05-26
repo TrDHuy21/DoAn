@@ -1,84 +1,89 @@
-﻿@using Application.Dtos.ProductDetailDtos
-@model Application.Dtos.OrderDtos.CreateOrderOnlineDto
+﻿@model Application.Dtos.OrderDtos.CreateOnlineOrderDto
+@using Application.Dtos.ProductDetailDtos;
+
 @{
     ViewData["Title"] = "Checkout";
-    var checkoutItems = ViewData["checkoutItems"] != null ? ViewData["checkoutItems"] as List<CheckoutItem>
-        ?? new List<CheckoutItem>()
-        : new List<CheckoutItem>();
+    var checkoutItems = ViewData["checkoutItems"] != null ? ViewData["checkoutItems"] as List<CheckoutItem> ?? new List<CheckoutItem>() : new List<CheckoutItem>();
+    decimal totalAmount = 0; // Initialize total amount
 }
 
-<h2>Checkout</h2>
-<h2>@checkoutItems.Count</h2>
+<h2 class="text-center">Checkout</h2>
+<h4 class="text-center">Total Products: @checkoutItems.Count</h4>
 
-<form asp-action="SubmitOrder" method="post" id="checkoutForm">
-    <div>
-        <h4>Thông tin sản phẩm</h4>
-        <table class="table">
+<form asp-controller="Order" asp-action="CreateOnlineOrder" method="post" id="checkoutForm" class="mt-4">
+    <div class="mb-4">
+        <h4>Product Information</h4>
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Hình ảnh</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in checkoutItems)
+                @for (int i = 0; i < checkoutItems.Count; i++)
                 {
+                    var item = checkoutItems[i];
+                    var totalPrice = item.ProductDetail.Price * item.Quantity; // Calculate total price
+                    totalAmount += totalPrice; // Accumulate total amount
                     <tr>
                         @{
                             var base64String = Convert.ToBase64String(item.ProductDetail.Image.Data);
                             var imageSrc = $"data:{item.ProductDetail.Image.Type};base64,{base64String}";
-                            <td><img src="@imageSrc" width="60" /></td> 
                         }
+                        <td><img src="@imageSrc" width="60" class="img-thumbnail" /></td>
                         <td>@item.ProductDetail.Name</td>
                         <td>@item.ProductDetail.Price.ToString("N0") ₫</td>
                         <td>@item.Quantity</td>
+                        <td>@totalPrice.ToString("N0") ₫</td> <!-- Display total price -->
                     </tr>
 
-                    <!-- Hidden inputs for OrderDetailDto -->
-                    <input type="hidden" name="OrderDetails[@item.productDetailId].ProductDetailId" value="@item.ProductDetail.Id" />
-                    <input type="hidden" name="OrderDetails[@item.productDetailId].Price" value="@item.ProductDetail.Price" />
-                    <input type="hidden" name="OrderDetails[@item.productDetailId].Quantity" value="@item.Quantity" />
+                    <!-- SỬA LỖI: Sử dụng index thay vì ProductDetailId -->
+                    <input type="hidden" name="OrderDetails[@i].ProductDetailId" value="@item.ProductDetail.Id" />
+                    <input type="hidden" name="OrderDetails[@i].Quantity" value="@item.Quantity" />
                 }
             </tbody>
         </table>
+        <h5 class="text-right">Total Amount: @totalAmount.ToString("N0") ₫</h5> <!-- Display total amount -->
     </div>
 
-    <div>
-        <h4>Thông tin giao hàng</h4>
+    <div class="mb-4">
+        <h4>Shipping Information</h4>
         <div class="form-group">
-            <label>Họ và tên</label>
+            <label>Recipient Name</label>
             <input asp-for="Name" class="form-control" required />
         </div>
         <div class="form-group">
-            <label>Số điện thoại</label>
+            <label>Recipient Phone</label>
             <input asp-for="Phone" class="form-control" required />
         </div>
         <div class="form-group">
-            <label>Ghi chú</label>
-            <textarea asp-for="Note" class="form-control"></textarea>
+            <label>Customer Note</label>
+            <textarea asp-for="CustomerNote" class="form-control" rows="3"></textarea>
         </div>
 
         <div class="form-group">
-            <label>Tỉnh / Thành phố</label>
-            <select class="form-control" id="provinceSelect"></select>
+            <label>Province/City</label>
+            <select class="form-control" id="provinceSelect" required></select>
         </div>
         <div class="form-group">
-            <label>Quận / Huyện</label>
-            <select class="form-control" id="districtSelect"></select>
+            <label>District</label>
+            <select class="form-control" id="districtSelect" required></select>
         </div>
         <div class="form-group">
-            <label>Phường / Xã</label>
-            <select class="form-control" id="wardSelect" name="WardId"></select>
+            <label>Ward</label>
+            <select class="form-control" id="wardSelect" name="WardId" required></select>
         </div>
         <div class="form-group">
-            <label>Địa chỉ chi tiết</label>
+            <label>Detailed Address</label>
             <input class="form-control" name="Address" required />
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Đặt hàng</button>
+    <button type="submit" class="btn btn-primary btn-block mt-3">Place Order</button>
 </form>
 
 @section Scripts {
@@ -87,7 +92,7 @@
         $(document).ready(function () {
             // Load provinces
             $.get('/address/province', function (data) {
-                $('#provinceSelect').append($('<option>').text('--Chọn tỉnh--').val(''));
+                $('#provinceSelect').append($('<option>').text('--Select Province--').val(''));
                 $.each(data, function (i, p) {
                     $('#provinceSelect').append($('<option>').val(p.id).text(p.name));
                 });
@@ -96,11 +101,10 @@
             // On province change
             $('#provinceSelect').change(function () {
                 var provinceId = $(this).val();
-                $('#districtSelect').empty();
-                $('#wardSelect').empty();
+                $('#districtSelect').empty().append($('<option>').text('--Select District--').val(''));
+                $('#wardSelect').empty().append($('<option>').text('--Select Ward--').val(''));
                 if (provinceId) {
                     $.get('/address/district', { provinceId: provinceId }, function (data) {
-                        $('#districtSelect').append($('<option>').text('--Chọn huyện--').val(''));
                         $.each(data, function (i, d) {
                             $('#districtSelect').append($('<option>').val(d.id).text(d.name));
                         });
@@ -111,10 +115,9 @@
             // On district change
             $('#districtSelect').change(function () {
                 var districtId = $(this).val();
-                $('#wardSelect').empty();
+                $('#wardSelect').empty().append($('<option>').text('--Select Ward--').val(''));
                 if (districtId) {
                     $.get('/address/ward', { districtId: districtId }, function (data) {
-                        $('#wardSelect').append($('<option>').text('--Chọn xã--').val(''));
                         $.each(data, function (i, w) {
                             $('#wardSelect').append($('<option>').val(w.id).text(w.name));
                         });

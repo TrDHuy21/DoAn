@@ -25,6 +25,31 @@ namespace WebMvc.Areas.Admin.Controllers
             _apiService = apiService;
         }
 
+        [HttpGet("Getall")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                //request to API server
+                var response = await _apiService.GetAsync(AdminApiString.CATEGORY_ADMIN());
+                //check response
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                // check content
+                var categories = await response.Content.ReadFromJsonAsync<List<IndexCategoryDto>>() ?? throw new Exception("error");
+                ViewData["categories"] = categories;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return View();
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10)
         {

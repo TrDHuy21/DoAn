@@ -130,6 +130,8 @@ namespace Application.Service.Implementation
             {
                 var products = await _unitOfWork.Products.GetAll()
                     .Include(x => x.MainImage)
+                    .Include(x => x.Category)
+                    .Include(x => x.Brand)
                     .ToListAsync();
                 if (products.Count <= 0)
                 {

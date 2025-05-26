@@ -55,5 +55,9 @@ namespace WebMvc.Models
         public static string PRODUCT_DETAIL_ADMIN_PAGE(int pageIndex, int pageSize) => PRODUCT_DETAIL_ADMIN() + $"/page/{pageIndex}?pagesize={pageSize}";
         public static string PRODUCT_DETAIL_ADMIN_CHANGE_ACTIVE(int id, bool active) => PRODUCT_DETAIL_ADMIN() + $"/changeactive/{id}?isactive={active}";
 
+        // order
+        public static string ORDER_ADMIN() => BASE_URL + "/OrderAdminApi";
+
+
     }
 }

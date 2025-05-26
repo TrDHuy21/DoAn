@@ -30,7 +30,29 @@ namespace WebMvc.Areas.Admin.Controllers
             _apiService = apiService;
         }
 
-
+        [HttpGet("Getall")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                //request to API server
+                var response = await _apiService.GetAsync(AdminApiString.PRODUCT_ADMIN());
+                //check response
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                // check content
+                var products = await response.Content.ReadFromJsonAsync<List<IndexProductDto>>() ?? throw new Exception("error");
+                ViewData["products"] = products;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return View();
+        }
 
         //index
         [HttpGet]

@@ -1,0 +1,352 @@
+﻿@using Application.Dtos.OrderDtos
+@{
+	ViewBag.Title = "Danh sách đơn hàng";
+	var orders = ViewData["orders"] != null ? ViewData["orders"] as List<IndexOrderDto> ?? new List<IndexOrderDto>() : new List<IndexOrderDto>();
+
+	string GetStatusText(int? status)
+	{
+		return status switch
+		{
+			0 => "Chờ xác nhận",
+			1 => "Đã xác nhận",
+			2 => "Đang giao hàng",
+			3 => "Giao hàng thành công",
+			4 => "Đơn hàng thành công",
+			5 => "Giao hàng không thành công",
+			6 => "Đang hoàn hàng",
+			7 => "Hoàn hàng thành công",
+			8 => "Đã hủy",
+			_ => "Không xác định"
+		};
+	}
+
+	string GetStatusClass(int? status)
+	{
+		return status switch
+		{
+			0 => "warning",
+			1 => "info",
+			2 => "primary",
+			3 => "success",
+			4 => "success",
+			5 => "danger",
+			6 => "warning",
+			7 => "info",
+			8 => "secondary",
+			_ => "secondary"
+		};
+	}
+}
+
+<link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<div class="d-flex justify-content-between align-items-center">
+						<h4 class="card-title">Danh sách đơn hàng</h4>
+					</div>
+				</div>
+				<div class="card-body">
+					@if (orders != null)
+					{
+						<!-- Bộ lọc tìm kiếm nâng cao -->
+						<div class="row mb-4">
+							<div class="col-md-3">
+								<label class="form-label">Tìm theo trạng thái:</label>
+								<select class="form-select" id="statusFilter">
+									<option value="">Tất cả trạng thái</option>
+									<option value="0">Chờ xác nhận</option>
+									<option value="1">Đã xác nhận</option>
+									<option value="2">Đang giao hàng</option>
+									<option value="3">Giao hàng thành công</option>
+									<option value="4">Đơn hàng thành công</option>
+									<option value="5">Giao hàng không thành công</option>
+									<option value="6">Đang hoàn hàng</option>
+									<option value="7">Hoàn hàng thành công</option>
+									<option value="8">Đã hủy</option>
+								</select>
+							</div>
+							<div class="col-md-3">
+								<label class="form-label">Loại đơn hàng:</label><br />
+								<select class="form-select" id="typeFilter">
+									<option value="">Tất cả loại</option>
+									<option value="online">Online</option>
+									<option value="offline">Offline</option>
+								</select>
+							</div>
+							<div class="col-md-3">
+								<label class="form-label">Từ ngày:</label>
+								<input type="date" class="form-control" id="dateFrom">
+							</div>
+							<div class="col-md-3">
+								<label class="form-label">Đến ngày:</label>
+								<input type="date" class="form-control" id="dateTo">
+							</div>
+						</div>
+
+						<div class="table-responsive">
+							<table class="table table-bordered table-hover" id="ordersTable">
+								<thead class="thead-light">
+									<tr>
+										<th>Mã đơn hàng</th>
+										<th>Trạng thái</th>
+										<th>Ngày đặt</th>
+										<th>Loại</th>
+										<th>Tổng tiền</th>
+										<th>Khách hàng</th>
+										<th>Nhân viên</th>
+										<th>Thao tác</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var item in orders)
+									{
+										<tr>
+											<td>@item.Id</td>
+											<td>
+												<span class="badge bg-@GetStatusClass(item.Status) bg-lg">
+													@GetStatusText(item.Status)
+												</span>
+											</td>
+											<td>
+												<span>@item.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
+											</td>
+											<td>
+												<span class="badge bg-@(item.Type == "online" ? "success" : "warning")">
+													@(item.Type == "online" ? "Online" : "Offline")
+												</span>
+											</td>
+											<td>
+												<h5 class="text-success mb-0">@item.TotalAmount</h5>
+											</td>
+											<td>
+												@if (item.Customer != null)
+												{
+													<span>@item.Customer.Name - @item.Customer.Username</span>
+												}
+											</td>
+											<td>
+												@if (item.Employee != null)
+												{
+													<span>@item.Employee.Name - @item.Employee.Username</span>
+												}
+											</td>
+											<td>
+												<a class="btn btn-info btn-sm">Chi tiết</a>
+												<button class="btn btn-warning btn-sm btn-update"
+														data-id="@item.Id"
+														data-status="@item.Status"
+														data-tracking="@item.TrackingCode">
+													Cập nhật
+												</button>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+							<div id="noDataMessage" style="display: none;">
+								<p class="text-center">Không có dữ liệu</p>
+							</div>
+						</div>
+					}
+					else
+					{
+						<h3>Không có dữ liệu</h3>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal cập nhật trạng thái -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<form id="updateForm" class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="updateModalLabel">Cập nhật đơn hàng</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" name="id" />
+				<div class="mb-3">
+					<label class="form-label">Trạng thái</label>
+					<select class="form-select" name="status" required>
+						<option value="0">Chờ xác nhận</option>
+						<option value="1">Đã xác nhận</option>
+						<option value="2">Đang giao hàng</option>
+						<option value="3">Giao hàng thành công</option>
+						<option value="4">Đơn hàng thành công</option>
+						<option value="5">Giao hàng không thành công</option>
+						<option value="6">Đang hoàn hàng</option>
+						<option value="7">Hoàn hàng thành công</option>
+						<option value="8">Đã hủy</option>
+					</select>
+				</div>
+				<div class="mb-3" id="trackingCodeGroup" style="display:none;">
+					<label class="form-label">Mã vận đơn</label>
+					<input type="text" class="form-control" name="trackingCode" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success">Lưu</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+	let table;
+	let updateModal;
+
+	$(document).ready(function () {
+		// Khởi tạo DataTable với tìm kiếm
+		table = $('#ordersTable').DataTable({
+			"pageLength": 10,
+			"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+			"order": [[ 0, "desc" ]],
+			"columnDefs": [
+				{ "orderable": false, "targets": 7 } // Không cho phép sắp xếp cột thao tác
+			]
+		});
+
+		// Khởi tạo Modal
+		updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+
+		// Bộ lọc theo trạng thái
+		$('#statusFilter').on('change', function() {
+			const selectedStatus = this.value;
+			if (selectedStatus === '') {
+				table.column(1).search('').draw();
+			} else {
+				// Tìm kiếm theo text của status
+				const statusText = getStatusTextByValue(selectedStatus);
+				table.column(1).search(statusText).draw();
+			}
+		});
+
+		// Bộ lọc theo loại đơn hàng
+		$('#typeFilter').on('change', function() {
+			const selectedType = this.value;
+			if (selectedType === '') {
+				table.column(3).search('').draw();
+			} else {
+				const typeText = selectedType === 'online' ? 'Online' : 'Offline';
+				table.column(3).search(typeText).draw();
+			}
+		});
+
+		// Bộ lọc theo ngày
+		$('#dateFrom, #dateTo').on('change', function() {
+			table.draw();
+		});
+
+		// Custom search function cho ngày
+		$.fn.dataTable.ext.search.push(
+			function(settings, data, dataIndex) {
+				const dateFrom = $('#dateFrom').val();
+				const dateTo = $('#dateTo').val();
+
+				if (!dateFrom && !dateTo) {
+					return true;
+				}
+
+				const orderDateStr = data[2]; // Cột ngày đặt
+				if (!orderDateStr) return true;
+
+				// Parse ngày từ định dạng dd/MM/yyyy HH:mm
+				const dateParts = orderDateStr.split(' ')[0].split('/');
+				const orderDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+
+				const fromDate = dateFrom ? new Date(dateFrom) : null;
+				const toDate = dateTo ? new Date(dateTo) : null;
+
+				if (fromDate && orderDate < fromDate) {
+					return false;
+				}
+				if (toDate && orderDate > toDate) {
+					return false;
+				}
+
+				return true;
+			}
+		);
+
+		// Xử lý nút cập nhật
+		$('#ordersTable tbody').on('click', '.btn-update', function () {
+			const id = $(this).data('id');
+			const status = $(this).data('status');
+			const tracking = $(this).data('tracking');
+
+			$('#updateForm [name=id]').val(id);
+			$('#updateForm [name=status]').val(status);
+			$('#updateForm [name=trackingCode]').val(tracking || '');
+
+			// Hiển thị/ẩn trường mã vận đơn
+			$('#trackingCodeGroup').toggle(status == 2);
+
+			updateModal.show();
+		});
+
+		// Xử lý thay đổi trạng thái trong modal
+		$('#updateForm [name=status]').change(function(){
+			$('#trackingCodeGroup').toggle($(this).val() == 2);
+		});
+
+		// Xử lý submit form
+		$('#updateForm').submit(function(e){
+			e.preventDefault();
+
+			let status = $('#updateForm [name=status]').val();
+			let trackingCode = $('#updateForm [name=trackingCode]').val();
+
+			if(status == 2 && !trackingCode) {
+				alert('Vui lòng nhập mã vận đơn khi chuyển sang trạng thái Đang giao hàng!');
+				return;
+			}
+
+			const formData = $(this).serialize();
+			const orderId = $('#updateForm [name=id]').val();
+
+			$.post(`/order/${orderId}/edit`, formData)
+				.done(function(response) {
+					updateModal.hide();
+					// Reload trang để cập nhật dữ liệu mới
+					window.location.reload();
+				})
+				.fail(function(xhr, status, error) {
+					alert('Có lỗi xảy ra khi cập nhật đơn hàng: ' + error);
+				});
+		});
+
+		// Đảm bảo modal đóng hoàn toàn
+		$('#updateModal').on('hidden.bs.modal', function () {
+			$('#updateForm')[0].reset();
+			$('#trackingCodeGroup').hide();
+		});
+	});
+
+	// Helper function để lấy text status theo value
+	function getStatusTextByValue(value) {
+		const statusMap = {
+			'0': 'Chờ xác nhận',
+			'1': 'Đã xác nhận',
+			'2': 'Đang giao hàng',
+			'3': 'Giao hàng thành công',
+			'4': 'Đơn hàng thành công',
+			'5': 'Giao hàng không thành công',
+			'6': 'Đang hoàn hàng',
+			'7': 'Hoàn hàng thành công',
+			'8': 'Đã hủy'
+		};
+		return statusMap[value] || '';
+	}
+</script>

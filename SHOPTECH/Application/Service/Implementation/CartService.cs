@@ -146,7 +146,7 @@ namespace Application.Service.Implementation
                     ProductDetailId = x.ProductDetailId,
                     ProductName = x.ProductDetail.Name,
                     Image = _mapper.Map<ImageFileDto>(x.ProductDetail.Image),
-                    Price = x.ProductDetail.Price ?? 0,
+                    Price = x.ProductDetail.Price,
                     Quantity = x.Quantity,
                     AvailableQuantity = x.ProductDetail.Quantity ?? 0
 

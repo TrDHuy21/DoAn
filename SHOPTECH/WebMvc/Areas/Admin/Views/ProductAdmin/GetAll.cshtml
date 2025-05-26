@@ -1,0 +1,168 @@
+﻿@using Application.Dtos.ProductDtos
+
+@{
+	ViewData["Title"] = "Quản lý sản phẩm";
+	var products = ViewData["products"] == null ? new List<IndexProductDto>() :
+		ViewData["products"] as List<IndexProductDto> ?? new List<IndexProductDto>();
+}
+<link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<div class="d-flex justify-content-between align-items-center">
+						<h4 class="card-title">Danh sách sản phẩm</h4>
+						<a href="@Url.Action("Add", "ProductAdmin")" class="btn btn-primary">
+							<i class="fas fa-plus"></i> Thêm mới
+						</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<form id="productFilterForm" class="row g-2 mb-3">
+						<div class="col-md-3">
+							<input type="text" id="nameFilter" class="form-control" placeholder="Tìm theo tên sản phẩm">
+						</div>
+						<div class="col-md-2">
+							<input type="text" id="brandFilter" class="form-control" placeholder="Tìm theo hãng">
+						</div>
+						<div class="col-md-2">
+							<input type="text" id="categoryFilter" class="form-control" placeholder="Tìm theo danh mục">
+						</div>
+						<div class="col-md-2">
+							<select id="statusFilter" class="form-select">
+								<option value="">Tất cả trạng thái</option>
+								<option value="Bật">Bật</option>
+								<option value="Tắt">Tắt</option>
+							</select>
+						</div>
+					</form>
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover" id="indexTable">
+							<thead class="thead-light">
+								<tr>
+									<th width="15%">Hình ảnh</th>
+									<th width="20%">Tên sản phẩm</th>
+									<th width="20%">Hãng</th>
+									<th width="20%">Danh mục</th>
+									<th width="10%">Trạng thái</th>
+									<th width="15%">Thao tác</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (products.Any())
+								{
+									@foreach (var item in products)
+									{
+										<tr>
+											<td class="text-center">
+												@if (item.MainImage != null)
+												{
+													var base64String = Convert.ToBase64String(item.MainImage.Data);
+													var imageSrc = $"data:{item.MainImage.Type};base64,{base64String}";
+													<img src="@imageSrc" alt="Image" style="max-width: 100px; max-height: 100px; width: auto; height: auto;" />
+												}
+												else
+												{
+													<span class="text-muted">Không có ảnh</span>
+												}
+											</td>
+											<td>@item.Name</td>
+											<td>@item.BrandName</td>
+											<td>@item.CategoryName</td>
+											<td class="text-center">
+												@if (item.IsActive)
+												{
+													<a href="@Url.Action("Active", "ProductAdmin", new { id = item.Id, isActive = false })" class="btn btn-success" data-toggle="tooltip" title="Bật">
+														Bật
+													</a>
+												}
+												else
+												{
+													<a href="@Url.Action("Active", "ProductAdmin", new { id = item.Id, isActive = true })" class="btn btn-danger" data-toggle="tooltip" title="Tắt">
+														Tắt
+													</a>
+												}
+											</td>
+											<td class="text-center">
+												<div class="d-flex flex-column">
+													<a href="@Url.Action("Detail", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-info mb-1" style="width: 70px;">
+														<i class="fas fa-info"></i> Xem
+													</a>
+													<a href="@Url.Action("Update", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-warning mb-1" style="width: 70px;">
+														<i class="fas fa-edit"></i> Sửa
+													</a>
+													<a href="@Url.Action("Delete", "ProductAdmin", new {id = item.Id })" class="btn btn-sm btn-danger mb-1" style="width: 70px;">
+														<i class="fas fa-trash"></i> Xóa
+													</a>
+
+												</div>
+											</td>
+										</tr>
+									}
+								}
+								else
+								{
+									<tr>
+										<td colspan="6" class="text-center">Không có dữ liệu</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+						<!-- Hiển thị thông báo khi không có dữ liệu -->
+						<div id="noDataMessage" style="display: none;">
+							<p class="text-center">Không có dữ liệu</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		var table = $('#indexTable').DataTable({
+			"pageLength": 10,
+			"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+			"order": [[1, "asc"]],
+			"language": {
+				search: "Tìm kiếm:",
+				lengthMenu: "Hiển thị _MENU_ dòng",
+				info: "Hiển thị _START_ đến _END_ của _TOTAL_ sản phẩm",
+				paginate: {
+					previous: "Trước",
+					next: "Sau"
+				}
+			},
+			"columnDefs": [
+				{ "orderable": false, "targets": [0, 4, 5] } // Không cho phép sắp xếp cột hình, trạng thái, thao tác
+			]
+		});
+
+		// Lọc theo tên sản phẩm (cột 1)
+		$('#nameFilter').on('keyup change', function () {
+			table.column(1).search(this.value).draw();
+		});
+
+		// Lọc theo hãng (cột 2)
+		$('#brandFilter').on('keyup change', function () {
+			table.column(2).search(this.value).draw();
+		});
+
+		// Lọc theo danh mục (cột 3)
+		$('#categoryFilter').on('keyup change', function () {
+			table.column(3).search(this.value).draw();
+		});
+
+		// Lọc theo trạng thái (cột 4)
+		$('#statusFilter').on('change', function () {
+			table.column(4).search(this.value).draw();
+		});
+	});
+</script>

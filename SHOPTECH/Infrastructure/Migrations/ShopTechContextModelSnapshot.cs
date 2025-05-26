@@ -155,16 +155,19 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("CustomerNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Note")
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("OrderDate")
@@ -173,15 +176,17 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("TrackingCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WardId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("status")
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WardId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -325,7 +330,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Price")
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("ProductId")
@@ -577,18 +582,15 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Enity.User", "Customer")
                         .WithMany("CustomerOrders")
-                        .HasForeignKey("CustomerId")
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Domain.Enity.User", "Employee")
                         .WithMany("EmployeeOrders")
-                        .HasForeignKey("EmployeeId")
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("Domain.Enity.Ward", "Ward")
                         .WithMany("Orders")
-                        .HasForeignKey("WardId")
-                        .IsRequired();
+                        .HasForeignKey("WardId");
 
                     b.Navigation("Customer");
 

@@ -30,6 +30,30 @@ namespace WebMvc.Areas.Admin.Controllers
             _apiService = apiService;
         }
 
+        [HttpGet("Getall")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                //request to API server
+                var response = await _apiService.GetAsync(AdminApiString.BRAND_ADMIN());
+                //check response
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+                // check content
+                var brands = await response.Content.ReadFromJsonAsync<List<IndexBrandDto>>() ?? throw new Exception("error");
+                ViewData["brands"] = brands;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 10)
         {

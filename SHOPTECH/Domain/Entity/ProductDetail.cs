@@ -11,7 +11,7 @@ namespace Domain.Enity
     {
 		public string? Code { get; set; }
         public int? Quantity { get; set; }
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
 		public bool? isNew { get; set; }
         public bool? isHot { get; set; }
         public bool? isSale { get; set; }

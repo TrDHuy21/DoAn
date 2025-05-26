@@ -14,7 +14,7 @@ namespace Application.Dtos.ProductDetailDtos
         public string Name { get; set; }
         public string? Code { get; set; }
         public int? Quantity { get; set; }
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
         public bool? IsNew { get; set; }
         public bool? IsHot { get; set; }
         public bool? IsSale { get; set; }

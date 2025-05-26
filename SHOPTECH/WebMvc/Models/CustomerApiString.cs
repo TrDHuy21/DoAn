@@ -71,7 +71,11 @@ namespace WebMvc.Models
         public static string ADDRESS_PROVINCE() => BASE_URL + "/Addressapi/province";
         public static string ADDRESS_DISTRICT(string provinceId) => BASE_URL + "/Addressapi/district?provinceId=" + provinceId;
         public static string ADDRESS_WARD(string districtId) => BASE_URL + "/Addressapi/ward?districtId=" + districtId;
-    
 
+        // order
+        public static string ORDER() => BASE_URL + "/OrderApi";
+        public static string ORDER(int id) => BASE_URL + "/OrderApi/" + id;
+        public static string ORDER_CREATE_ONLINE() => BASE_URL + "/OrderApi/CreateOrder/online";
+        public static string ORDER_CREATE_OFFLINE() => BASE_URL + "/OrderApi/CreateOrder/offline";
     }
 }

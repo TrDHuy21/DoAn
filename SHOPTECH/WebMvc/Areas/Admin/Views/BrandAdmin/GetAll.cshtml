@@ -1,0 +1,158 @@
+﻿@using Application.Dtos.BrandDtos
+@{
+	ViewData["Title"] = "Quản lý thương hiệu";
+	var brands = ViewData["brands"] == null ? new List<IndexBrandDto>() : 
+		ViewData["brands"] as List<IndexBrandDto> ??  new List<IndexBrandDto>() ;
+}
+<link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<div class="d-flex justify-content-between align-items-center">
+						<h4 class="card-title">Danh sách thương hiệu</h4>
+						<a href="@Url.Action("Add", "BrandAdmin")" class="btn btn-primary">
+							<i class="fas fa-plus"></i> Thêm mới
+						</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div  class="row g-2 mb-3">
+						<div class="col-md-4">
+							<input type="text" id="brandNameFilter" class="form-control" placeholder="Tìm theo tên thương hiệu">
+						</div>
+						<div class="col-md-3">
+							<label class="form-label">Tìm theo trạng thái:</label>
+							<select id="brandStatusFilter" class="form-select">
+								<option value="">Tất cả trạng thái</option>
+								<option value="true">Bật</option>
+								<option value="false">Tắt</option>
+							</select>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover" id="indexTable">
+							<thead class="thead-light">
+								<tr>
+									<th width="15%">Hình ảnh</th>
+									<th width="20%">Tên thương hiệu</th>
+									<th width="30%">Mô tả</th>
+									<th width="10%">Trạng thái</th>
+									<th width="8%">Thao tác</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (brands.Any())
+								{
+									@foreach (var item in brands)
+									{
+										<tr>
+											<td class="text-center">
+												@if (item.Image != null)
+												{
+													var base64String = Convert.ToBase64String(item.Image.Data);
+													var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+													<img src="@imageSrc" alt="Image" style="max-width: 100px; max-height: 100px; width: auto; height: auto;" />
+												}
+												else
+												{
+													<span class="text-muted">Không có ảnh</span>
+												}
+											</td>
+											<td>@item.Name</td>
+											<td>
+												@if (!string.IsNullOrEmpty(item.Description))
+												{
+													@(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)
+												}
+											</td>
+											<td class="text-center">
+
+												@if (item.IsActive)
+												{
+													<a href="@Url.Action("Active", "BrandAdmin", new { id = item.Id, isActive = false })" class="btn btn-success" data-toggle="tooltip" title="Bật">
+														Bật
+													</a>
+												}
+												else
+												{
+													<a href="@Url.Action("Active", "BrandAdmin", new { id = item.Id, isActive = true })" class="btn btn-danger" data-toggle="tooltip" title="Tắt">
+														Tắt
+													</a>
+												}
+
+
+											</td>
+											<td class="text-center">
+												<div class="d-flex flex-column">
+													<a href="@Url.Action("Detail", "BrandAdmin", new {id = item.Id })" class="btn btn-sm btn-info mb-1" style="width: 70px;">
+														<i class="fas fa-info"></i> Xem
+													</a>
+													<a href="@Url.Action("Update", "BrandAdmin", new {id = item.Id })" class="btn btn-sm btn-warning  mb-1" style="width: 70px;">
+														<i class="fas fa-edit"></i> Sửa
+													</a>
+													<a href="@Url.Action("Delete", "BrandAdmin", new {id = item.Id })" class="btn btn-sm btn-danger mb-1" style="width: 70px;">
+														<i class="fas fa-trash"></i> Xóa
+													</a>
+
+												</div>
+
+											</td>
+										</tr>
+									}
+								}
+								else
+								{
+									<tr>
+										<td colspan="6" class="text-center">Không có dữ liệu</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<!-- Hiển thị thông báo khi không có dữ liệu -->
+						<div id="noDataMessage" style="display: none;">
+							<p class="text-center">Không có dữ liệu</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+	let table;
+	$(document).ready(function () {
+		table = $('#indexTable').DataTable({
+			"pageLength": 10,
+			"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+			"order": [[ 1, "asc" ]],
+			"columnDefs": [
+				{ "orderable": false, "targets": [0, 2, 4] } // Không cho phép sắp xếp cột thao tác
+			]
+		});
+
+		// Lọc theo tên thương hiệu
+		$('#brandNameFilter').on('keyup change', function () {
+			table.column(1).search(this.value).draw();
+		});
+
+		// Lọc theo trạng thái
+		$('#brandStatusFilter').on('change', function () {
+			var val = this.value;
+			if (val === "") {
+				table.column(3).search('').draw();
+			} else if (val === "true") {
+				table.column(3).search("Bật").draw();
+			} else {
+				table.column(3).search("Tắt").draw();
+			}
+		});
+	});
+</script>

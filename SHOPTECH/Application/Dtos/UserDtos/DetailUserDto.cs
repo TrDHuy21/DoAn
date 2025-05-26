@@ -33,7 +33,6 @@ namespace Application.Dtos.UserDtos
         public string? Email { get; set; }
         public string? Cccd { get; set; }
         public string? Username { get; set; }
-        public string? Password { get; set; }
 
         //role
         public RoleDto? Role { get; set; }
@@ -44,8 +43,5 @@ namespace Application.Dtos.UserDtos
         //address
         public string? WardId { get; set; }
         public Ward? Ward { get; set; }
-
-
-
     }
 }

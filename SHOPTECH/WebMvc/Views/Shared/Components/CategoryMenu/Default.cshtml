@@ -1,12 +1,12 @@
 ﻿@using Application.Dtos.CategoryDtos
 
 @{
-    var categories = ViewData["Categories"] as List<IndexCategoryDto>
-        ?? new List<IndexCategoryDto>();
+	var categories = ViewData["Categories"] as List<IndexCategoryDto>
+		?? new List<IndexCategoryDto>();
 }
 
 <link rel="stylesheet" href="~/css/CategoryMenu.css" />
-
+@* 
 <!-- Categories Menu -->
 <section class="categories-section py-4">
     <div class="container">
@@ -45,3 +45,32 @@
         }
     </div>
 </section>
+ *@
+@if (categories.Any())
+{
+	<ul class="list-group">
+		@foreach (var category in categories)
+		{
+			<li class="list-group-item">
+				<a href="@Url.Action("ListProductDetailWithCategory", "productDetail", new { categoryName = category.UrlName })" class="text-decoration-none">
+					@if (category.Image != null && category.Image.Data != null)
+					{
+						var base64String = Convert.ToBase64String(category.Image.Data);
+						var imageSrc = $"data:{category.Image.Type};base64,{base64String}";
+						<img src="@imageSrc" alt="@category.Name" class="img-fluid me-2" style="width: 30px; height: 30px; object-fit: cover;" />
+					}
+					else
+					{
+						<span class="me-2"><i class="bi bi-image text-muted"></i></span>
+					}
+					@category.Name
+				</a>
+			</li>
+		}
+	</ul>
+}
+else
+{
+	<p class="text-muted">Lỗi trong quá trình lấy dữ liệu danh mục</p>
+}
+

@@ -42,30 +42,43 @@
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3">SHOP TECH<sup>2</sup></div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
-           
             <li class="nav-item active">
-                <a class="nav-link" href="@Url.Action("Index", "BrandAdmin")">
+            <a class="nav-link" href="./">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Home</span>
+            </a>
+            </li>
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item active">
+                <a class="nav-link" href="@Url.Action("GetAll", "BrandAdmin")">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Brand</span>
                 </a>
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="@Url.Action("Index", "CategoryAdmin")">
+                <a class="nav-link" href="@Url.Action("GetAll", "CategoryAdmin")">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Category</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="@Url.Action("Index", "ProductAdmin")">
+                <a class="nav-link" href="@Url.Action("getall", "ProductAdmin")">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Product</span>
+                </a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="@Url.Action("Index", "OrderAdmin")">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Order</span>
                 </a>
             </li>
            
