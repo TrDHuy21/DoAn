@@ -23,6 +23,7 @@ namespace WebMvc.Areas.Admin.Controllers
             _apiService = apiService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try

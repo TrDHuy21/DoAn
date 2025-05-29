@@ -21,7 +21,7 @@ namespace WebMvc.Controllers
         }
 
         [HttpGet("ProductDetail/{categoryName}")]
-        public async Task<IActionResult> ListProductDetailWithCategory([FromRoute]string categoryName, [FromQuery]Dictionary<string, string> queryParams = null)
+        public async Task<IActionResult> ListProductDetailWithCategory([FromRoute] string categoryName, [FromQuery] Dictionary<string, string> queryParams = null)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace WebMvc.Controllers
             {
                 // Handle exception (e.g., log it)
                 Console.WriteLine(ex.Message);
-                
+
             }
             ViewData["CategoryName"] = categoryName;
             ViewData["QueryParams"] = queryParams;
@@ -83,6 +83,30 @@ namespace WebMvc.Controllers
 
             }
             return View();
+        }
+        [HttpGet("ProductDetail/search")]
+        public async Task<IActionResult> Search([FromQuery] string name)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(CustomerApiString.PRODUCT_DETAIL_SEARCH(name));
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Failed to load product details.");
+                }
+                var productDetails = await response.Content.ReadFromJsonAsync<IEnumerable<IndexProductDetailDto>>()
+                    ?? throw new Exception("Failed to load product details.");
+                ViewData["ProductDetails"] = productDetails;
+                ViewData["name"] = name;
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                Console.WriteLine(ex.Message);
+
+            }
+            return View();
+
         }
     }
 }

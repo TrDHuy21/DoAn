@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using WebApi.Middleware;
 
 namespace WebApi
@@ -28,7 +29,7 @@ namespace WebApi
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   policy =>
                                   {
-                                  
+
                                       policy.WithOrigins("https://localhost:5048", "http://localhost:5048")
                                           .AllowAnyMethod()
                                           .AllowAnyHeader()
@@ -42,7 +43,7 @@ namespace WebApi
 
             // Add services to the container.
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            
+
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -55,10 +56,11 @@ namespace WebApi
             builder.Services.AddTransient<ICategoryService, CategoryService>();
             builder.Services.AddTransient<IProductAttributeService, ProductAttributeService>();
             builder.Services.AddTransient<IProductService, ProductService>();
-            builder.Services.AddTransient<IProductDetailService , ProductDetailService>();
+            builder.Services.AddTransient<IProductDetailService, ProductDetailService>();
             builder.Services.AddTransient<IProductDetailAttributeService, ProductDetailAttributeService>();
             builder.Services.AddTransient<ICartService, CartService>();
             builder.Services.AddTransient<IOrderService, OrderService>();
+            builder.Services.AddTransient<IUserService, UserService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -114,7 +116,42 @@ namespace WebApi
                 options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
             });
 
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "My API",
+                    Version = "v1",
+                    Description = "API có Authentication v?i JWT"
+                });
 
+                // add Security Definition cho Swagger
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Input JWT token  format: Bearer {token}"
+                });
+
+                // add Security Requirement
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -1,0 +1,237 @@
+﻿@model Application.Dtos.UserDtos.AddUserDto
+@{
+    ViewData["Title"] = "Thêm Người Dùng Mới";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">@ViewData["Title"]</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Thông tin người dùng</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Add" asp-controller="UserAdmin" method="post" enctype="multipart/form-data" id="userForm">
+                <div class="row">
+                    <!-- Thông tin cơ bản -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Name">Họ và tên <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="Nhập họ và tên đầy đủ">
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Username">Tên đăng nhập <span class="text-danger">*</span></label>
+                            <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập">
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Password">Mật khẩu <span class="text-danger">*</span></label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu">
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Cccd">Số CCCD/CMND</label>
+                            <input asp-for="Cccd" class="form-control" placeholder="Nhập số CCCD/CMND">
+                            <span asp-validation-for="Cccd" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email">Email <span class="text-danger">*</span></label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="Nhập địa chỉ email">
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin bổ sung -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Phone">Số điện thoại <span class="text-danger">*</span></label>
+                            <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại">
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="BirthDate">Ngày sinh</label>
+                            <input asp-for="BirthDate" type="date" class="form-control">
+                            <span asp-validation-for="BirthDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="RoleId">Vai trò <span class="text-danger">*</span></label>
+                            <select asp-for="RoleId" class="form-control">
+                                <option value="">-- Chọn vai trò --</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Saler</option>
+                                <option value="3">Customer</option>
+                            </select>
+                            <span asp-validation-for="RoleId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Trạng thái</label>
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" checked>
+                                <label class="form-check-label" asp-for="IsActive">
+                                    Kích hoạt tài khoản
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="FormFile">Ảnh đại diện</label>
+                            <div class="custom-file">
+
+                                <input asp-for="FormFile" type="file" class="custom-file-input" id="avatarFile">
+                                <label class="custom-file-label" for="avatarFile">Chọn ảnh...</label>
+
+                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+                                    <img id="imagePreview" src="" alt="Preview" class="img-fluid" style="max-width: 200px;">
+                                </div>
+
+                            </div>
+                            <span asp-validation-for="FormFile" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Địa chỉ -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5 class="mb-3">Địa chỉ</h5>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+
+                            <label for="Province">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                            <select id="provinceSelect" class="form-control">
+                                <option value="">-- Chọn tỉnh/thành phố --</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="District">Quận/Huyện <span class="text-danger">*</span></label>
+                            <select id="districtSelect" class="form-control" disabled>
+                                <option value="">-- Chọn quận/huyện --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="WardId">Phường/Xã <span class="text-danger">*</span></label>
+                            <select asp-for="WardId" class="form-control" disabled id="wardSelect">
+                                <option value="">-- Chọn phường/xã --</option>
+                            </select>
+                            <span asp-validation-for="WardId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="AdressDetail">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                            <input asp-for="AdressDetail" class="form-control" placeholder="Số nhà, tên đường, tổ/khu phố...">
+                            <span asp-validation-for="AdressDetail" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mô tả -->
+                <div class="form-group mt-3">
+                    <label asp-for="Description">Mô tả thêm</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Thông tin bổ sung về người dùng"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <!-- Nút gửi -->
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Thêm người dùng
+                    </button>
+                    <a href="@Url.Action("Index", "UserAdmin")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+                $(document).ready(function () {
+            $.ajax({
+                url: '/address/province',
+                method: 'GET',
+                success: function (data) {
+                    $.each(data, function (i, p) {
+                        $('#provinceSelect').append($('<option>').val(p.id).text(p.name));
+                    });
+                }
+            });
+
+            // On province change
+            $('#provinceSelect').change(function () {
+                var provinceId = $(this).val();
+                $('#districtSelect').empty().prop('disabled', true).append($('<option>').text('--Select District--').val(''));
+                $('#wardSelect').empty().prop('disabled', true).append($('<option>').text('--Select Ward--').val(''));
+
+                if (provinceId) {
+                    $.ajax({
+                        url: '/address/district',
+                        method: 'GET',
+                        data: { provinceId: provinceId },
+                        success: function (data) {
+                            $.each(data, function (i, d) {
+                                $('#districtSelect').append($('<option>').val(d.id).text(d.name));
+                            });
+                            $('#districtSelect').prop('disabled', false);
+                        }
+                    });
+                }
+            });
+
+            // On district change
+            $('#districtSelect').change(function () {
+                var districtId = $(this).val();
+                $('#wardSelect').empty().prop('disabled', true).append($('<option>').text('--Select Ward--').val(''));
+
+                if (districtId) {
+                    $.ajax({
+                        url: '/address/ward',
+                        method: 'GET',
+                        data: { districtId: districtId },
+                        success: function (data) {
+                            $.each(data, function (i, w) {
+                                $('#wardSelect').append($('<option>').val(w.id).text(w.name));
+                            });
+                            $('#wardSelect').prop('disabled', false);
+                        }
+                    });
+                }
+            });
+            // Xử lý preview hình ảnh khi chọn file
+            $('#avatarFile').change(function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imagePreview').attr('src', e.target.result);
+                        $('#imagePreviewContainer').show();
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#imagePreviewContainer').hide();
+                }
+            });
+        }); 
+    </script>
+}

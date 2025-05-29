@@ -1,0 +1,147 @@
+﻿@model Application.Dtos.UserDtos.DetailUserDto
+
+@{
+    ViewData["Title"] = "Thông tin chi tiết người dùng";
+}
+
+<div class="container py-5">
+    <div class="row">
+        @if(Model != null) {
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        @if (Model.Image != null)
+                        {
+                            var base64String = Convert.ToBase64String(Model.Image.Data);
+                            var imageSrc = $"data:{Model.Image.Type};base64,{base64String}";
+                            <img src="@imageSrc" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+                        else
+                        {
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                        }
+                        <h5 class="my-3">@Model.Name</h5>
+                        <p class="text-muted mb-1">@Model.Role?.Name</p>
+                        <p class="text-muted mb-4">
+                            @if (!string.IsNullOrEmpty(Model.Ward) && !string.IsNullOrEmpty(Model.District) && !string.IsNullOrEmpty(Model.Province))
+                            {
+                                @($"{Model.Ward}, {Model.District}, {Model.Province}")
+                            }
+                        </p>
+                        <div class="d-flex justify-content-center mb-2">
+                            <button type="button" class="btn btn-primary">Follow</button>
+                            <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Họ và tên</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.Name</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Email</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.Email</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Số điện thoại</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.Phone</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">CCCD/CMND</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.Cccd</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Ngày sinh</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.BirthDate?.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Địa chỉ chi tiết</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.AdressDetail</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Trạng thái</p>
+                            </div>
+                            <div class="col-sm-9">
+                                @if (Model.IsActive)
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Không hoạt động</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3">Mô tả</h5>
+                        <div class="p-3 bg-light rounded">
+                            @Model.Description
+                        </div>
+                    </div>
+                </div>
+            </div>
+        } else {
+            <h4> lỗi</h4>
+        }
+       
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .rounded-circle {
+        border: 5px solid #f8f9fa;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>

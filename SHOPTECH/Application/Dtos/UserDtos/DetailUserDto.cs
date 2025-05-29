@@ -14,18 +14,8 @@ namespace Application.Dtos.UserDtos
         public int Id { get; set; }
         public string Name { get; set; }
 
-        //public DateTime? CreatedAt { get; set; }
-        //public DateTime? UpdatedAt { get; set; }
-
-        //public int? CreatedBy { get; set; }
-        //public int? UpdatedBy { get; set; }
-
-        //public User? CreatedByUser { get; set; }
-        //public User? UpdatedByUser { get; set; }
-
         public string? Description { get; set; }
         public bool IsActive { get; set; }
-
 
         public DateTime? BirthDate { get; set; }
         public string? AdressDetail { get; set; }
@@ -33,15 +23,14 @@ namespace Application.Dtos.UserDtos
         public string? Email { get; set; }
         public string? Cccd { get; set; }
         public string? Username { get; set; }
-
         //role
         public RoleDto? Role { get; set; }
-
         //image
         public ImageFileDto? Image { get; set; }
 
         //address
-        public string? WardId { get; set; }
-        public Ward? Ward { get; set; }
+        public string Ward { get; set; }
+        public string Province { get; set; }
+        public string District { get; set; }
     }
 }

@@ -41,6 +41,8 @@ namespace WebMvc.Models
             }
             return PRODUCT_DETAIL() + "/checkout?" + queryString;
         }
+        public static string PRODUCT_DETAIL_SEARCH(string str) => PRODUCT_DETAIL() + "/search?str=" + str;
+
 
         //category
         public static string CATEGORY() => BASE_URL + "/CategoryApi";

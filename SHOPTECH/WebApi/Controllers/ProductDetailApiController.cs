@@ -40,7 +40,7 @@ namespace WebApi.Controllers
             {
                 Console.WriteLine("Error: " + ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                if(ex.InnerException != null)
+                if (ex.InnerException != null)
                 {
                     Console.WriteLine(ex.InnerException);
                 }
@@ -112,7 +112,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var pageResultDto = await _productDetailService.GetPageResultWithFilterAsync(categoryName,index, size, queryParams);
+                var pageResultDto = await _productDetailService.GetPageResultWithFilterAsync(categoryName, index, size, queryParams);
                 if (pageResultDto == null)
                 {
                     return NotFound(new { Message = "No product details found." });
@@ -140,6 +140,26 @@ namespace WebApi.Controllers
 
                 productDetails = productDetails.Where(pd => pd.IsActive);
 
+                var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
+                return Ok(productDetailDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> GetByName(string str)
+        {
+            try
+            {
+                var productDetails = await _productDetailService.GetByName(str);
+                if (productDetails == null)
+                {
+                    return NotFound(new { Message = "No product details found." });
+                }
+                productDetails = productDetails.Where(pd => pd.IsActive);
                 var productDetailDtos = _mapper.Map<IEnumerable<IndexProductDetailDto>>(productDetails);
                 return Ok(productDetailDtos);
             }

@@ -466,5 +466,32 @@ namespace Application.Service.Implementation
                 throw new Exception("Error getting checkout product details", ex);
             }
         }
+
+        public async Task<IEnumerable<ProductDetail>> GetByName(string str)
+        {
+            try
+            {
+                if (str == null)
+                {
+                    throw new ArgumentNullException(nameof(str), "Search string cannot be null");
+                }
+
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    throw new ArgumentException("Search string cannot be empty", nameof(str));
+                }
+                var productDetails = await _unitOfWork.ProductDetails.GetAll()
+                    .Include(x => x.Image)
+                    .Where(x => x.Name.Contains(str))
+                    .ToListAsync();
+                return productDetails;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                throw new Exception("Lỗi khi đang tìm kiếm", ex);
+            }
+        }
     }
 }

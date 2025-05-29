@@ -58,6 +58,11 @@ namespace WebMvc.Models
         // order
         public static string ORDER_ADMIN() => BASE_URL + "/OrderAdminApi";
 
+        // user
+        public static string USER_ADMIN() => BASE_URL + "/UserAdminApi";
+        public static string USER_ADMIN(int id) => USER_ADMIN() + "/" + id;
+
+
 
     }
 }

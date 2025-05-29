@@ -1,0 +1,30 @@
+﻿@using Application.Dtos.ProductDetailDtos
+
+@{
+    var productDetails = ViewData["ProductDetails"] as List<IndexProductDetailDto>
+                         ?? new List<IndexProductDetailDto>();
+}
+
+<h3 class="mt-4">Tìm kiếm sản phẩm: @ViewData["Name"]</h3>
+
+@if (productDetails.Any())
+{
+    <div class="container mt-4">
+        <div class="row">
+            @foreach (var item in productDetails)
+            {
+                @await Component.InvokeAsync("CardProductDetail", new { productDetail = item })
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center">Không có sản phẩm nào</h2>
+            </div>
+        </div>
+    </div>
+}

@@ -84,7 +84,6 @@ namespace WebApi.Controllers.Admin
             try
             {
                 var brand = await _brandService.AddAsync(brandDto);
-
                 return CreatedAtAction(nameof(GetById), new { id = brand.Id }, brand.Id);
             } 
             catch (Exception ex)

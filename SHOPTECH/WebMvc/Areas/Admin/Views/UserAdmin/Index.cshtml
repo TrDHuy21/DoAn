@@ -1,0 +1,146 @@
+﻿
+@using Application.Dtos.UserDtos
+
+@{
+	ViewData["Title"] = "Quản lý tài khoản";
+	var users = ViewData["users"] != null ? ViewData["users"] as List<IndexUserDto> 
+		?? new List<IndexUserDto>()
+		: new List<IndexUserDto>();
+}
+
+<link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+
+<div class="container-fluid">
+	<div class="filter-card">
+		<div class="row g-3">
+			<div class="col-md-4">
+				<label class="form-label fw-medium">Tìm theo tên tài khoản</label>
+				<div class="input-group">
+					<span class="input-group-text"><i class="fas fa-user"></i></span>
+					<input type="text" id="userNameFilter" class="form-control" placeholder="Nhập tài khoản ngươi dùng...">
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label class="form-label fw-medium">Tìm theo số điện thoại</label>
+				<div class="input-group">
+					<span class="input-group-text"><i class="fas fa-phone"></i></span>
+					<input type="text" id="phoneFilter" class="form-control" placeholder="Số điện thoại...">
+				</div>
+			</div>
+			<div class="col-md-3">
+				<label class="form-label fw-medium">Vai trò tài khoản</label>
+				<select id="roleFilter" class="form-select">
+					<option value="">Tất cả quyền</option>
+					<option value="admin">Admin</option>
+					<option value="saler">Saler</option>
+					<option value="customer">Customer</option>
+				</select>
+			</div>
+		</div>
+	</div>
+			<div class="card">
+				<div class="card-header">
+					<div class="d-flex justify-content-between align-items-center">
+						<h4 class="card-title">Danh sách thương hiệu</h4>
+						<a href="@Url.Action("Add", "UserAdmin")" class="btn btn-primary">
+							<i class="fas fa-plus"></i> Tạo tài khoản nhân viên
+						</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover" id="indexTable">
+							<thead class="thead-light">
+								<tr>
+									<th width="10%">Tên</th>
+									<th width="10%">Số điện thoại</th>
+									<th width="10%">Tên đăng nhập</th>
+									<th width="10%">Email</th>
+									<th width="5%">Vai trò</th>
+									<th width="5%">Thao tác</th>
+								</tr>
+							</thead>
+							<tbody>
+								@if (users.Any()) {
+									@foreach (var item in users)
+									{
+										<tr>
+											<td>@item.Name</td>
+											<td>@item.Phone</td>
+											<td>@item.Username</td>
+											<td>@item.Email</td>
+											<td>
+												@switch (item.Role.Id)
+												{
+													case 1:
+														<span class="badge bg-danger text-white">@item.Role.Name</span> <!-- Admin -->
+														break;
+													case 2:
+														<span class="badge bg-warning text-white">@item.Role.Name</span> <!-- Saler -->
+														break;
+													case 3:
+														<span class="badge bg-success text-white">@item.Role.Name</span> <!-- Customer -->
+														break;
+													default:
+														<span class="badge bg-secondary text-white">@item.Role.Name</span> <!-- Unknown -->
+														break;
+												}
+											</td>
+											<td>
+												<a href="@Url.Action("Detail", "UserAdmin", new {id = @item.Id })" class="btn btn-sm btn-info mb-1" style="width: 70px;">
+													<i class="fas fa-info"></i> Xem
+												</a>
+												<a href="@Url.Action("Update", "UserAdmin", new {id = @item.Id })" class="btn btn-sm btn-warning  mb-1" style="width: 70px;">
+													<i class="fas fa-edit"></i> Sửa
+												</a>
+												<a href="@Url.Action("Delete", "UserAdmin", new {id = @item.Id })" class="btn btn-sm btn-danger mb-1" style="width: 70px;">
+													<i class="fas fa-trash"></i> Xóa
+												</a>
+											</td>
+										</tr>
+									}
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+</div>
+
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+	let table;
+	$(document).ready(function () {
+		table = $('#indexTable').DataTable({
+			"pageLength": 10,
+			"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+			"order": [[ 1, "asc" ]],
+			"columnDefs": [
+				{ "orderable": false, "targets": [0, 2, 4] } // Không cho phép sắp xếp cột thao tác
+			]
+		});
+
+		$('#userNameFilter').on('keyup change', function () {
+			table.column(3).search(this.value).draw();
+		});
+
+		$('#phoneFilter').on('keyup change', function () {
+			table.column(2).search(this.value).draw();
+		});
+
+		$('#roleFilter').on('change', function () {
+			var val = this.value;
+			if (val === "") {
+				table.column(5).search('').draw();
+			} else {
+				table.column(5).search(this.value).draw();
+			}
+		});
+	});
+</script>
+
+
