@@ -26,6 +26,8 @@ namespace Application.Dtos.ProductDetailDtos
         public bool? IsHot { get; set; }
 
         public bool? IsSale { get; set; }
+        public bool? IsActive { get; set; }
+
 
         public string? ColorName { get; set; }
 

@@ -41,7 +41,9 @@
     </div>
 </div>
 
-@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "laptop", filter = "ishot", name = "Laptop nổi bật" })
-@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "dien_thoai", name = "Điện thoại nổi bật" })
-@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "camera", name = "Camera" })
+<div class="container mt-4">
+    @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "laptop", filter = "ishot", name = "Laptop nổi bật" })
+    @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "dien_thoai", filter = "ishot", name = "Điện thoại nổi bật" })
+    @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "camera", filter = "ishot", name = "Camera" })
+</div>
 

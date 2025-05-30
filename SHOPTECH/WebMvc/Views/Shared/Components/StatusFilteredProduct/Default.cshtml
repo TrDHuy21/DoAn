@@ -1,14 +1,29 @@
 ﻿@model IEnumerable<Application.Dtos.ProductDetailDtos.IndexProductDetailDto>
-
 @if (Model != null && Model.Any())
 {
-	<section class="mb-4">
-		<h3 class="section-title">@TempData["Name"]</h3>
-		<div class="row">
-			@foreach (var item in Model)
-			{
-				@await Component.InvokeAsync("CardProductDetail", new { productDetail = item })
-			}
-		</div>
-	</section>
+    <section class="mb-5">
+        <!-- Header với title và nút "Xem tất cả" -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="text-primary fw-semibold border-start border-primary border-4 ps-3 mb-0">
+                @TempData["Name"]
+            </h3>
+            <a @Url.Action("ListProductDetailWithCategory", "productDetail", new { categoryName = @TempData["categoryName"]})
+               class="btn btn-outline-primary btn-sm">
+                Xem tất cả
+                <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <!-- Container có thể scroll ngang -->
+        <div class="overflow-auto">
+            <div class="d-flex gap-3 pb-2" style="width: max-content;">
+                @foreach (var item in Model)
+                {
+                    <div style="min-width: 280px; max-width: 320px;">
+                        @await Component.InvokeAsync("CardProductDetail", new { productDetail = item })
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
 }

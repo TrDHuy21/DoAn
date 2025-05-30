@@ -6,46 +6,6 @@
 }
 
 <link rel="stylesheet" href="~/css/CategoryMenu.css" />
-@* 
-<!-- Categories Menu -->
-<section class="categories-section py-4">
-    <div class="container">
-        @if (categories.Any())
-        {
-            <div class="row category-slider flex-nowrap flex-md-wrap overflow-auto pb-2">
-                @foreach (var category in categories)
-                {
-                    <div class="col-3 col-md-2 col-lg-1 mb-3">
-                        <a href="@Url.Action("ListProductDetailWithCategory","productDetail", new {categoryName = category.UrlName})" class="category-item text-decoration-none text-center d-block">
-                            <div class="category-image-container mb-2 d-flex align-items-center justify-content-center">
-                                @if (category.Image != null && category.Image.Data != null)
-                                {
-                                    var base64String = Convert.ToBase64String(category.Image.Data);
-                                    var imageSrc = $"data:{category.Image.Type};base64,{base64String}";
-                                    <img src="@imageSrc" alt="@category.Name" class="img-fluid category-image" />
-                                }
-                                else
-                                {
-                                    <div class="placeholder-image">
-                                        <i class="bi bi-image text-muted"></i>
-                                    </div>
-                                }
-                            </div>
-                            <div class="category-name small fw-medium text-truncate">@category.Name</div>
-                        </a>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="text-center py-4">
-                <p class="text-muted">No categories available</p>
-            </div>
-        }
-    </div>
-</section>
- *@
 @if (categories.Any())
 {
 	<ul class="list-group">
@@ -58,7 +18,7 @@
 						var base64String = Convert.ToBase64String(category.Image.Data);
 						var imageSrc = $"data:{category.Image.Type};base64,{base64String}";
 						<img src="@imageSrc" alt="@category.Name" class="img-fluid me-2" style="width: 30px; height: 30px; object-fit: cover;" />
-					}
+					} 
 					else
 					{
 						<span class="me-2"><i class="bi bi-image text-muted"></i></span>

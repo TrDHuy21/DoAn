@@ -46,7 +46,8 @@ namespace Application.Mapping
                                 Name = pa.Name,
                                 Description = pa.Description,
                                 IsDisplay = pa.IsDisplay,
-                                IsActive = pa.IsActive
+                                IsActive = pa.IsActive,
+                                CanFilter = pa.CanFilter,
                             }
                         ).ToList()
                 ));

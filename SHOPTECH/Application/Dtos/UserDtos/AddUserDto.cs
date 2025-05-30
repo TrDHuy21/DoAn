@@ -18,6 +18,8 @@ namespace Application.Dtos.UserDtos
         [StringLength(50, ErrorMessage = "Name cannot be longer than 50 characters.")]
         public string Username { get; set; }
 
+        [Required(ErrorMessage = "Username is required.")]
+
         public string Password { get; set; }
         public string Cccd { get; set; }
         public IFormFile? FormFile { get; set; }
@@ -25,7 +27,11 @@ namespace Application.Dtos.UserDtos
         public string Phone { get; set; }
         public string AdressDetail { get; set; }
         public DateTime? BirthDate { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+
         public int? RoleId { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+
         public string WardId { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }

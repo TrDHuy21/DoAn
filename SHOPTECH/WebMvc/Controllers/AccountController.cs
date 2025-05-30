@@ -1,22 +1,26 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using Application.Dtos.LoginDtos;
+using Application.Dtos.UserDtos;
 using Application.Helper;
 using Application.Models;
 using Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
+using WebMvc.Service.Interface;
 
 namespace WebMvc.Controllers
 {
     public class AccountController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IApiService _apiService;
 
-        public AccountController(HttpClient httpClient)
+        public AccountController(HttpClient httpClient, IApiService apiService)
         {
             _httpClient = httpClient;
+            _apiService = apiService;
         }
 
         [HttpGet]
@@ -76,6 +80,7 @@ namespace WebMvc.Controllers
             return View("Login", loginDto);
         }
 
+
         [HttpGet]
         public IActionResult Logout()
         {
@@ -91,6 +96,32 @@ namespace WebMvc.Controllers
         public IActionResult AccessDenied()
         {
             return View();
-        }   
+        }
+
+        [HttpGet]   
+        public async Task<IActionResult> Profile()
+        {
+            try
+            {
+                var response = await _apiService.GetAsync(CustomerApiString.USER_ADMIN_PROFILE());
+                if (response.IsSuccessStatusCode)
+                {
+                    var user = await response.Content.ReadFromJsonAsync<DetailUserDto>()
+                        ?? throw new Exception("");
+
+                    return View(user);
+                }
+                else
+                {
+                    throw new Exception("");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return View();
+        }
+
     }
 }

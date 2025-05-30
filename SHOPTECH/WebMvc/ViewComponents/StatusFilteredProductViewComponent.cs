@@ -17,6 +17,7 @@ namespace WebMvc.ViewComponents.Home
         public async Task<IViewComponentResult> InvokeAsync(string categoryName = null, string filter = null, string name = null)
         {
             TempData["Name"] = name;
+            TempData["categoryName"] = categoryName;
             try
             {
                 Dictionary<string, string> queryParams = new Dictionary<string, string>();

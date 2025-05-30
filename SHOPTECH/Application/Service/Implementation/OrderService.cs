@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -158,6 +159,7 @@ namespace Application.Service.Implementation
             .ThenInclude(x => x.Province)
             .Include(x => x.OrderDetails)
             .ThenInclude(x => x.ProductDetail)
+            .ThenInclude(pd => pd.Image)
             .FirstOrDefaultAsync(x => x.Id == id && (x.CustomerId == userId ||role == "admin" || role == "saler"))
             ?? throw new Exception("Not found");
 

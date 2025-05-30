@@ -20,5 +20,6 @@ namespace Application.Service.Interface
         Task<PageResultDto<IndexUserDto>?> GetPageResultAsync(int pageIndex, int pageSize);
         Task<User?> ChangeActiveAsync(int id, bool isActive);
         Task<User> ChangeActive(int id, bool isActive);
+        Task<User> GetMyProfile();
     }
 }

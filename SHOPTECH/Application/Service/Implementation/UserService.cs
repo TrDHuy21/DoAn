@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos;
@@ -10,6 +11,7 @@ using Application.Service.Interface;
 using AutoMapper;
 using Domain.Enity;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Service.Implementation
@@ -19,17 +21,22 @@ namespace Application.Service.Implementation
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IImageFileService _imageFileService;
         protected readonly IMapper _mapper;
+        protected readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork, IImageFileService imageFileService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            _imageFileService = imageFileService;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<User?> AddAsync(AddUserDto userDto)
         {
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
+
                 ImageFile? imageFile = null;
                 if (userDto.FormFile != null)
                 {
@@ -41,7 +48,7 @@ namespace Application.Service.Implementation
                 {
                     user.ImageId = imageFile.Id;
                 }
-
+                user.UrlName = "";
                 BaseEntityService<User>.Add(user);
                 await _unitOfWork.Users.AddAsync(user);
 
@@ -102,6 +109,20 @@ namespace Application.Service.Implementation
         {
             var users = await _unitOfWork.Users.GetByIdAsync(id);
             return users;
+        }
+
+        public async Task<User> GetMyProfile()
+        {
+            var userCurrent = _httpContextAccessor.HttpContext?.User;
+            int userId = Convert.ToInt32(userCurrent?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? throw new Exception("Lỗi trong quá trình lấy thông tin người dùng"));
+
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("Không tìm thấy người dùng");
+            }
+            return user;
         }
 
         public async Task<PageResultDto<IndexUserDto>?> GetPageResultAsync(int pageIndex, int pageSize)

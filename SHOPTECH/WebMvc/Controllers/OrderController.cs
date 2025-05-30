@@ -59,7 +59,7 @@ namespace WebMvc.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var order = await response.Content.ReadFromJsonAsync<DetailOrderDto>();
-                    return RedirectToAction("Detail", "Order", new {id = order.Id});
+                    return RedirectToAction("Detail", "Order", new { id = order.Id });
                 }
                 else
                 {
@@ -72,6 +72,31 @@ namespace WebMvc.Controllers
             }
             return Redirect(Request.Headers["Referer"].ToString());
 
+        }
+
+        // get my orders
+        [HttpGet("MyOrders")]
+        public async Task<IActionResult> MyOrders(int? status)
+        {
+            try
+            {
+                var response = await _apiService.GetAsync(CustomerApiString.ORDER_MY_ORDERS());
+                if (response.IsSuccessStatusCode)
+                {
+                    var orders = await response.Content.ReadFromJsonAsync<IEnumerable<IndexOrderDto>>();
+                    ViewData["Orders"] = orders;
+                    return View(orders);
+                }
+                else
+                {
+                    throw new Exception("Lỗi khi lấy danh sách đơn hàng");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            return View();
         }
     }
 }

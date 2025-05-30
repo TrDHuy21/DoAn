@@ -7,6 +7,7 @@ using Application.Dtos.ProductDtos;
 using Application.Dtos;
 using Domain.Enity;
 using Application.Dtos.ImageDtos;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Service.Interface
 {
@@ -20,5 +21,6 @@ namespace Application.Service.Interface
         Task<PageResultDto<IndexProductDto>?> GetPageResultAsync(int pageIndex, int pageSize);
         Task<Product?> ChangeActiveAsync(int id, bool isActive);
         Task<List<ImageFileDto>> GetImages(int id);
+
     }
 }

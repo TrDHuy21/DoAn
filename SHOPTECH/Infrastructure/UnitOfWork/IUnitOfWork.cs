@@ -25,6 +25,7 @@ namespace Infrastructure.UnitOfWork
         IProvinceRepo Provinces { get; }
         IRoleRepo Roles { get; }
         IWardRepo Wards { get; }
+        IProductImageRepo ProductImages { get; }
 
         // transaction 
         Task BeginTransactionAsync();

@@ -9,6 +9,7 @@ using Infrastructure.Repo.Implementation;
 using Infrastructure.Repo.Interface;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
+using Domain.Entity;
 
 namespace Infrastructure.UnitOfWork
 {
@@ -19,39 +20,55 @@ namespace Infrastructure.UnitOfWork
         public UnitOfWork(ShopTechContext context)
         {
             _context = context;
-            Brands = new BrandRepo(_context);
-            Carts = new CartRepo(_context);
-            Categories = new CategoryRepo(_context);
-            Districts = new DistrictRepo(_context);
-            Users = new UserRepo(_context);
-            ImageFiles = new ImageFileRepo(_context);
-            OrderDetails = new OrderDetailRepo(_context);
-            Orders = new OrderRepo(_context);
-            ProductAttributes = new ProductAttributeRepo(_context);
-            ProductDetailAttributes = new ProductDetailAttributeRepo(_context);
-            ProductDetails = new ProductDetailRepo(_context);
-            Products = new ProductRepo(_context);
-            Provinces = new ProvinceRepo(_context);
-            Roles = new RoleRepo(_context);
-            Wards = new WardRepo(_context);
-
         }
 
-        public IBrandRepo Brands { get; }
-        public ICartRepo Carts { get; }
-        public ICategoryRepo Categories { get; }
-        public IDistrictRepo Districts { get; }
-        public IUserRepo Users { get; }
-        public IImageFileRepo ImageFiles { get; }
-        public IOrderDetailRepo OrderDetails { get; }
-        public IOrderRepo Orders { get; }
-        public IProductAttributeRepo ProductAttributes { get; }
-        public IProductDetailAttributeRepo ProductDetailAttributes { get; }
-        public IProductDetailRepo ProductDetails { get; }
-        public IProductRepo Products { get; }
-        public IProvinceRepo Provinces { get; }
-        public IRoleRepo Roles { get; }
-        public IWardRepo Wards { get; }
+        private IBrandRepo _brands;
+        public IBrandRepo Brands => _brands ??= new BrandRepo(_context);
+
+        private ICartRepo _carts;
+        public ICartRepo Carts => _carts ??= new CartRepo(_context);
+
+        private ICategoryRepo _categories;
+        public ICategoryRepo Categories => _categories ??= new CategoryRepo(_context);
+
+        private IDistrictRepo _districts;
+        public IDistrictRepo Districts => _districts ??= new DistrictRepo(_context);
+
+        private IUserRepo _users;
+        public IUserRepo Users => _users ??= new UserRepo(_context);
+
+        private IImageFileRepo _imageFiles;
+        public IImageFileRepo ImageFiles => _imageFiles ??= new ImageFileRepo(_context);
+
+        private IOrderDetailRepo _orderDetails;
+        public IOrderDetailRepo OrderDetails => _orderDetails ??= new OrderDetailRepo(_context);
+
+        private IOrderRepo _orders;
+        public IOrderRepo Orders => _orders ??= new OrderRepo(_context);
+
+        private IProductAttributeRepo _productAttributes;
+        public IProductAttributeRepo ProductAttributes => _productAttributes ??= new ProductAttributeRepo(_context);
+
+        private IProductDetailAttributeRepo _productDetailAttributes;
+        public IProductDetailAttributeRepo ProductDetailAttributes => _productDetailAttributes ??= new ProductDetailAttributeRepo(_context);
+
+        private IProductDetailRepo _productDetails;
+        public IProductDetailRepo ProductDetails => _productDetails ??= new ProductDetailRepo(_context);
+
+        private IProductRepo _products;
+        public IProductRepo Products => _products ??= new ProductRepo(_context);
+
+        private IProvinceRepo _provinces;
+        public IProvinceRepo Provinces => _provinces ??= new ProvinceRepo(_context);
+
+        private IRoleRepo _roles;
+        public IRoleRepo Roles => _roles ??= new RoleRepo(_context);
+
+        private IWardRepo _wards;
+        public IWardRepo Wards => _wards ??= new WardRepo(_context);
+
+        private IProductImageRepo _productImages;
+        public IProductImageRepo ProductImages => _productImages ??= new ProductImageRepo(_context);
 
         public async Task BeginTransactionAsync()
         {

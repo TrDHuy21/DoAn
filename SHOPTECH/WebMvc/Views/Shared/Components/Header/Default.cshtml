@@ -1,66 +1,174 @@
 ﻿@{
     var user = ViewData["User"] as UserViewModel;
 }
-<link rel="stylesheet" href="~/css/Header.css" />
-
 
 <!-- Top Header -->
-<div class="top-header">
+<div class="bg-dark text-white py-2 small">
     <div class="container">
-        <div class="row">
+        <div class="row align-items-center">
             <div class="col-md-6">
-                <small>Hệ thống cửa hàng toàn quốc | Liên hệ: <strong>1800.2097</strong></small>
+                <div class="d-flex align-items-center">
+                    <span class="me-3">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        Hệ thống cửa hàng toàn quốc
+                    </span>
+                    <span class="me-3">|</span>
+                    <span>
+                        <i class="fas fa-phone-alt me-1"></i>
+                        Liên hệ: <strong>1800.2097</strong>
+                    </span>
+                </div>
             </div>
-            <div class="col-md-6 text-end">
-                <small>Tin tức | Tuyển dụng | Tra cứu đơn hàng</small>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-white text-decoration-none me-3">
+                    <i class="fas fa-newspaper me-1"></i> Tin tức
+                </a>
+                <a href="#" class="text-white text-decoration-none me-3">
+                    <i class="fas fa-briefcase me-1"></i> Tuyển dụng
+                </a>
+                <a href="#" class="text-white text-decoration-none">
+                    <i class="fas fa-search me-1"></i> Tra cứu đơn hàng
+                </a>
             </div>
         </div>
     </div>
 </div>
 <!-- End Top Header -->
 <!-- Main Header -->
-<header class="main-header sticky-top">
+<header class="sticky-top bg-white shadow-sm">
     <div class="container">
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg navbar-light py-2">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-action="Index" asp-controller="Home">
-                    <img src="~/Image/LogoShopTech.png" alt="Logo">
+                    <img src="~/Image/LogoShopTech.png" alt="Logo" height="40">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <form asp-action="Search" asp-controller="ProductDetail" method="get" class="search-form mx-lg-4 my-2 my-lg-0">
-                        <input class="form-control" type="search" name="name" placeholder="Bạn cần tìm gì hôm nay?">
-                        <button type="submit"><i class="fas fa-search"></i></button>
+                    <form asp-action="Search" asp-controller="ProductDetail" method="get" class="d-flex mx-lg-4 my-2 my-lg-0">
+                        <input class="form-control rounded-pill me-2" type="search" name="name" placeholder="Bạn cần tìm gì hôm nay?">
+                        <button class="btn btn-primary rounded-pill px-4" type="submit">
+                            <i class="fas fa-search me-1"></i> Tìm
+                        </button>
                     </form>
-                    <div class="header-icons ms-auto d-flex align-items-center">
-                        
-                        <a asp-action="Index" asp-controller="Cart" class="position-relative">
+                    <div class="d-flex align-items-center ms-auto">
+                        <a asp-action="Index" asp-controller="Wishlist" class="btn btn-light position-relative mx-1 rounded-circle p-2">
+                            <i class="fas fa-heart"></i>
+                        </a>
+
+                        <a asp-action="Index" asp-controller="Cart" class="btn btn-light position-relative mx-1 rounded-circle p-2">
                             <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
                         </a>
 
                         @if (user != null)
                         {
-                            <div class="dropdown">
-                                <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user me-1"></i>
-                                    <span class="ms-1">Xin chào, @user.Name</span>
+                            <div class="dropdown ms-3">
+                                <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                        @user.Name.Substring(0, 1)
+                                    </div>
+                                    <div class="ms-2 d-none d-md-block text-start">
+                                        <div class="fw-medium">@user.Name</div>
+                                        <div class="small">
+                                            @if (user.Role == "Admin")
+                                            {
+                                                <span class="badge bg-danger">Admin</span>
+                                            }
+                                            @if (user.Role == "Saler")
+                                            {
+                                                <span class="badge bg-success">Saler</span>
+                                            }
+                                        </div>
+                                    </div>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item text-dark" asp-action="Profile" asp-controller="Account">Thông tin cá nhân</a></li>
-                                    <li><a class="dropdown-item text-dark" asp-action="Orders" asp-controller="Account">Đơn hàng</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item rounded-3" asp-action="Profile" asp-controller="Account">
+                                            <i class="fas fa-user-circle me-2"></i>
+                                            Thông tin cá nhân
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item rounded-3" asp-action="MyOrders" asp-controller="Order">
+                                            <i class="fas fa-shopping-bag me-2"></i>
+                                            Đơn hàng 
+                                        </a>
+                                    </li>
+
+                                    @if (user.Role == "Admin")
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <h6 class="dropdown-header text-primary fw-bold">
+                                                <i class="fas fa-crown me-1"></i>
+                                                Quản trị viên
+                                            </h6>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item rounded-3" asp-area="Admin" asp-action="Index" asp-controller="Home">
+                                                <i class="fas fa-tachometer-alt me-2"></i>
+                                                Dashboard
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item rounded-3" asp-area="Admin" asp-action="GetAll" asp-controller="ProductAdmin">
+                                                <i class="fas fa-box me-2"></i>
+                                                Quản lý sản phẩm
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item rounded-3" asp-area="Admin" asp-action="Index" asp-controller="UserAdmin">
+                                                <i class="fas fa-users me-2"></i>
+                                                Quản lý người dùng
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @if (user.Role == "Saler")
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <h6 class="dropdown-header text-primary fw-bold">
+                                                <i class="fas fa-store me-1"></i>
+                                                Người bán hàng
+                                            </h6>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item rounded-3" asp-action="Index" asp-controller="Saler">
+                                                <i class="fas fa-list me-2"></i>
+                                                Quản lý đơn hàng
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item rounded-3" asp-action="Reports" asp-controller="Saler">
+                                                <i class="fas fa-chart-bar me-2"></i>
+                                                Thống kê bán hàng
+                                            </a>
+                                        </li>
+                                    }
+
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-dark" asp-action="Logout" asp-controller="Account">Đăng xuất</a></li>
+                                    <li>
+                                        <a class="dropdown-item rounded-3 text-danger" asp-action="Logout" asp-controller="Account">
+                                            <i class="fas fa-sign-out-alt me-2"></i>
+                                            Đăng xuất
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         }
                         else
                         {
-                            <a class="dropdown-toggle d-flex align-items-center" asp-action="Login" asp-controller="Account">
-                                <i class="fas fa-user me-1"></i>
-                                <span class="ms-1">Đăng nhập</span>
-                            </a>
+                            <div class="ms-3">
+                                <a class="btn btn-outline-primary" asp-action="Login" asp-controller="Account">
+                                    <i class="fas fa-user me-1"></i>
+                                    Đăng nhập
+                                </a>
+                            </div>
                         }
                     </div>
                 </div>
@@ -68,4 +176,3 @@
         </nav>
     </div>
 </header>
-<!-- End Main Header -->

@@ -61,6 +61,7 @@ namespace WebApi
             builder.Services.AddTransient<ICartService, CartService>();
             builder.Services.AddTransient<IOrderService, OrderService>();
             builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<IProductImageService, ProductImageService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

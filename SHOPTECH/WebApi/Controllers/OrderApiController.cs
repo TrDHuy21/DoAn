@@ -56,14 +56,14 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpGet("GetMyOrder")]
+        [HttpGet("MyOrder")]
         [Authorize]
         public async Task<IActionResult> GetMyOrder()
         {
             try
             {
                 var orders = await _orderService.GetMyOrder();
-                var orderDtos = _mapper.Map<IEnumerable<DetailOrderDto>>(orders);
+                var orderDtos = _mapper.Map<IEnumerable<IndexOrderDto>>(orders);
                 return Ok(orderDtos);
             }
             catch (Exception ex)

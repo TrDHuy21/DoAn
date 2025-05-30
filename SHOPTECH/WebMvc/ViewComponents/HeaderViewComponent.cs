@@ -26,10 +26,10 @@ namespace WebMvc.ViewComponents
                 // Tạo model chứa thông tin người dùng
                 var userInfo = new UserViewModel
                 {
-                    Id = user.FindFirst("sub")?.Value,
-                    Name = user.FindFirst("name")?.Value ?? user.FindFirst(ClaimTypes.Name)?.Value,
-                    Email = user.FindFirst("email")?.Value ?? user.FindFirst(ClaimTypes.Email)?.Value,
-                    Roles = user.FindAll("role").Select(c => c.Value).ToList()
+                    Id = user.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                    Name =user.FindFirst(ClaimTypes.Name)?.Value,
+                    Email = user.FindFirst(ClaimTypes.Email)?.Value,
+                    Role = user.FindFirst(ClaimTypes.Role)?.Value
                 };
 
                 // Truyền thông tin người dùng qua ViewData
