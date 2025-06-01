@@ -36,6 +36,10 @@ namespace Application.Mapping
 
             //adduserdto to user
             CreateMap<AddUserDto, User>();
+            CreateMap<RegisterUser, User>()
+                .ForMember(u => u.RoleId, o => o.MapFrom(_ => 3))
+                .ForMember(u => u.Username, o => o.MapFrom(_ => _.Phone));
+
 
             CreateMap<UpdateUserDto, User>();
             CreateMap<User, UpdateUserDto>();

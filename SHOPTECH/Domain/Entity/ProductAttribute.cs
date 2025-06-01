@@ -8,8 +8,6 @@ namespace Domain.Enity
 {
     public class ProductAttribute : BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public bool IsDisplay { get; set; }
         public bool CanFilter { get; set; }
         public int CategoryId { get; set; }

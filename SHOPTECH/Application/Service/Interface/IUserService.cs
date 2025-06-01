@@ -21,5 +21,6 @@ namespace Application.Service.Interface
         Task<User?> ChangeActiveAsync(int id, bool isActive);
         Task<User> ChangeActive(int id, bool isActive);
         Task<User> GetMyProfile();
+        Task<bool> RegisterUserAsync(RegisterUser registerUser);
     }
 }

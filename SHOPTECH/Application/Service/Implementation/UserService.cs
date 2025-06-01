@@ -144,6 +144,37 @@ namespace Application.Service.Implementation
             }
         }
 
+        public async Task<bool> RegisterUserAsync(RegisterUser registerUser)
+        {
+            try
+            {
+                //check username exsit
+                var userExist = await _unitOfWork.Users.GetAll()
+                    .FirstOrDefaultAsync(x => x.Username == registerUser.Phone);
+                if (userExist != null)
+                {
+                    throw new Exception("Số điện thoại này đã được đăng ký");
+                }
+
+                var user = _mapper.Map<User>(registerUser);
+                user.UrlName = "";
+                user.IsActive = true; // Mặc định người dùng mới được kích hoạt
+                BaseEntityService<User>.Add(user);
+                await _unitOfWork.Users.AddAsync(user);
+                int rs = await _unitOfWork.SaveChangeAsync();
+                return rs > 0;
+            } 
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.InnerException);
+                throw ex;
+            }
+            
+
+        }
+
         public async Task<User?> UpdateAsync(UpdateUserDto userDto)
         {
             try

@@ -13,7 +13,6 @@ namespace Application.Dtos.OrderDtos
         public string Phone { get; set; }
         public string Address { get; set; }
         public string WardId { get; set; }
-        public string EmployeeNote { get; set; } // New property for employee note
         public IEnumerable<CreateOrderDetailDto> OrderDetails { get; set; }
     }
 }

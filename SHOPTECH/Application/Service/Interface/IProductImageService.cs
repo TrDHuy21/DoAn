@@ -10,9 +10,10 @@ namespace Application.Service.Interface
 {
     public interface IProductImageService
     {
-        Task<bool> AddAsync(ProductImageDto[] productImageDtos);
+        Task<bool> AddAsync(List<IFormFile> files, int productId);
         Task<bool> UPdateAsync(ProductImageDto productImageDto);
-        Task<bool> RemoveAsync(ProductImageDto productImageDto);
-        Task<bool> GetAllAsync(int productId);
+        Task<bool> DeleteAsync(ProductImageDto productImageDto);
+        Task<IEnumerable<ProductImageDto>> GetByProductIdAsync(int productId);
+        Task<IEnumerable<ProductImageDto>> GetAllAsync();
     }
 }

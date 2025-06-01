@@ -31,6 +31,19 @@ namespace Infrastructure.Config
              .WithMany(x => x.Users)
              .HasForeignKey(x => x.WardId);
 
+            builder.HasIndex(c => c.Username)
+                .IsUnique();
+
+            builder.HasIndex(c => c.Phone)
+                .IsUnique();
+
+            builder.HasIndex(c => c.Cccd)
+                .IsUnique();
+
+            builder.HasIndex(c => c.Email)
+                .IsUnique();
+
+
             //builder.HasOne(x => x.CreatedByUser)
             //  .WithMany(x => x.CreatedUser)
             //  .HasForeignKey(x => x.CreatedBy)

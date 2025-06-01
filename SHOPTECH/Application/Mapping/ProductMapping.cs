@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos.ImageDtos;
 using Application.Dtos.ProductDtos;
+using Application.Dtos.ProductImage;
 using Application.Helper;
 using AutoMapper;
 using Domain.Enity;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Mapping
 {
@@ -29,7 +31,19 @@ namespace Application.Mapping
                {
                    Data = s.MainImage.Data,
                    Type = s.MainImage.Type,
-               } : null));
+               } : null))
+               .ForMember(t => t.productImages, x => x.MapFrom(s => s.ProductImages.Select(i => new ProductImageDto
+               {
+                   ImageFileId = i.ImageFileId,
+                   ProductId = s.Id,
+                   Image = new ImageFileDto
+                   {
+                       Id = i.ImageFile.Id,
+                       Name = i.ImageFile.Name,
+                       Data = i.ImageFile.Data,
+                       Type = i.ImageFile.Type
+                   }
+               }).ToList()));
 
             CreateMap<AddProductDto, Product>()
                 .ForMember(t => t.UrlName, o => o.MapFrom(s => s.Name.ChuanHoa("_")));

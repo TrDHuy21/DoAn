@@ -13,8 +13,8 @@ namespace Domain.Enity
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? Cccd { get; set; }
-        public string? Username { get; set; }
-        public string? Password { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
 
         //role
         public int? RoleId { get; set; }

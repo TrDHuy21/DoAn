@@ -19,15 +19,11 @@ namespace Infrastructure.Config
             builder.Property(c => c.Id)
                 .UseIdentityColumn();
 
-            //builder.HasOne(x => x.CreatedByUser)
-            //  .WithMany(x => x.CreatedCategory)
-            //  .HasForeignKey(x => x.CreatedBy)
-            //  .OnDelete(DeleteBehavior.ClientSetNull);
-
-            //builder.HasOne(x => x.UpdatedByUser)
-            //  .WithMany(x => x.UpdatedCategory)
-            //  .HasForeignKey(x => x.UpdatedBy)
-            //  .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+            builder.HasIndex(c => c.Name)
+                .IsUnique();
         }
     }
 }

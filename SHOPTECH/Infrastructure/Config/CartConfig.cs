@@ -24,6 +24,16 @@ namespace Infrastructure.Config
             builder.HasOne(x => x.User)
              .WithMany(x => x.Carts)
              .HasForeignKey(x => x.UserId) ;
+
+            //quantity is required, min 0
+            builder.Property(x => x.Quantity)
+                .IsRequired()
+                .HasDefaultValue(0);
+
+            builder.ToTable(t => t.HasCheckConstraint("CK_Cart_Quantity_NonNegative", "[Quantity] >= 0"));
+
+
+
         }
     }
 }

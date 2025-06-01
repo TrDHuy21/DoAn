@@ -1,29 +1,64 @@
-﻿@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@model Application.Dtos.LoginDtos.LoginDto
+
+@{
+    ViewData["Title"] = "Login";
 }
-@model Application.Dtos.LoginDtos.LoginDto
-<div class="container mt-5">
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-6">
-            <div class="card px-5 py-5" id="form1">
+
+<section class="vh-100">
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                     class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                 <form asp-action="Login" asp-controller="Account" method="post">
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="mb-4">
-                        <label for="UserName" class="form-label">Tên Đăng Nhập</label>
-                        <input type="text" asp-for="Username" class="form-control" required />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-primary">ĐĂNG NHẬP</h2>
+                        <p class="text-muted">Chào mừng bạn quay trở lại.</p>
+                    </div>
+
+                    <!-- Email input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <label asp-for="Username" class="form-label">Tên đăng nhập</label>
+                        <input asp-for="Username" type="text" class="form-control"
+                               placeholder="Enter Username" />
                         <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="Password" class="form-label">Mật Khẩu</label>
-                        <input type="password" asp-for="Password" class="form-control" required />
+                    <!-- Password input -->
+                    <div data-mdb-input-init class="form-outline mb-3">
+                        <label asp-for="Password" class="form-label">Mật khẩu</label>
+                        <input asp-for="Password" type="password" class="form-control"
+                               placeholder="Enter password" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Đăng Nhập</button>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="#!" class="text-body">Quên mât khẩu?</a>
+                    </div>
+
+                    <div class="text-center text-lg-start mt-4 pt-2">
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
+                                style="padding-left: 2.5rem; padding-right: 2.5rem;">
+                            Đăng nhập
+                        </button>
+                        <p class="small fw-bold mt-2 pt-1 mb-0">
+                            Bạn chưa có tài khoản? <a href="@Url.Action("Register","Account")" class="link-danger">Đăng ký</a>
+                        </p>
+                    </div>
+
+                    @Html.AntiForgeryToken()
                 </form>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

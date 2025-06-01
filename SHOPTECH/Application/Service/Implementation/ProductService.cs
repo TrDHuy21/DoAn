@@ -10,6 +10,7 @@ using Application.Helper;
 using Application.Service.Interface;
 using AutoMapper;
 using Domain.Enity;
+using Domain.Entity;
 using Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
@@ -154,6 +155,13 @@ namespace Application.Service.Implementation
                 _unitOfWork.LoadReference<Product, Category>(product, product => product.Category);
                 _unitOfWork.LoadReference<Product, Brand>(product, product => product.Brand);
                 _unitOfWork.LoadReference<Product, ImageFile>(product, product => product.MainImage);
+                _unitOfWork.LoadCollection<Product, ProductImage>(product, product => product.ProductImages);
+
+                foreach (var item in product.ProductImages)
+                {
+                    _unitOfWork.LoadReference<ProductImage, ImageFile>(item, item => item.ImageFile);
+                }
+
                 if (product == null)
                 {
                     throw new Exception("Not found");
@@ -177,6 +185,7 @@ namespace Application.Service.Implementation
                 var product = await _unitOfWork.Products.GetAll()
                                     .Include(x => x.MainImage)
                                     .Include(x => x.ProductImages)
+                                    .ThenInclude(pi => pi.ImageFile)
                                     .Include(x => x.ProductDetails)
                                         .ThenInclude(x => x.Image)
                                     .FirstOrDefaultAsync(x => x.Id == id && x.IsActive);
@@ -194,7 +203,7 @@ namespace Application.Service.Implementation
                 {
                     foreach (var item in product.ProductImages)
                     {
-                        listImage.Add(_mapper.Map<ImageFileDto>(item));
+                        listImage.Add(_mapper.Map<ImageFileDto>(item.ImageFile));
                     }
                 }
 

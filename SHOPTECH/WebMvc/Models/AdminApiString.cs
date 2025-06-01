@@ -63,6 +63,13 @@ namespace WebMvc.Models
         public static string USER_ADMIN(int id) => USER_ADMIN() + "/" + id;
         public static string USER_ADMIN_PROFILE() => USER_ADMIN() + "/profile";
 
+        // product image admin
+        public static string PRODUCT_IMAGE_ADMIN() => BASE_URL + "/ProductImageAdminApi";
+        public static string PRODUCT_IMAGE_ADMIN_GETBYPRODUCTID(int productId) => PRODUCT_IMAGE_ADMIN() + $"/getbyproductid/{productId}";
+        public static string PRODUCT_IMAGE_ADMIN_ADD(int productId) => PRODUCT_IMAGE_ADMIN() + "?productId=" + productId;
+        public static string PRODUCT_IMAGE_ADMIN_UPDATE() => PRODUCT_IMAGE_ADMIN();
+        public static string PRODUCT_IMAGE_ADMIN_DELETE() => PRODUCT_IMAGE_ADMIN();
+        public static string PRODUCT_IMAGE_ADMIN_GETALL() => PRODUCT_IMAGE_ADMIN();
 
 
     }

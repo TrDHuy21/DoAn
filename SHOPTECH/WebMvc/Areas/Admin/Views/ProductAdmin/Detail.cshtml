@@ -1,5 +1,6 @@
 ﻿@using Application.Dtos.ProductAttributeDtos
 @using Application.Dtos.ProductDetailDtos;
+@using Application.Dtos.ProductImage
 
 @model Application.Dtos.ProductDtos.DetailProductDto
 
@@ -11,6 +12,9 @@
     // Thêm list attributes cho category này
     var productAttributes = ViewData["ProductAttributes"] == null ? new List<IndexProductAttributeDto>() :
         ViewData["ProductAttributes"] as List<IndexProductAttributeDto>;
+
+    var productImages = ViewData["ProductImages"] == null ? new List<ProductImageDto>() :
+           ViewData["ProductImages"] as List<ProductImageDto>;
 }
 <!-- product -->
 <div class="card">
@@ -78,6 +82,75 @@
         </div>
     </div>
 </div>
+
+<!-- Quản lý hình ảnh -->
+<div class="card mt-4 border-0 shadow-sm">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 font-weight-bold text-primary">
+            <i class="fas fa-images mr-2"></i>Quản lý hình ảnh sản phẩm
+        </h5>
+        <button type="button" class="btn btn-success btn-sm" id="btnAddImages">
+            <i class="fas fa-plus mr-1"></i> Thêm hình ảnh
+        </button>
+    </div>
+    <div class="card-body p-3">
+        <!-- Input file ẩn -->
+        <input type="file" id="imageFiles" multiple accept="image/*" style="display: none;">
+
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" class="text-center py-4" style="display: none;">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Đang tải...</span>
+            </div>
+            <p class="mt-3 font-weight-bold text-muted">Đang xử lý hình ảnh...</p>
+        </div>
+
+        <!-- Hiển thị hình ảnh -->
+        <div id="imageGallery" class="row no-gutters">
+            @if (productImages != null && productImages.Any())
+            {
+                foreach (var image in productImages)
+                {
+                    var base64String = Convert.ToBase64String(image.Image.Data);
+                    var imageSrc = $"data:{image.Image.Type};base64,{base64String}";
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 p-2" id="image-container-@image.ImageFileId">
+                        <div class="card border shadow-sm h-100">
+                            <div class="card-img-top position-relative overflow-hidden bg-light"
+                                 style="padding-top: 100%;">
+                                <!-- Aspect ratio 1:1 -->
+                                <img src="@imageSrc"
+                                     class="position-absolute w-100 h-100"
+                                     style="top: 0; left: 0; object-fit: contain;"
+                                     alt="Product Image">
+                                <button type="button"
+                                        class="btn btn-danger btn-sm position-absolute rounded-circle"
+                                        style="top: 8px; right: 8px; width: 30px; height: 30px; padding: 0;"
+                                        onclick="deleteImage(@image.ImageFileId)"
+                                        title="Xóa hình ảnh">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="card-footer bg-white text-center small py-2">
+                                <span class="text-muted">@image.Image.Name</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5" id="noImagesMessage">
+                    <div class="d-inline-block p-4">
+                        <i class="fas fa-image fa-3x text-light mb-3 p-3 bg-secondary rounded-circle"></i>
+                        <h5 class="text-muted font-weight-normal">Chưa có hình ảnh nào</h5>
+                        <p class="text-muted small">Nhấn nút "Thêm hình ảnh" để bắt đầu</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
 
 <!-- product detail -->
 <div class="card">
@@ -312,7 +385,7 @@
     </div>
 </div>
 
-<!-- Modal Xem Chi Tiết -->
+<!-- Modal Xem Chi Tiết sản phẩm chi tiết -->
 <div class="modal fade" id="viewDetailModal" tabindex="-1" role="dialog" aria-labelledby="viewDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -354,7 +427,149 @@
     </div>
 </div>
 
+<!-- Modal xác nhận xóa hình ảnh -->
+<div class="modal fade" id="deleteImageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa hình ảnh này không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts {
+    <script>
+        let imageToDelete = null;
+
+        // Xử lý nút thêm hình ảnh
+        document.getElementById('btnAddImages').addEventListener('click', function() {
+            document.getElementById('imageFiles').click();
+        });
+
+        // Xử lý khi chọn file
+        document.getElementById('imageFiles').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                uploadImages(files);
+            }
+        });
+
+        // Upload hình ảnh
+        function uploadImages(files) {
+            const formData = new FormData();
+
+            // Thêm files vào FormData
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+            formData.append('productId', @Model.Id);
+
+            // Hiển thị loading
+            document.getElementById('loadingIndicator').style.display = 'block';
+
+            fetch('@Url.Action("Add", "ProductImageAdmin", new { area = "Admin" })', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+
+                if (data.success) {
+                    // Reload trang để hiển thị hình ảnh mới
+                    location.reload();
+                } else {
+                    alert('Có lỗi xảy ra khi tải hình ảnh: ' + (data.message || 'Lỗi không xác định'));
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi tải hình ảnh');
+            });
+
+            // Reset input file
+            document.getElementById('imageFiles').value = '';
+        }
+
+        // Xóa hình ảnh
+        function deleteImage(imageId) {
+            imageToDelete = imageId;
+            $('#deleteImageModal').modal('show');
+        }
+
+        // Xác nhận xóa
+               document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (imageToDelete) {
+                let productId = @Html.Raw(Json.Serialize(@Model.Id));
+                const deleteData = {
+                    ImageFileId: imageToDelete,
+                    ProductId: productId
+                };
+                $.ajax({
+                    url: '@Url.Action("Delete", "ProductImageAdmin", new { area = "Admin" })',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(deleteData),
+                    beforeSend: function() {
+                        // Có thể thêm loading indicator cho nút delete
+                        $('#confirmDeleteBtn').prop('disabled', true).text('Đang xóa...');
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            // Xóa element khỏi DOM theo ID
+                            const imageContainer = document.getElementById(`image-container-${imageToDelete}`);
+                            if (imageContainer) {
+                                imageContainer.remove();
+                            }
+
+                            // Kiểm tra nếu không còn hình ảnh nào
+                            const imageGallery = document.getElementById('imageGallery');
+                            const remainingImages = imageGallery.querySelectorAll('[id^="image-container-"]');
+                            if (remainingImages.length === 0) {
+                                imageGallery.innerHTML =
+                                    '<div class="col-12 text-center text-muted" id="noImagesMessage"><p>Chưa có hình ảnh nào</p></div>';
+                            }
+                            $('#deleteImageModal').modal('hide');
+                        } else {
+                            alert('Có lỗi xảy ra khi xóa hình ảnh: ' + (data.message || 'Lỗi không xác định'));
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.error('Status:', status);
+                        console.error('Response:', xhr.responseText);
+                        alert('Có lỗi xảy ra khi xóa hình ảnh');
+                    },
+                    complete: function() {
+                        // Reset nút về trạng thái ban đầu
+                        $('#confirmDeleteBtn').prop('disabled', false).text('Xóa');
+                        imageToDelete = null;
+                    }
+                });
+            }
+        });
+
+        // Reset khi đóng modal
+        $('#deleteImageModal').on('hidden.bs.modal', function () {
+            imageToDelete = null;
+        });
+    </script>
     <script src="~/js/ProductDetail.js"></script>
 }

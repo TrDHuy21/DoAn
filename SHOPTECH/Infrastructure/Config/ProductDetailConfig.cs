@@ -29,6 +29,10 @@ namespace Infrastructure.Config
                .WithMany(x => x.ProductDetails)
                .HasForeignKey(x => x.ImageId);
 
+            builder.Property(c => c.Name)
+               .IsRequired()
+               .HasMaxLength(100);
+            
             //builder.HasOne(x => x.CreatedByUser)
             //  .WithMany(x => x.CreatedProductDetail)
             //  .HasForeignKey(x => x.CreatedBy)

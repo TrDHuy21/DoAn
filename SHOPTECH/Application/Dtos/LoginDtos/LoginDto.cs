@@ -9,7 +9,7 @@ namespace Application.Dtos.LoginDtos
 {
     public class LoginDto
     {
-        [Required(ErrorMessage = "Email is required")]
+        [Required(ErrorMessage = "username is required")]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Password is required")]

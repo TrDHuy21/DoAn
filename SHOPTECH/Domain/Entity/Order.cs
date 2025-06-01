@@ -21,7 +21,7 @@ namespace Domain.Enity
         7. hoàn hàng thành công
         8. đã Hủy
          */
-        public int? Status { get; set; }
+        public int Status { get; set; }
         public DateTime? OrderDate { get; set; }
         public string? TrackingCode { get; set; }
         public string? Type { get; set; }

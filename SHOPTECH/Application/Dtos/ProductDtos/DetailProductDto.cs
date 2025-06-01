@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dtos.ImageDtos;
+using Application.Dtos.ProductImage;
 
 namespace Application.Dtos.ProductDtos
 {
@@ -15,6 +16,7 @@ namespace Application.Dtos.ProductDtos
         public bool IsActive { get; set; }
         public int? MainImageId { get; set; }
         public ImageFileDto? MainImage { get; set; }
+        public List<ProductImageDto>? productImages { get; set; }
         public int BrandId { get; set; }
         public string BrandName { get; set; }
         public int CategoryId { get; set; }

@@ -82,9 +82,10 @@ namespace WebMvc.Models
         public static string ORDER_MY_ORDERS() => ORDER() + "/myorder";
 
 
-        //
+        // user
         public static string USER_ADMIN_PROFILE() => BASE_URL + "/UserApi/profile";
+        public static string USER_REGISTER() => BASE_URL + "/UserApi/register";
 
-       
+
     }
 }

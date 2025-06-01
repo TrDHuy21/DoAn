@@ -10,10 +10,11 @@ namespace Application.Dtos.ProductImage
 {
     public class ProductImageDto
     {
-        public int ImageId { get; set; }
+        public int ImageFileId { get; set; }
         public int ProductId { get; set; }
-        public IFormFile formFile { get; set; }
-        public ImageFileDto Image { get; set; }
-        public string Description { get; set; }
+        public IFormFile? FormFile { get; set; }
+
+        public ImageFileDto? Image { get; set; }
+        public string? Description { get; set; }
     }
 }

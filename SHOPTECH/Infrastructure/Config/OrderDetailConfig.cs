@@ -23,6 +23,7 @@ namespace Infrastructure.Config
             builder.HasOne(x => x.ProductDetail)
             .WithMany(x => x.OrderDetails)
             .HasForeignKey(x => x.ProductDetailId);
+
         }
     }
 }

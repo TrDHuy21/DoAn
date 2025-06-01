@@ -33,6 +33,7 @@ namespace Infrastructure.Config
             .WithMany(x => x.CustomerOrders)
             .HasForeignKey(x => x.CustomerId)
             .OnDelete(DeleteBehavior.ClientSetNull);
+
         }
     }
 }

@@ -14,18 +14,17 @@ namespace Application.Dtos.BrandDtos
         [Required]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100, MinimumLength = 2)]
+        [Required(ErrorMessage = "Name is required")]
+        [MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
         public string Name { get; set; }
 
-        [StringLength(500)]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         public bool IsActive { get; set; }
 
         // Cho phép người dùng cập nhật hình ảnh (nếu có)
-        public IFormFile? FormFile { get; set; }
-        public ImageFileDto? Image { get; set; }
+        public IFormFile FormFile { get; set; }
+        public ImageFileDto Image { get; set; }
 
     }
 }

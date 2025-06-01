@@ -115,6 +115,8 @@ namespace WebMvc.Areas.Admin.Controllers
                 var productAttributes = await response.Content.ReadFromJsonAsync<List<IndexProductAttributeDto>>() ?? throw new Exception("error");
                 ViewData["ProductAttributes"] = productAttributes;
 
+                ViewData["ProductImages"] = product.productImages;
+
                 return View(product);
             }
             catch (Exception ex)

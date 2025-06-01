@@ -26,7 +26,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var user = await _userService.GetMyProfile(); 
+                var user = await _userService.GetMyProfile();
                 if (user == null)
                 {
                     return NotFound(new { Message = "User not found" });
@@ -38,6 +38,28 @@ namespace WebApi.Controllers
             {
                 return StatusCode(500, new { Message = ex.Message });
             }
+        }
+
+        // resgister user
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterUser registerUser)
+        {
+            try
+            {
+                var rs = await _userService.RegisterUserAsync(registerUser);
+                if (!rs)
+                {
+                    throw new Exception("Có lỗi xảy ra");
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, new { Message = ex.Message });
+            }
+
         }
     }
 }
