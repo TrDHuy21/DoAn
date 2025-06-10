@@ -28,6 +28,14 @@ namespace Infrastructure.Config
             builder.HasOne(x => x.ProductAttribute)
                .WithMany(x => x.ProductDetailAttributes)
                .HasForeignKey(x => x.ProductAttributeId);
+
+            builder.Property(c => c.Value)
+              .IsRequired()
+              .HasMaxLength(400);
+
+            builder.Property(c => c.UrlValue)
+              .IsRequired()
+              .HasMaxLength(400);
         }
     }
 }

@@ -102,13 +102,12 @@ namespace WebMvc.Controllers
         }
 
         [Authorize]
-        [HttpPost("cart/checkout")]
-        public async Task<IActionResult> Checkout([FromBody]IEnumerable<CheckoutItem> checkoutItems)
+        [HttpPost("cart/checkoutonline")]
+        public async Task<IActionResult> CheckoutOnline([FromBody]IEnumerable<CheckoutItem> checkoutItems)
         {
             try
             {
                 var response = await _apiService.GetAsync(CustomerApiString.PRODUCT_DETAIL_CHECKOUT(checkoutItems.Select(x => x.productDetailId)));
-
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -122,14 +121,41 @@ namespace WebMvc.Controllers
                     item.ProductDetail = checkoutItems1.FirstOrDefault(x => x.Id == item.productDetailId);
                 }
                 ViewData["checkoutItems"] = checkoutItems;
-
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Đã xảy ra lỗi";
+                return BadRequest();
             }
             return View();
-
         }
+
+        [Authorize]
+        [HttpPost("cart/checkoutoffline")]
+        public async Task<IActionResult> CheckoutOffline([FromBody] IEnumerable<CheckoutItem> checkoutItems)
+        {
+            try
+            {
+                var response = await _apiService.GetAsync(CustomerApiString.PRODUCT_DETAIL_CHECKOUT(checkoutItems.Select(x => x.productDetailId)));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+
+                var checkoutItems1 = await response.Content.ReadFromJsonAsync<IEnumerable<IndexProductDetailDto>>() ?? throw new Exception("error");
+
+                foreach (var item in checkoutItems)
+                {
+                    item.ProductDetail = checkoutItems1.FirstOrDefault(x => x.Id == item.productDetailId);
+                }
+                ViewData["checkoutItems"] = checkoutItems;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            return View();
+        }
+
     }
 }

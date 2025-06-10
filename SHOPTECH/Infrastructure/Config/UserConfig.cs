@@ -43,6 +43,18 @@ namespace Infrastructure.Config
             builder.HasIndex(c => c.Email)
                 .IsUnique();
 
+            builder.Property(c => c.Password)
+              .IsRequired()
+              .HasMaxLength(100);
+
+            builder.Property(c => c.UrlName)
+              .IsRequired()
+              .HasMaxLength(100);
+
+            builder.Property(c => c.Name)
+              .IsRequired()
+              .HasMaxLength(100);
+
 
             //builder.HasOne(x => x.CreatedByUser)
             //  .WithMany(x => x.CreatedUser)

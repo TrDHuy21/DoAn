@@ -1,4 +1,6 @@
-﻿using Application.Dtos.OrderDtos;
+﻿using Application.Dtos.OrderDetailDtos;
+using Application.Dtos.OrderDtos;
+using Application.Dtos.ProductDetailDtos;
 using Application.Service.Interface;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -67,6 +69,33 @@ namespace WebApi.Controllers.Admin
             }
             catch (Exception ex)
             {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var order = await _orderService.GetById(id);
+                var orderDto = _mapper.Map<DetailOrderDto>(order);
+                orderDto.OrderDetails = new List<IndexOrderDetailDto>();
+                foreach (var item in order.OrderDetails)
+                {
+                    orderDto.OrderDetails.Add(new IndexOrderDetailDto()
+                    {
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        ProductDetail = _mapper.Map<IndexProductDetailDto>(item.ProductDetail)
+                    });
+                }
+                return Ok(orderDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
                 return BadRequest(ex.Message);
             }
         }

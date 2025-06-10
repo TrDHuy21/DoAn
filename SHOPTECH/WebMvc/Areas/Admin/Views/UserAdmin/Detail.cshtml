@@ -4,9 +4,13 @@
     ViewData["Title"] = "Thông tin chi tiết người dùng";
 }
 
+<!-- Toast CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
 <div class="container py-5">
     <div class="row">
-        @if(Model != null) {
+        @if (Model != null)
+        {
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
@@ -29,8 +33,32 @@
                             }
                         </p>
                         <div class="d-flex justify-content-center mb-2">
-                            <button type="button" class="btn btn-primary">Follow</button>
-                            <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                            <a href="@Url.Action("Edit", "UserAdmin", new { id = Model.Id })" class="btn btn-primary mr-2">
+                                <i class="fas fa-edit"></i> Chỉnh sửa
+                            </a>
+                            @if (Model.IsActive)
+                            {
+                                <button type="button"
+                                        class="btn btn-danger btn-deactivate"
+                                        data-user-id="@Model.Id"
+                                        data-user-name="@Model.Name">
+                                    <i class="fas fa-ban"></i> Tắt hoạt động
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button"
+                                        class="btn btn-success btn-activate"
+                                        data-user-id="@Model.Id"
+                                        data-user-name="@Model.Name">
+                                    <i class="fas fa-check"></i> Kích hoạt
+                                </button>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <a href="@Url.Action("Index", "UserAdmin")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -97,14 +125,16 @@
                                 <p class="mb-0">Trạng thái</p>
                             </div>
                             <div class="col-sm-9">
-                                @if (Model.IsActive)
-                                {
-                                    <span class="badge bg-success">Hoạt động</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Không hoạt động</span>
-                                }
+                                <span id="userStatus">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success text-light">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-light">Không hoạt động</span>
+                                    }
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -119,12 +149,207 @@
                     </div>
                 </div>
             </div>
-        } else {
-            <h4> lỗi</h4>
         }
-       
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Lỗi!</h4>
+                    <p>Không thể tải thông tin người dùng. Vui lòng thử lại sau.</p>
+                    <hr>
+                    <a href="@Url.Action("Index", "UserAdmin")" class="btn btn-outline-danger">
+                        <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+<!-- Confirmation Modal for Deactivation -->
+<div class="modal fade" id="confirmDeactivateModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeactivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeactivateModalLabel">Xác nhận tắt hoạt động</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn tắt hoạt động tài khoản của <strong id="userNameToDeactivate"></strong>?</p>
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Người dùng sẽ không thể đăng nhập sau khi tắt hoạt động.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeactivateBtn">
+                    <i class="fas fa-ban"></i> Tắt hoạt động
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal for Activation -->
+<div class="modal fade" id="confirmActivateModal" tabindex="-1" role="dialog" aria-labelledby="confirmActivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmActivateModalLabel">Xác nhận kích hoạt</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn kích hoạt lại tài khoản của <strong id="userNameToActivate"></strong>?</p>
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle"></i>
+                    Người dùng sẽ có thể đăng nhập sau khi kích hoạt.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-success" id="confirmActivateBtn">
+                    <i class="fas fa-check"></i> Kích hoạt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    let currentUserId = null;
+    let currentAction = null;
+
+    // Configure toastr
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+
+    $(document).ready(function () {
+        // Deactivate button click event
+        $(document).on('click', '.btn-deactivate', function() {
+            currentUserId = $(this).data('user-id');
+            currentAction = 'deactivate';
+            var userName = $(this).data('user-name');
+
+            $('#userNameToDeactivate').text(userName);
+            $('#confirmDeactivateModal').modal('show');
+        });
+
+        // Activate button click event
+        $(document).on('click', '.btn-activate', function() {
+            currentUserId = $(this).data('user-id');
+            currentAction = 'activate';
+            var userName = $(this).data('user-name');
+
+            $('#userNameToActivate').text(userName);
+            $('#confirmActivateModal').modal('show');
+        });
+
+        // Confirm deactivation
+        $('#confirmDeactivateBtn').on('click', function() {
+            if (currentUserId) {
+                toggleUserStatus(currentUserId, false);
+            }
+        });
+
+        // Confirm activation
+        $('#confirmActivateBtn').on('click', function() {
+            if (currentUserId) {
+                toggleUserStatus(currentUserId, true);
+            }
+        });
+    });
+
+    function toggleUserStatus(userId, isActive) {
+        var actionText = isActive ? 'kích hoạt' : 'tắt hoạt động';
+        var buttonSelector = isActive ? '#confirmActivateBtn' : '#confirmDeactivateBtn';
+        var modalSelector = isActive ? '#confirmActivateModal' : '#confirmDeactivateModal';
+
+        // Show loading state
+        $(buttonSelector).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
+
+        $.ajax({
+            url: '@Url.Action("ChangeActive", "UserAdmin")',
+            type: 'POST',
+            data: {
+                id: userId,
+                isActive: isActive,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update status badge
+                    if (isActive) {
+                        $('#userStatus').html('<span class="badge bg-success text-light">Hoạt động</span>');
+                        // Update button to deactivate
+                        $('.btn-activate').removeClass('btn-activate btn-success')
+                                         .addClass('btn-deactivate btn-danger')
+                                         .html('<i class="fas fa-ban"></i> Tắt hoạt động');
+                    } else {
+                        $('#userStatus').html('<span class="badge bg-danger text-light">Không hoạt động</span>');
+                        // Update button to activate
+                        $('.btn-deactivate').removeClass('btn-deactivate btn-danger')
+                                           .addClass('btn-activate btn-success')
+                                           .html('<i class="fas fa-check"></i> Kích hoạt');
+                    }
+
+                    // Show success toast
+                    toastr.success(`Tài khoản đã được ${actionText} thành công!`, 'Thành công');
+
+                    // Close modal
+                    $(modalSelector).modal('hide');
+                } else {
+                    // Show error toast
+                    toastr.error(response.message || `Có lỗi xảy ra khi ${actionText} tài khoản!`, 'Lỗi');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                toastr.error('Có lỗi xảy ra khi kết nối đến server!', 'Lỗi');
+            },
+            complete: function() {
+                // Reset button state
+                if (isActive) {
+                    $('#confirmActivateBtn').prop('disabled', false).html('<i class="fas fa-check"></i> Kích hoạt');
+                } else {
+                    $('#confirmDeactivateBtn').prop('disabled', false).html('<i class="fas fa-ban"></i> Tắt hoạt động');
+                }
+                currentUserId = null;
+                currentAction = null;
+            }
+        });
+    }
+
+    // Reset modals when closed
+    $('#confirmDeactivateModal, #confirmActivateModal').on('hidden.bs.modal', function () {
+        currentUserId = null;
+        currentAction = null;
+        $('#confirmDeactivateBtn').prop('disabled', false).html('<i class="fas fa-ban"></i> Tắt hoạt động');
+        $('#confirmActivateBtn').prop('disabled', false).html('<i class="fas fa-check"></i> Kích hoạt');
+    });
+</script>
 
 <style>
     .card {
@@ -143,5 +368,39 @@
 
     .bg-light {
         background-color: #f8f9fa !important;
+    }
+
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    .btn {
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+    .alert {
+        border-radius: 8px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #e9ecef;
+        border-radius: 0 0 10px 10px;
     }
 </style>

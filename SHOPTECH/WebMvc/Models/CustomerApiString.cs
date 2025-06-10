@@ -80,6 +80,9 @@ namespace WebMvc.Models
         public static string ORDER_CREATE_ONLINE() => BASE_URL + "/OrderApi/CreateOrder/online";
         public static string ORDER_CREATE_OFFLINE() => BASE_URL + "/OrderApi/CreateOrder/offline";
         public static string ORDER_MY_ORDERS() => ORDER() + "/myorder";
+        public static string ORDER_STATUS() => ORDER() + "/status";
+
+
 
 
         // user

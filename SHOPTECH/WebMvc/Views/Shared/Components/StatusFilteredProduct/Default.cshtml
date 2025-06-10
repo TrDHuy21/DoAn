@@ -1,29 +1,66 @@
 ﻿@model IEnumerable<Application.Dtos.ProductDetailDtos.IndexProductDetailDto>
 @if (Model != null && Model.Any())
 {
-    <section class="mb-5">
-        <!-- Header với title và nút "Xem tất cả" -->
+    <div class="container-fluid my-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="text-primary fw-semibold border-start border-primary border-4 ps-3 mb-0">
                 @TempData["Name"]
             </h3>
-            <a @Url.Action("ListProductDetailWithCategory", "productDetail", new { categoryName = @TempData["categoryName"]})
+            <a @Url.Action("ListProductDetailWithCategory", "productDetail", new { categoryName = @TempData["categoryName"] })
                class="btn btn-outline-primary btn-sm">
                 Xem tất cả
                 <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
+        <div class="d-flex flex-nowrap overflow-auto pb-3">
+            @foreach (var item in Model)
+            {
+                <div class="flex-shrink-0 me-3" style="width: 250px;">
+                    <div class="card h-100 position-relative">
+                        <!-- Nhãn góc trên phải -->
+                        @if (item.IsHot || item.IsSale || item.IsNew)
+                        {
+                            <div class="position-absolute d-flex flex-wrap gap-1" style="top: 10px; right: 10px; z-index: 10">
+                                @if (item.IsHot)
+                                {
+                                    <span class="badge bg-danger rounded-pill">
+                                        <i class="bi bi-fire me-1"></i>Hot
+                                    </span>
+                                }
+                                @if (item.IsSale)
+                                {
+                                    <span class="badge bg-success rounded-pill">
+                                        <i class="bi bi-percent me-1"></i>Sale
+                                    </span>
+                                }
+                                @if (item.IsNew)
+                                {
+                                    <span class="badge bg-primary rounded-pill">
+                                        <i class="bi bi-star me-1"></i>New
+                                    </span>
+                                }
+                            </div>
+                        }
 
-        <!-- Container có thể scroll ngang -->
-        <div class="overflow-auto">
-            <div class="d-flex gap-3 pb-2" style="width: max-content;">
-                @foreach (var item in Model)
-                {
-                    <div style="min-width: 280px; max-width: 320px;">
-                        @await Component.InvokeAsync("CardProductDetail", new { productDetail = item })
+                        <a href="@Url.Action("info", "productdetail", new { id = item.Id })" class="text-decoration-none text-dark">
+                            <div class="card-img-top overflow-hidden d-flex align-items-center justify-content-center" style="height: 200px;">
+                                @if (item.Image != null)
+                                {
+                                    var base64String = Convert.ToBase64String(item.Image.Data);
+                                    var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
+                                    <img src="@imageSrc" alt="@item.Name" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+                                }
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-danger fw-bold">@item.Price.ToString("N0") đ</span>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
-    </section>
+    </div>
 }

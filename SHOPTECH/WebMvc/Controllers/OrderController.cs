@@ -1,4 +1,5 @@
 ﻿using Application.Dtos.OrderDtos;
+using Domain.Enity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
@@ -25,7 +26,7 @@ namespace WebMvc.Controllers
             return View();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("Detail/{id}")]
         public async Task<IActionResult> Detail(int id)
         {
             //call api to get order by id
@@ -36,6 +37,7 @@ namespace WebMvc.Controllers
                 {
                     var order = await response.Content.ReadFromJsonAsync<DetailOrderDto>();
                     ViewData["Order"] = order;
+                    return View(order);
                 }
                 else
                 {
@@ -44,9 +46,9 @@ namespace WebMvc.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["ErrorMessage"] = "Lỗi trong quá trình lấy dữ liệu";
+                return Redirect(Request.Headers["Referer"].ToString());
             }
-            return View();
         }
 
         [HttpPost("CreateOnlineOrder")]
@@ -56,6 +58,35 @@ namespace WebMvc.Controllers
             {
                 Console.WriteLine(CustomerApiString.ORDER_CREATE_ONLINE());
                 var response = await _apiService.PostAsync(CustomerApiString.ORDER_CREATE_ONLINE(), createOnlineOrderDto);
+                if (response.IsSuccessStatusCode)
+                {
+                    var order = await response.Content.ReadFromJsonAsync<DetailOrderDto>();
+                    return RedirectToAction("Detail", "Order", new { id = order.Id });
+                }
+                else
+                {
+                    throw new Exception("Lỗi khi tạo đơn hàng");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            return Redirect(Request.Headers["Referer"].ToString());
+
+        }
+
+        [HttpPost("CreateOfflineOrder")]
+        public async Task<IActionResult> CreateOfflineOrder(CreateOfflineOrderDto createOfflineOrderDto)
+        {
+            try
+            {
+                if(!ModelState.IsValid)
+                {
+                    throw new Exception("Lỗi khi tạo đơn hàng");
+                }
+                Console.WriteLine(CustomerApiString.ORDER_CREATE_OFFLINE());
+                var response = await _apiService.PostAsync(CustomerApiString.ORDER_CREATE_OFFLINE(), createOfflineOrderDto);
                 if (response.IsSuccessStatusCode)
                 {
                     var order = await response.Content.ReadFromJsonAsync<DetailOrderDto>();
@@ -98,5 +129,38 @@ namespace WebMvc.Controllers
             }
             return View();
         }
+
+        [HttpPost("Cancel")]
+        public async Task<IActionResult> Cancel(UpdateOrderDto updateOrderDto)
+        {
+            try
+            {
+                if(!ModelState.IsValid)
+                {
+                    throw new Exception();
+                }
+                updateOrderDto.Status = 8;
+                var response = await _apiService.PutAsync(CustomerApiString.ORDER_STATUS(), updateOrderDto);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new
+                    {
+                        success = true
+                    });
+                } else
+                {
+                    return Ok(new {
+                        success = false,
+                        message = "Đã xảy ra lỗi"
+                    });
+                }
+                
+            }
+            catch (Exception ex)
+            { 
+                return BadRequest();
+            }
+        }
+
     }
 }

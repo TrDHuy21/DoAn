@@ -24,6 +24,10 @@ namespace Infrastructure.Config
                 .HasMaxLength(100);
             builder.HasIndex(c => c.Name)
                 .IsUnique();
+
+            builder.Property(c => c.UrlName)
+              .IsRequired()
+              .HasMaxLength(100);
         }
     }
 }

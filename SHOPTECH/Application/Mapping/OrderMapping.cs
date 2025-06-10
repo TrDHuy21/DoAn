@@ -26,7 +26,7 @@ namespace Application.Mapping
 
             CreateMap<CreateOfflineOrderDto, Order>()
                 .ForMember(t => t.OrderDetails, o => o.Ignore())
-                .ForMember(t => t.Status, o => o.MapFrom(t => 5))
+                .ForMember(t => t.Status, o => o.MapFrom(t => 4))
                 .ForMember(t => t.OrderDate, o => o.MapFrom(t => DateTime.Now))
                 .ForMember(t => t.Type, o => o.MapFrom(t => "offline"));
 

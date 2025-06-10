@@ -1,0 +1,216 @@
+﻿@model Application.Dtos.OrderDtos.CreateOfflineOrderDto
+@using Application.Dtos.ProductDetailDtos;
+
+@{
+    ViewData["Title"] = "Checkout - Offline Order";
+    var checkoutItems = ViewData["checkoutItems"] != null ? ViewData["checkoutItems"] as List<CheckoutItem> ?? new List<CheckoutItem>() : new List<CheckoutItem>();
+    decimal totalAmount = 0; // Initialize total amount
+}
+<div class="container-fluid bg-light min-vh-100 py-4">
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="mb-0">
+                                <i class="fas fa-shopping-cart me-2"></i>
+                                Tạo Đơn Hàng Offline
+                            </h2>
+                            <div class="text-end">
+                                <div class="small opacity-75">@checkoutItems.Count sản phẩm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-controller="Order" asp-action="CreateOfflineOrder" method="post" id="checkoutForm">
+            <div class="row">
+                <!-- Order Summary -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-box me-2"></i>
+                                Tóm Tắt Đơn Hàng
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            @for (int i = 0; i < checkoutItems.Count; i++)
+                            {
+                                var item = checkoutItems[i];
+                                var totalPrice = item.ProductDetail.Price * item.Quantity;
+                                totalAmount += totalPrice;
+
+                                <div class="card mb-3 border-0 bg-light">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            @{
+                                                var base64String = Convert.ToBase64String(item.ProductDetail.Image.Data);
+                                                var imageSrc = $"data:{item.ProductDetail.Image.Type};base64,{base64String}";
+                                            }
+                                            <div class="col-md-2 col-3 text-center">
+                                                <img src="@imageSrc" class="img-fluid rounded" style="max-height: 80px; object-fit: cover;" alt="@item.ProductDetail.Name" />
+                                            </div>
+                                            <div class="col-md-6 col-9">
+                                                <h5 class="card-title mb-1">@item.ProductDetail.Name</h5>
+                                                <div class="text-muted">
+                                                    <span class="badge bg-secondary me-2">@item.ProductDetail.Price.ToString("N0") ₫</span>
+                                                    <span class="badge bg-info">SL: @item.Quantity</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-md-end text-center mt-2 mt-md-0">
+                                                <h5 class="text-success mb-0">@totalPrice.ToString("N0") ₫</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden inputs -->
+                                <input type="hidden" name="OrderDetails[@i].ProductDetailId" value="@item.ProductDetail.Id" />
+                                <input type="hidden" name="OrderDetails[@i].Quantity" value="@item.Quantity" />
+                            }
+
+                            <hr class="my-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h4 class="mb-0">Tổng Tiền:</h4>
+                                        <h4 class="mb-0 text-danger">@totalAmount.ToString("N0") ₫</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-user-friends me-2"></i>
+                                Thông Tin Khách Hàng
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Personal Information -->
+                            <div class="mb-4">
+                                <h5 class="text-muted mb-3">
+                                    <i class="fas fa-user me-2"></i>
+                                    Thông Tin Cá Nhân
+                                </h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-user me-1"></i>
+                                        Tên Khách Hàng
+                                    </label>
+                                    <input asp-for="Name" class="form-control" placeholder="Nhập tên khách hàng" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-phone me-1"></i>
+                                        Số Điện Thoại
+                                    </label>
+                                    <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        Địa Chỉ
+                                    </label>
+                                    <input asp-for="Address" class="form-control" placeholder="Nhập địa chỉ khách hàng" required />
+                                </div>
+                            </div>
+
+                            <!-- Notes Section -->
+                            <div class="mb-4">
+                                <h5 class="text-muted mb-3">
+                                    <i class="fas fa-sticky-note me-2"></i>
+                                    Ghi Chú
+                                </h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-comment me-1"></i>
+                                        Ghi Chú Khách Hàng
+                                    </label>
+                                    <textarea asp-for="CustomerNote" class="form-control" rows="2" placeholder="Ghi chú từ khách hàng..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-user-tie me-1"></i>
+                                        Ghi Chú Nhân Viên
+                                    </label>
+                                    <textarea asp-for="EmployeeNote" class="form-control" rows="2" placeholder="Ghi chú nội bộ..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Create Order Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-plus-circle me-2"></i>
+                                    Tạo Đơn Hàng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Mobile Summary (visible on small screens only) -->
+        <div class="d-lg-none mt-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h5 class="text-primary mb-2">Tổng Đơn Hàng</h5>
+                    <h3 class="text-danger mb-0">@totalAmount.ToString("N0") ₫</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Load provinces
+            $.get('/address/province', function (data) {
+                $('#provinceSelect').append($('<option>').text('--Select Province--').val(''));
+                $.each(data, function (i, p) {
+                    $('#provinceSelect').append($('<option>').val(p.id).text(p.name));
+                });
+            });
+
+            // On province change
+            $('#provinceSelect').change(function () {
+                var provinceId = $(this).val();
+                $('#districtSelect').empty().append($('<option>').text('--Select District--').val(''));
+                $('#wardSelect').empty().append($('<option>').text('--Select Ward--').val(''));
+                if (provinceId) {
+                    $.get('/address/district', { provinceId: provinceId }, function (data) {
+                        $.each(data, function (i, d) {
+                            $('#districtSelect').append($('<option>').val(d.id).text(d.name));
+                        });
+                    });
+                }
+            });
+
+            // On district change
+            $('#districtSelect').change(function () {
+                var districtId = $(this).val();
+                $('#wardSelect').empty().append($('<option>').text('--Select Ward--').val(''));
+                if (districtId) {
+                    $.get('/address/ward', { districtId: districtId }, function (data) {
+                        $.each(data, function (i, w) {
+                            $('#wardSelect').append($('<option>').val(w.id).text(w.name));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

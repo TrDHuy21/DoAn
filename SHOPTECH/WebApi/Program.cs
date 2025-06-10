@@ -1,5 +1,6 @@
 ﻿
 using System.Text;
+using Application.Models.EmailModel;
 using Application.Service.Implementation;
 using Application.Service.Interface;
 using Infrastructure.Context;
@@ -44,6 +45,10 @@ namespace WebApi
             // Add services to the container.
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            // email setting
+            builder.Services.Configure<EmailSettings>(
+                builder.Configuration.GetSection("EmailSettings"));
+
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -62,6 +67,8 @@ namespace WebApi
             builder.Services.AddTransient<IOrderService, OrderService>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IProductImageService, ProductImageService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

@@ -32,7 +32,22 @@ namespace Infrastructure.Config
             builder.Property(c => c.Name)
                .IsRequired()
                .HasMaxLength(100);
-            
+
+            builder.Property(c => c.Code)
+              .IsRequired()
+              .HasMaxLength(20);
+
+            builder.Property(c => c.UrlName)
+              .IsRequired()
+              .HasMaxLength(100);
+
+            builder.Property(c => c.ColorCode)
+              .IsRequired()
+              .HasMaxLength(10);
+
+            builder.Property(c => c.ColorName)
+              .IsRequired()
+              .HasMaxLength(20);
             //builder.HasOne(x => x.CreatedByUser)
             //  .WithMany(x => x.CreatedProductDetail)
             //  .HasForeignKey(x => x.CreatedBy)

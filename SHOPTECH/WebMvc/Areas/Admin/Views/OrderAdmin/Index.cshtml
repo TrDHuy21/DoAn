@@ -106,7 +106,7 @@
 										<tr>
 											<td>@item.Id</td>
 											<td>
-												<span class="badge bg-@GetStatusClass(item.Status) bg-lg">
+												<span class="badge bg-@GetStatusClass(item.Status) bg-lg text-light">
 													@GetStatusText(item.Status)
 												</span>
 											</td>
@@ -114,7 +114,7 @@
 												<span>@item.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
 											</td>
 											<td>
-												<span class="badge bg-@(item.Type == "online" ? "success" : "warning")">
+												<span class="text-light badge bg-@(item.Type == "online" ? "success" : "warning")">
 													@(item.Type == "online" ? "Online" : "Offline")
 												</span>
 											</td>
@@ -134,13 +134,7 @@
 												}
 											</td>
 											<td>
-												<a class="btn btn-info btn-sm">Chi tiết</a>
-												<button class="btn btn-warning btn-sm btn-update"
-														data-id="@item.Id"
-														data-status="@item.Status"
-														data-tracking="@item.TrackingCode">
-													Cập nhật
-												</button>
+												<a asp-action="Detail" asp-area="Admin" asp-controller="OrderAdmin" asp-route-id="@item.Id" class="btn btn-info btn-sm">Chi tiết</a>
 											</td>
 										</tr>
 									}
@@ -161,45 +155,6 @@
 	</div>
 </div>
 
-<!-- Modal cập nhật trạng thái -->
-<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<form id="updateForm" class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="updateModalLabel">Cập nhật đơn hàng</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<input type="hidden" name="id" />
-				<div class="mb-3">
-					<label class="form-label">Trạng thái</label>
-					<select class="form-select" name="status" required>
-						<option value="0">Chờ xác nhận</option>
-						<option value="1">Đã xác nhận</option>
-						<option value="2">Đang giao hàng</option>
-						<option value="3">Giao hàng thành công</option>
-						<option value="4">Đơn hàng thành công</option>
-						<option value="5">Giao hàng không thành công</option>
-						<option value="6">Đang hoàn hàng</option>
-						<option value="7">Hoàn hàng thành công</option>
-						<option value="8">Đã hủy</option>
-					</select>
-				</div>
-				<div class="mb-3" id="trackingCodeGroup" style="display:none;">
-					<label class="form-label">Mã vận đơn</label>
-					<input type="text" class="form-control" name="trackingCode" />
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="submit" class="btn btn-success">Lưu</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-			</div>
-		</form>
-	</div>
-</div>
-
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
@@ -210,12 +165,10 @@
 	$(document).ready(function () {
 		// Khởi tạo DataTable với tìm kiếm
 		table = $('#ordersTable').DataTable({
-			"pageLength": 10,
 			"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-			"order": [[ 0, "desc" ]],
-			"columnDefs": [
-				{ "orderable": false, "targets": 7 } // Không cho phép sắp xếp cột thao tác
-			]
+			"ordering": false,
+			"searching": false,
+			"paging": false
 		});
 
 		// Khởi tạo Modal
@@ -279,59 +232,6 @@
 				return true;
 			}
 		);
-
-		// Xử lý nút cập nhật
-		$('#ordersTable tbody').on('click', '.btn-update', function () {
-			const id = $(this).data('id');
-			const status = $(this).data('status');
-			const tracking = $(this).data('tracking');
-
-			$('#updateForm [name=id]').val(id);
-			$('#updateForm [name=status]').val(status);
-			$('#updateForm [name=trackingCode]').val(tracking || '');
-
-			// Hiển thị/ẩn trường mã vận đơn
-			$('#trackingCodeGroup').toggle(status == 2);
-
-			updateModal.show();
-		});
-
-		// Xử lý thay đổi trạng thái trong modal
-		$('#updateForm [name=status]').change(function(){
-			$('#trackingCodeGroup').toggle($(this).val() == 2);
-		});
-
-		// Xử lý submit form
-		$('#updateForm').submit(function(e){
-			e.preventDefault();
-
-			let status = $('#updateForm [name=status]').val();
-			let trackingCode = $('#updateForm [name=trackingCode]').val();
-
-			if(status == 2 && !trackingCode) {
-				alert('Vui lòng nhập mã vận đơn khi chuyển sang trạng thái Đang giao hàng!');
-				return;
-			}
-
-			const formData = $(this).serialize();
-			const orderId = $('#updateForm [name=id]').val();
-
-			$.post(`/order/${orderId}/edit`, formData)
-				.done(function(response) {
-					updateModal.hide();
-					// Reload trang để cập nhật dữ liệu mới
-					window.location.reload();
-				})
-				.fail(function(xhr, status, error) {
-					alert('Có lỗi xảy ra khi cập nhật đơn hàng: ' + error);
-				});
-		});
-
-		// Đảm bảo modal đóng hoàn toàn
-		$('#updateModal').on('hidden.bs.modal', function () {
-			$('#updateForm')[0].reset();
-			$('#trackingCodeGroup').hide();
-		});
 	});
 
 	// Helper function để lấy text status theo value

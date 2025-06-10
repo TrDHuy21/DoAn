@@ -16,6 +16,7 @@ namespace WebApi.Controllers
         private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
 
+
         public OrderApiController(IOrderService orderService, IMapper mapper)
         {
             _orderService = orderService;
@@ -80,6 +81,9 @@ namespace WebApi.Controllers
             {
                 var order = await _orderService.CreateOnlineOrder(createOrderOnlineDto);
                 var orderDto = _mapper.Map<DetailOrderDto>(order);
+
+                await _orderService.SendNewOrderNotificationForCustomerAsync(order);
+                await _orderService.SendNewOrderNotificationForAdminAsync(order);
                 return Ok(orderDto);
             }
             catch (Exception ex)
@@ -89,6 +93,44 @@ namespace WebApi.Controllers
                 Console.WriteLine(ex.InnerException);
 
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("CreateOrder/offline")]
+        [Authorize(Policy = "RequireSalerRole")]
+        public async Task<IActionResult> Offline([FromBody] CreateOfflineOrderDto createOfflineOrderDto)
+        {
+            try
+            {
+                var order = await _orderService.CreateOfflineOrder(createOfflineOrderDto);
+                var orderDto = _mapper.Map<DetailOrderDto>(order);
+
+                return Ok(orderDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.InnerException);
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("status")]
+        public async Task<IActionResult> UpdateStatus(UpdateOrderDto updateOrder)
+        {
+            try
+            {
+                var order = await _orderService.UpdateStatus(updateOrder);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Message = ex.Message
+                });
             }
         }
     }

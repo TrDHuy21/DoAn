@@ -16,7 +16,9 @@ namespace Infrastructure.Config
             builder.ToTable("Role");
             builder.HasKey(x => x.Id);
 
-          
+            builder.Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(100);
         }
     }
 }

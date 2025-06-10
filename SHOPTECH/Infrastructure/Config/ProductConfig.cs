@@ -37,7 +37,9 @@ namespace Infrastructure.Config
             builder.HasIndex(c => c.Name)
                 .IsUnique();
 
-
+            builder.Property(c => c.UrlName)
+              .IsRequired()
+              .HasMaxLength(100);
 
             //builder.HasOne(x => x.CreatedByUser)
             //  .WithMany(x => x.CreatedProduct)

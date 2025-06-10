@@ -118,5 +118,30 @@ namespace WebMvc.Areas.Admin.Controllers
                 return View(userDto);
             }
         }
+
+        [HttpPost("changeActive")]
+        public async Task<IActionResult> ChangeActive(int id,bool isActive)
+        {
+            try
+            {
+                var response =await _apiService.PutAsync(AdminApiString.USER_ADMIN_CHAGNE_ACTIVE(id), isActive);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception();
+                }
+                return Ok(new
+                {
+                    success = true,
+                });
+            } 
+            catch
+            {
+                return Ok(new
+                {
+                    success = false,
+                    message = "Đã xảy ra lỗi"
+                });
+            }
+        }
     }   
 }

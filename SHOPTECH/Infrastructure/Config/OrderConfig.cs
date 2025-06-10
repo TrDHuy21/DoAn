@@ -34,6 +34,21 @@ namespace Infrastructure.Config
             .HasForeignKey(x => x.CustomerId)
             .OnDelete(DeleteBehavior.ClientSetNull);
 
+            builder.Property(c => c.Address)
+              .IsRequired()
+              .HasMaxLength(200);
+
+            builder.Property(c => c.Phone)
+              .IsRequired()
+              .HasMaxLength(20);
+
+            builder.Property(c => c.Name)
+              .IsRequired()
+              .HasMaxLength(100);
+
+            builder.Property(c => c.TrackingCode)
+              .HasMaxLength(50);
+
         }
     }
 }

@@ -23,6 +23,14 @@ namespace Infrastructure.Config
                 .WithMany(x => x.ProductAttributes)
                 .HasForeignKey(x => x.CategoryId);
 
+            builder.Property(c => c.UrlName)
+              .IsRequired()
+              .HasMaxLength(100);
+
+            builder.Property(c => c.Name)
+              .IsRequired()
+              .HasMaxLength(100);
+
             //builder.HasOne(x => x.CreatedByUser)
             //  .WithMany(x => x.CreatedProductAttribute)
             //  .HasForeignKey(x => x.CreatedBy)

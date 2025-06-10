@@ -1,258 +1,258 @@
 ﻿@model IEnumerable<Application.Dtos.OrderDtos.IndexOrderDto>
 @{
-    ViewData["Title"] = "Danh sách đơn hàng";
+	ViewData["Title"] = "Danh sách đơn hàng";
 }
 
 @functions {
-    string GetStatusText(int? status)
-    {
-        return status switch
-        {
-            0 => "Chờ xác nhận",
-            1 => "Đã xác nhận",
-            2 => "Đang giao hàng",
-            3 => "Giao hàng thành công",
-            4 => "Đơn hàng thành công",
-            5 => "Giao hàng không thành công",
-            6 => "Đang hoàn hàng",
-            7 => "Hoàn hàng thành công",
-            8 => "Đã hủy",
-            _ => "Không xác định"
-        };
-    }
+	string GetStatusText(int? status)
+	{
+		return status switch
+		{
+			0 => "Chờ xác nhận",
+			1 => "Đã xác nhận",
+			2 => "Đang giao hàng",
+			3 => "Giao hàng thành công",
+			4 => "Đơn hàng thành công",
+			5 => "Giao hàng không thành công",
+			6 => "Đang hoàn hàng",
+			7 => "Hoàn hàng thành công",
+			8 => "Đã hủy",
+			_ => "Không xác định"
+		};
+	}
 
-    string GetStatusClass(int? status)
-    {
-        return status switch
-        {
-            0 => "warning",
-            1 => "info",
-            2 => "primary",
-            3 => "success",
-            4 => "success",
-            5 => "danger",
-            6 => "warning",
-            7 => "info",
-            8 => "secondary",
-            _ => "secondary"
-        };
-    }
+	string GetStatusClass(int? status)
+	{
+		return status switch
+		{
+			0 => "warning",
+			1 => "info",
+			2 => "primary",
+			3 => "success",
+			4 => "success",
+			5 => "danger",
+			6 => "warning",
+			7 => "info",
+			8 => "secondary",
+			_ => "secondary"
+		};
+	}
 }
 
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-6 fw-bold text-primary">
-            <i class="fas fa-list-alt me-2"></i>Danh sách đơn hàng
-        </h1>
-        <div class="d-flex gap-2">
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
-                    <i class="fas fa-filter me-2"></i>Lọc trạng thái
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Tất cả</a></li>
-                    <li><a class="dropdown-item" href="#">Chờ xác nhận</a></li>
-                    <li><a class="dropdown-item" href="#">Đang giao hàng</a></li>
-                    <li><a class="dropdown-item" href="#">Thành công</a></li>
-                    <li><a class="dropdown-item" href="#">Đã hủy</a></li>
-                </ul>
-            </div>
-            <div class="input-group" style="width: 250px;">
-                <input type="text" class="form-control" placeholder="Tìm kiếm đơn hàng...">
-                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="text-center">Mã đơn hàng</th>
-                            <th>Ngày đặt hàng</th>
-                            <th>Trạng thái</th>
-                            <th class="text-center">Mã theo dõi</th>
-                            <th class="text-end">Tổng tiền</th>
-                            <th class="text-center">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model)
-                        {
-                            <tr>
-                                <td class="text-center fw-bold">#@order.Id</td>
-                                <td>@(order.OrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
-                                <td>
-                                    <span class="badge bg-@GetStatusClass(order.Status)">
-                                        @GetStatusText(order.Status)
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    @if (!string.IsNullOrEmpty(order.TrackingCode))
-                                    {
-                                        <span class="badge bg-light text-dark">@order.TrackingCode</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Chưa có</span>
-                                    }
-                                </td>
-                                <td class="text-end fw-bold">@order.TotalAmount.ToString("N0") ₫</td>
-                                <td class="text-center">
-                                    <a href="@Url.Action("Details", new { id = order.Id })" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye me-1"></i>Chi tiết
-                                    </a>
-                                    @if (order.Status == 0)
-                                    {
-                                        <button class="btn btn-sm btn-outline-danger ms-1">
-                                            <i class="fas fa-times me-1"></i>Hủy
-                                        </button>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    @if (!Model.Any())
-    {
-        <div class="text-center py-5">
-            <div class="mb-4">
-                <i class="fas fa-box-open fa-4x text-secondary"></i>
-            </div>
-            <h3 class="fw-light mb-3">Bạn chưa có đơn hàng nào</h3>
-            <p class="text-muted mb-4">Hãy bắt đầu mua sắm để tạo đơn hàng đầu tiên của bạn</p>
-            <a href="@Url.Action("Index", "Home")" class="btn btn-primary px-4">
-                <i class="fas fa-shopping-cart me-2"></i>Mua sắm ngay
-            </a>
-        </div>
-    }
-    else
-    {
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <div class="text-muted">
-                Hiển thị <span class="fw-bold">@Model.Count()</span> trong tổng số đơn hàng
-            </div>
-            <nav>
-                <ul class="pagination mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Trước</a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Tiếp</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    }
-</div>
-
-<!-- Modal for Order Status -->
-<div class="modal fade" id="statusModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Lịch sử trạng thái đơn hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <ul class="timeline">
-                    <li class="timeline-item">
-                        <span class="timeline-badge bg-success"></span>
-                        <div class="timeline-content">
-                            <h6 class="mb-1">Đơn hàng đã đặt</h6>
-                            <p class="text-muted mb-0">25/05/2024 10:30</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="timeline-badge bg-info"></span>
-                        <div class="timeline-content">
-                            <h6 class="mb-1">Đã xác nhận</h6>
-                            <p class="text-muted mb-0">25/05/2024 11:15</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="timeline-badge bg-primary"></span>
-                        <div class="timeline-content">
-                            <h6 class="mb-1">Đang vận chuyển</h6>
-                            <p class="text-muted mb-0">25/05/2024 14:20</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="timeline-badge bg-warning"></span>
-                        <div class="timeline-content">
-                            <h6 class="mb-1">Đang giao hàng</h6>
-                            <p class="text-muted mb-0">26/05/2024 09:45</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+<link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 <style>
-    .timeline {
-        list-style: none;
-        padding: 0;
-        position: relative;
-    }
+	.timeline {
+		list-style: none;
+		padding: 0;
+		position: relative;
+	}
 
-        .timeline:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #dee2e6;
-            left: 20px;
-            margin-left: -1.5px;
-        }
+		.timeline:before {
+			content: '';
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 2px;
+			background: #dee2e6;
+			left: 20px;
+			margin-left: -1.5px;
+		}
 
-    .timeline-item {
-        margin-bottom: 15px;
-        position: relative;
-        display: flex;
-    }
+	.timeline-item {
+		margin-bottom: 15px;
+		position: relative;
+		display: flex;
+	}
 
-    .timeline-badge {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 1;
-        flex-shrink: 0;
-        margin-right: 15px;
-    }
+	.timeline-badge {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		z-index: 1;
+		flex-shrink: 0;
+		margin-right: 15px;
+	}
 
-    .timeline-content {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 10px 15px;
-        flex-grow: 1;
-    }
+	.timeline-content {
+		background: #f8f9fa;
+		border-radius: 8px;
+		padding: 10px 15px;
+		flex-grow: 1;
+	}
 
-    .table-hover tbody tr:hover {
-        background-color: rgba(13, 110, 253, 0.05);
-        cursor: pointer;
-    }
+	.table-hover tbody tr:hover {
+		background-color: rgba(13, 110, 253, 0.05);
+		cursor: pointer;
+	}
 
-    .badge {
-        padding: 0.5em 0.75em;
-        font-weight: 500;
-    }
+	.badge {
+		padding: 0.5em 0.75em;
+		font-weight: 500;
+	}
 </style>
+
+<div class="container py-5">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h1 class="display-6 fw-bold text-primary">
+			<i class="fas fa-list-alt me-2"></i>Danh sách đơn hàng
+		</h1>
+		<div class="d-flex gap-2">
+			<div class="dropdown">
+				<select class="form-select" id="statusFilter">
+					<option value="">Tất cả trạng thái</option>
+					<option value="0">Chờ xác nhận</option>
+					<option value="1">Đã xác nhận</option>
+					<option value="2">Đang giao hàng</option>
+					<option value="3">Giao hàng thành công</option>
+					<option value="4">Đơn hàng thành công</option>
+					<option value="5">Giao hàng không thành công</option>
+					<option value="6">Đang hoàn hàng</option>
+					<option value="7">Hoàn hàng thành công</option>
+					<option value="8">Đã hủy</option>
+				</select>
+			</div>
+			<div class="input-group" style="width: 250px;">
+				<input type="text" class="form-control" id="customSearch" placeholder="Tìm kiếm đơn hàng...">
+				<button class="btn btn-primary" type="button" id="searchBtn"><i class="fas fa-search"></i></button>
+			</div>
+		</div>
+	</div>
+	@if (Model.Any())
+	{
+		<div class="card shadow-sm border-0">
+			<div class="card-body p-0">
+				<div class="table-responsive">
+					<table class="table table-hover align-middle mb-0" id="indexTable">
+						<thead class="table-light">
+							<tr>
+								<th class="text-center">Mã đơn hàng</th>
+								<th>Ngày đặt hàng</th>
+								<th>Trạng thái</th>
+								<th class="text-center">Mã theo dõi</th>
+								<th class="text-end">Tổng tiền</th>
+								<th class="text-center">Hành động</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var order in Model)
+							{
+								<tr>
+									<td class="text-center fw-bold">#@order.Id</td>
+									<td>@(order.OrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+									<td>
+										<span class="badge bg-@GetStatusClass(order.Status)" data-status="@order.Status">
+											@GetStatusText(order.Status)
+										</span>
+									</td>
+									<td class="text-center">
+										@if (!string.IsNullOrEmpty(order.TrackingCode))
+										{
+											<span class="badge bg-light text-dark">@order.TrackingCode</span>
+										}
+										else
+										{
+											<span class="text-muted">Chưa có</span>
+										}
+									</td>
+									<td class="text-end fw-bold">@order.TotalAmount.ToString("N0") ₫</td>
+									<td class="text-center">
+										<a href="@Url.Action("Detail", new { id = order.Id })" class="btn btn-sm btn-outline-primary">
+											<i class="fas fa-eye me-1"></i>Chi tiết
+										</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+
+
+	@if (!Model.Any())
+	{
+		<div class="text-center py-5">
+			<div class="mb-4">
+				<i class="fas fa-box-open fa-4x text-secondary"></i>
+			</div>
+			<h3 class="fw-light mb-3">Bạn chưa có đơn hàng nào</h3>
+			<p class="text-muted mb-4">Hãy bắt đầu mua sắm để tạo đơn hàng đầu tiên của bạn</p>
+			<a href="@Url.Action("Index", "Home")" class="btn btn-primary px-4">
+				<i class="fas fa-shopping-cart me-2"></i>Mua sắm ngay
+			</a>
+		</div>
+	}
+</div>
+
+@section Scripts {
+	<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			// Khởi tạo DataTable
+			var table = $('#indexTable').DataTable({
+				"paging": false,
+				"lengthMenu": [[-1], ["Tất cả"]],
+				"pageLength": -1,
+				"searching": false,
+				"ordering": false,
+				"language": {
+					"search": "Tìm kiếm:",
+					"lengthMenu": "Hiển thị _MENU_ dòng",
+					"info": "Hiển thị _START_ đến _END_ của _TOTAL_ đơn hàng",
+					"infoEmpty": "Hiển thị 0 đến 0 của 0 đơn hàng",
+					"infoFiltered": "(lọc từ _MAX_ tổng số đơn hàng)",
+					"emptyTable": "Không có dữ liệu trong bảng",
+					"zeroRecords": "Không tìm thấy kết quả phù hợp",
+					"paginate": {
+						"first": "Đầu",
+						"last": "Cuối",
+						"next": "Sau",
+						"previous": "Trước"
+					}
+				},
+			});
+
+			// Bộ lọc theo trạng thái
+			$('#statusFilter').on('change', function() {
+				const selectedStatus = this.value;
+
+				if (selectedStatus === '') {
+					// Hiển thị tất cả
+					table.column(2).search('').draw();
+				} else {
+					// Lọc theo trạng thái được chọn
+					console.log(getStatusTextByValue(selectedStatus))
+					table.column(2).search(getStatusTextByValue(selectedStatus)).draw();
+				}
+			});
+
+			// Tìm kiếm tùy chỉnh
+			$('#customSearch').on('change', function() {
+				table.column(0).search(this.value).draw();
+			});
+		});
+
+		// Helper function để lấy text status theo value
+		function getStatusTextByValue(value) {
+			const statusMap = {
+				'0': 'Chờ xác nhận',
+				'1': 'Đã xác nhận',
+				'2': 'Đang giao hàng',
+				'3': 'Giao hàng thành công',
+				'4': 'Đơn hàng thành công',
+				'5': 'Giao hàng không thành công',
+				'6': 'Đang hoàn hàng',
+				'7': 'Hoàn hàng thành công',
+				'8': 'Đã hủy'
+			};
+			return statusMap[value] || '';
+		}
+	</script>
+}

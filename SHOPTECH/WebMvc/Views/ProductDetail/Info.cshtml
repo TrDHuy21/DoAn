@@ -116,7 +116,7 @@
 											<span class="badge bg-light text-dark border me-2 mb-2">@att.Value</span>
 										}
 										<br />
-										<strong class="text-danger">@item.Price</strong>
+										<strong class="text-danger">@item.Price.ToString("N0") đ</strong>
 									</div>
 								</div>
 							</div>
@@ -133,7 +133,7 @@
 						<i class="fas fa-cart-plus"></i>
 					</button>
 				</form>
-				<button class="btn btn-danger flex-grow-1">
+				<button class="btn btn-danger flex-grow-1" id="muaNgayBtn" product-id="@productDetail.Id">
 					MUA NGAY
 					<small class="d-block">(Giao tận nhà hoặc nhận tại cửa hàng)</small>
 				</button>
@@ -172,6 +172,33 @@
 		@await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = categoryName, filter = "issale", name = "Các sản đang giảm giá" })
 	</div>
 </div>
-
+@section Scripts {
 <script src="~/js/ProductSlider.js"></script>
+<script>
+	$(document).ready(function() {
+		   $('#muaNgayBtn').on('click', function(e) {
+			   const productId = $(this).attr('product-id');
+			   const requestData = [{
+						productDetailId: parseInt(productId),
+						quantity: 1
+					}];
+				
+				$.ajax({
+					url: '/Cart/Checkout-online',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(requestData),
+					success: function(response) {
+						document.open();
+						document.write(response);
+						document.close();
+					},
+					error: function() {
+						showNotification("Đã xảy ra lỗi khi xử lý đơn hàng!");
+					}
+				});
+		   })
+	})
+</script>
+}
 

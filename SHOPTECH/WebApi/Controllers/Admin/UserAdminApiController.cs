@@ -125,7 +125,7 @@ namespace WebApi.Controllers.Admin
         }
 
         [HttpPut("ChangeActive/{id}")]
-        public async Task<IActionResult> ChangeActive(int id, bool isActive)
+        public async Task<IActionResult> ChangeActive(int id,[FromBody] bool isActive)
         {
             try
             {

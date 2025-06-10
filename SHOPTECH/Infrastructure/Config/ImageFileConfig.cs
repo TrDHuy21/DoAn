@@ -18,6 +18,10 @@ namespace Infrastructure.Config
 
             builder.Property(c => c.Id)
                 .UseIdentityColumn();
+
+            builder.Property(c => c.Name)
+              .IsRequired()
+              .HasMaxLength(100);
         }
     }
 }

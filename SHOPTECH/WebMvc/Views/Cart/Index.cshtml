@@ -1,7 +1,11 @@
-﻿`@using Application.Dtos.CartDtos
+﻿@using Application.Dtos.CartDtos
+@using System.Security.Claims
+@inject IHttpContextAccessor _httpContextAccessor
 @{
 	ViewData["Title"] = "Giỏ hàng của bạn";
 	var cartItems = ViewData["cartItems"] != null ? ViewData["cartItems"] as List<CartDto> : new List<CartDto>();
+	var user = _httpContextAccessor.HttpContext?.User;
+	string userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
 }
 <h2>Giỏ hàng của bạn</h2>
 @if (cartItems.Any())
@@ -238,9 +242,10 @@ else
 					showNotification("Vui lòng chọn ít nhất một sản phẩm để mua hàng!");
 					return;
 				}
+				let role = @Html.Raw(Json.Serialize(@userRole));
 
 				$.ajax({
-					url: '/Cart/Checkout',
+					url: role === "Customer" ? '/Cart/Checkoutonline' : '/Cart/Checkoutoffline',
 					type: 'POST',
 					contentType: 'application/json',
 					data: JSON.stringify(selectedItems),

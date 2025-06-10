@@ -57,11 +57,13 @@ namespace WebMvc.Models
 
         // order
         public static string ORDER_ADMIN() => BASE_URL + "/OrderAdminApi";
+        public static string ORDER_ADMIN(int id) => BASE_URL + "/OrderAdminApi/"+id;
 
         // user
         public static string USER_ADMIN() => BASE_URL + "/UserAdminApi";
         public static string USER_ADMIN(int id) => USER_ADMIN() + "/" + id;
         public static string USER_ADMIN_PROFILE() => USER_ADMIN() + "/profile";
+        public static string USER_ADMIN_CHAGNE_ACTIVE(int id) => USER_ADMIN() + "/changeActive/"+id;
 
         // product image admin
         public static string PRODUCT_IMAGE_ADMIN() => BASE_URL + "/ProductImageAdminApi";
@@ -71,6 +73,9 @@ namespace WebMvc.Models
         public static string PRODUCT_IMAGE_ADMIN_DELETE() => PRODUCT_IMAGE_ADMIN();
         public static string PRODUCT_IMAGE_ADMIN_GETALL() => PRODUCT_IMAGE_ADMIN();
 
+
+        // statistics
+        public static string STATISTICS_ADMIN_DOANHTHUTHANG() => BASE_URL + "/StatisticsAdminApi/doanhthuthang";
 
     }
 }

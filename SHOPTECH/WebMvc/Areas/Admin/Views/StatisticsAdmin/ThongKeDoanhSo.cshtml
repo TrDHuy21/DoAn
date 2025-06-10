@@ -1,0 +1,937 @@
+﻿
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #3498db;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .top-list {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .top-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+        .top-item:last-child {
+            border-bottom: none;
+        }
+
+    .rank-badge {
+        background: #3498db;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+        .rank-badge.gold {
+            background: #f39c12;
+        }
+
+        .rank-badge.silver {
+            background: #95a5a6;
+        }
+
+        .rank-badge.bronze {
+            background: #e67e22;
+        }
+
+    .date-filter {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .employee-table {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .table th {
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        border-color: #ecf0f1;
+    }
+</style>
+<div class="dashboard-header">
+        <div class="container">
+            <h1 class="text-center"><i class="fas fa-chart-line"></i> Dashboard Thống Kê Bán Hàng</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Bộ lọc thời gian -->
+        <div class="row">
+            <div class="col-12">
+                <div class="date-filter">
+                    <h5><i class="fas fa-calendar-alt"></i> Chọn Thời Gian</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Tháng/Năm Bắt Đầu:</label>
+                            <input type="month" class="form-control" id="startDate" value="2025-01">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Tháng/Năm Kết Thúc:</label>
+                            <input type="month" class="form-control" id="endDate" value="2025-06">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary" onclick="updateData()">
+                                <i class="fas fa-search"></i> Cập Nhật
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần 1: Tổng Quan -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-chart-pie"></i> Phần 1: Tổng Quan</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRevenue">2.5 tỷ</div>
+                    <div class="stat-label">Tổng Doanh Thu</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-success" id="onlineRevenue">1.8 tỷ</div>
+                    <div class="stat-label">Doanh Thu Online</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-info" id="offlineRevenue">700 triệu</div>
+                    <div class="stat-label">Doanh Thu Offline</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrders">15,245</div>
+                    <div class="stat-label">Tổng Đơn Hàng</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-success" id="onlineOrders">12,180</div>
+                    <div class="stat-label">Đơn Hàng Online</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-info" id="offlineOrders">3,065</div>
+                    <div class="stat-label">Đơn Hàng Offline</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-container">
+                    <h5><i class="fas fa-area-chart"></i> Biểu Đồ Doanh Số Theo Tháng</h5>
+                    <canvas id="monthlyRevenueChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần 2: Thông Tin Đơn Hàng Online -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-shopping-cart"></i> Phần 2: Thông Tin Đơn Hàng Online</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCustomers">8,456</div>
+                    <div class="stat-label">Tổng Người Mua</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-warning" id="oldCustomers">5,234</div>
+                    <div class="stat-label">Người Mua Cũ</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-success" id="newCustomers">3,222</div>
+                    <div class="stat-label">Người Mua Mới</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-danger" id="cancelledOrders">1,456</div>
+                    <div class="stat-label">Đơn Bị Hủy</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-danger" id="cancelRate">11.9%</div>
+                    <div class="stat-label">Tỷ Lệ Bị Hủy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-container">
+                    <h5><i class="fas fa-line-chart"></i> Số Lượng Đơn Hàng Online Theo Tháng</h5>
+                    <canvas id="onlineOrdersChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần 3: Thông Tin Doanh Số Nhân Viên -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-users"></i> Phần 3: Thông Tin Doanh Số Nhân Viên</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="employee-table">
+                    <h5><i class="fas fa-list"></i> Danh Sách Doanh Số Nhân Viên</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tên Nhân Viên</th>
+                                <th>Doanh Số</th>
+                                <th>Đơn Hàng</th>
+                                <th>Tỷ Lệ Hoàn Thành</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTable">
+                            <tr>
+                                <td>Nguyễn Văn A</td>
+                                <td>245 triệu</td>
+                                <td>156</td>
+                                <td><span class="badge badge-success">98%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Trần Thị B</td>
+                                <td>198 triệu</td>
+                                <td>134</td>
+                                <td><span class="badge badge-success">95%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Lê Văn C</td>
+                                <td>167 triệu</td>
+                                <td>98</td>
+                                <td><span class="badge badge-warning">89%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Phạm Thị D</td>
+                                <td>143 triệu</td>
+                                <td>87</td>
+                                <td><span class="badge badge-warning">85%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Hoàng Văn E</td>
+                                <td>122 triệu</td>
+                                <td>76</td>
+                                <td><span class="badge badge-danger">78%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Vũ Thị F</td>
+                                <td>108 triệu</td>
+                                <td>65</td>
+                                <td><span class="badge badge-danger">72%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Đỗ Văn G</td>
+                                <td>89 triệu</td>
+                                <td>54</td>
+                                <td><span class="badge badge-danger">68%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Bùi Thị H</td>
+                                <td>76 triệu</td>
+                                <td>43</td>
+                                <td><span class="badge badge-danger">65%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-container">
+                    <h5><i class="fas fa-bar-chart"></i> Doanh Số Nhân Viên Theo Tháng</h5>
+                    <canvas id="employeeSalesChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần 4: Thông Tin Sản Phẩm - Danh Mục -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title"><i class="fas fa-box"></i> Phần 4: Thông Tin Sản Phẩm - Danh Mục</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="top-list">
+                    <h5><i class="fas fa-trophy"></i> Top 5 Sản Phẩm Bán Chạy (Số Lượng)</h5>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge gold">1</div>
+                            <span>iPhone 15 Pro Max</span>
+                        </div>
+                        <span class="text-success font-weight-bold">2,456 sp</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge silver">2</div>
+                            <span>Samsung Galaxy S24</span>
+                        </div>
+                        <span class="text-success font-weight-bold">1,987 sp</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge bronze">3</div>
+                            <span>MacBook Air M3</span>
+                        </div>
+                        <span class="text-success font-weight-bold">1,654 sp</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge">4</div>
+                            <span>iPad Pro 12.9</span>
+                        </div>
+                        <span class="text-success font-weight-bold">1,432 sp</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge">5</div>
+                            <span>AirPods Pro 2</span>
+                        </div>
+                        <span class="text-success font-weight-bold">1,234 sp</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="top-list">
+                    <h5><i class="fas fa-medal"></i> Top 3 Danh Mục Bán Chạy (Số Lượng)</h5>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge gold">1</div>
+                            <span>Điện Thoại</span>
+                        </div>
+                        <span class="text-success font-weight-bold">5,678 sp</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge silver">2</div>
+                            <span>Laptop</span>
+                        </div>
+                        <span class="text-success font-weight-bold">3,456 sp</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge bronze">3</div>
+                            <span>Phụ Kiện</span>
+                        </div>
+                        <span class="text-success font-weight-bold">2,890 sp</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="top-list">
+                    <h5><i class="fas fa-dollar-sign"></i> Top 5 Sản Phẩm Doanh Thu Cao</h5>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge gold">1</div>
+                            <span>iPhone 15 Pro Max</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">786 triệu</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge silver">2</div>
+                            <span>MacBook Pro M3</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">654 triệu</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge bronze">3</div>
+                            <span>Samsung Galaxy S24 Ultra</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">432 triệu</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge">4</div>
+                            <span>iPad Pro 12.9</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">387 triệu</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge">5</div>
+                            <span>MacBook Air M3</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">298 triệu</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="top-list">
+                    <h5><i class="fas fa-chart-bar"></i> Top 3 Danh Mục Doanh Thu Cao</h5>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge gold">1</div>
+                            <span>Điện Thoại</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">1.2 tỷ</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge silver">2</div>
+                            <span>Laptop</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">890 triệu</span>
+                    </div>
+                    <div class="top-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rank-badge bronze">3</div>
+                            <span>Tablet</span>
+                        </div>
+                        <span class="text-primary font-weight-bold">456 triệu</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-chart-bar"></i> Tỷ Lệ Doanh Thu Theo Danh Mục</h5>
+                    <canvas id="categoryRevenueChart" height="200"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-chart-bar"></i> Tỷ Lệ Doanh Thu Theo Khoảng Giá</h5>
+                    <canvas id="priceRangeChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-line-chart"></i> Số Lượng Bán Theo Khoảng Giá Theo Tháng</h5>
+                    <canvas id="priceRangeTrendChart" height="200"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-scatter-plot"></i> Quan Hệ Giá - Số Lượng - Doanh Số</h5>
+                    <canvas id="priceQuantityRelationChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+@section Scripts {
+
+     <script>
+        var onlineOrdersData = {
+            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+            data: [890, 952, 1024, 987, 1156, 1289, 1345, 1456, 1398, 1567, 1634, 1789]
+        };
+
+        var employeeData = {
+            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+            datasets: [
+                {
+                    label: 'Nguyễn Văn A',
+                    data: [25, 32, 28, 35, 42, 38],
+                    backgroundColor: '#3498db'
+                },
+                {
+                    label: 'Trần Thị B',
+                    data: [22, 28, 25, 31, 35, 33],
+                    backgroundColor: '#2ecc71'
+                },
+                {
+                    label: 'Lê Văn C',
+                    data: [18, 23, 21, 26, 29, 27],
+                    backgroundColor: '#e74c3c'
+                },
+                {
+                    label: 'Phạm Thị D',
+                    data: [15, 19, 17, 22, 25, 23],
+                    backgroundColor: '#f39c12'
+                },
+                {
+                    label: 'Hoàng Văn E',
+                    data: [12, 16, 14, 18, 21, 19],
+                    backgroundColor: '#9b59b6'
+                }
+            ]
+        };
+
+        var categoryData = {
+            labels: ['Điện Thoại', 'Laptop', 'Tablet', 'Phụ Kiện', 'Đồng Hồ'],
+            data: [48, 35.6, 18.2, 12.8, 8.4]
+        };
+
+        var priceRangeData = {
+            labels: ['0-5 triệu', '5-10 triệu', '10-15 triệu', '15-20 triệu', '20+ triệu'],
+            data: [15.2, 28.5, 32.1, 18.7, 5.5]
+        };
+
+        // bieu do doanh so theo thang
+        const EmonthlyRevenueChart = document.getElementById('monthlyRevenueChart').getContext('2d');
+        let monthlyRevenueChart = new Chart(EmonthlyRevenueChart, {
+            type: 'line',
+            data: {
+                labels: null,
+                datasets: [
+                    {
+                        label: 'Online',
+                        data: null,
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Offline',
+                        data:null,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatNumber(value); // Sử dụng hàm formatNumber
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + formatNumber(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Biểu đồ đơn hàng online
+        const onlineOrdersChart = document.getElementById('onlineOrdersChart').getContext('2d');
+            new Chart(onlineOrdersChart, {
+                type: 'line',
+                data: {
+                    labels: onlineOrdersData.labels,
+                    datasets: [{
+                        label: 'Đơn hàng online',
+                        data: onlineOrdersData.data,
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#e74c3c',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' đơn';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+
+        // Biểu đồ doanh số nhân viên
+         const employeeSalesChart = document.getElementById('employeeSalesChart').getContext('2d');
+            new Chart(employeeSalesChart, {
+                type: 'bar',
+                data: employeeData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' triệu';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        // Biểu đồ doanh thu theo danh mục (Horizontal Bar)
+         const categoryRevenueChart = document.getElementById('categoryRevenueChart').getContext('2d');
+            new Chart(categoryRevenueChart, {
+                type: 'bar',
+                data: {
+                    labels: categoryData.labels,
+                    datasets: [{
+                        label: 'Tỷ lệ doanh thu (%)',
+                        data: categoryData.data,
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#9b59b6'
+                        ]
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        // Biểu đồ khoảng giá (Horizontal Bar)
+         const priceRangeChart = document.getElementById('priceRangeChart').getContext('2d');
+            new Chart(priceRangeChart, {
+                type: 'bar',
+                data: {
+                    labels: priceRangeData.labels,
+                    datasets: [{
+                        label: 'Tỷ lệ doanh thu (%)',
+                        data: priceRangeData.data,
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#9b59b6'
+                        ]
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        // Biểu đồ xu hướng khoảng giá
+         const priceRangeTrendChart = document.getElementById('priceRangeTrendChart').getContext('2d');
+            new Chart(priceRangeTrendChart, {
+                type: 'line',
+                data: {
+                    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+                    datasets: [
+                        {
+                            label: '0-5 triệu',
+                            data: [120, 135, 128, 142, 156, 149],
+                            borderColor: '#3498db',
+                            tension: 0.4
+                        },
+                        {
+                            label: '5-10 triệu',
+                            data: [89, 95, 102, 98, 106, 112],
+                            borderColor: '#2ecc71',
+                            tension: 0.4
+                        },
+                        {
+                            label: '10-15 triệu',
+                            data: [67, 72, 69, 78, 85, 82],
+                            borderColor: '#e74c3c',
+                            tension: 0.4
+                        },
+                        {
+                            label: '15-20 triệu',
+                            data: [45, 52, 48, 56, 63, 59],
+                            borderColor: '#f39c12',
+                            tension: 0.4
+                        },
+                        {
+                            label: '20+ triệu',
+                            data: [23, 28, 25, 31, 35, 33],
+                            borderColor: '#9b59b6',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' sp';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        // Biểu đồ mối quan hệ giá-số lượng (Bubble Chart)
+        const priceQuantityRelationChart = document.getElementById('priceQuantityRelationChart').getContext('2d');
+            new Chart(priceQuantityRelationChart, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Khoảng giá',
+                        data: [
+                            {x: 2.5, y: 1456, r: 15}, // 0-5 triệu: giá trung bình 2.5, số lượng bán 1456, số sản phẩm 15
+                            {x: 7.5, y: 892, r: 25},  // 5-10 triệu
+                            {x: 12.5, y: 634, r: 18}, // 10-15 triệu
+                            {x: 17.5, y: 345, r: 12}, // 15-20 triệu
+                            {x: 25, y: 156, r: 8}     // 20+ triệu
+                        ],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.6)',
+                            'rgba(46, 204, 113, 0.6)',
+                            'rgba(231, 76, 60, 0.6)',
+                            'rgba(243, 156, 18, 0.6)',
+                            'rgba(155, 89, 182, 0.6)'
+                        ],
+                        borderColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#9b59b6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Giá Trung Bình (triệu đồng)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Số Lượng Bán Được'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.parsed;
+                                    return `Giá: ${point.x} triệu, Số lượng bán: ${point.y}, Số sản phẩm: ${context.raw.r}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+        // Update data function
+        function updateData() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const [beginYear, beginMonth] = startDate.split('-');
+            const [endYear, endMonth] = endDate.split('-');
+
+             loadMonthlyRevenueChart(beginMonth, beginYear, endMonth, endYear);
+
+        }
+
+        // Format number function
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(1) + ' tỷ';
+            } else if (num >= 1000000) {
+                return (num / 1000000).toFixed(0) + ' triệu';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(0) + 'k';
+            }
+            return num.toString();
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateData();
+        });
+
+        // Responsive chart resize
+        window.addEventListener('resize', function() {
+            Chart.helpers.each(Chart.instances, function(instance) {
+                instance.resize();
+            });
+        });
+
+        async function loadMonthlyRevenueChart(beginMonth, beginYear, endMonth, endYear) {
+            try {
+                    let response = await fetch(`http://localhost:5114/doanhthuvadonhang?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                    if (!response.ok) throw new Error('Network response was not ok');
+
+                    let data = await response.json();
+                    console.log(data);
+                    monthlyRevenueChart.data.labels = data.labels;
+                    monthlyRevenueChart.data.datasets[0].data = data.online;
+                    monthlyRevenueChart.data.datasets[1].data = data.offline;
+                    monthlyRevenueChart.update();
+
+                    const totalOnline = data.online.reduce((sum, value) => sum + value, 0);
+                    const totalOffline = data.offline.reduce((sum, value) => sum + value, 0);
+                    const totalRevenue = totalOnline + totalOffline;
+
+                    // Cập nhật các stat-number với format
+                    document.getElementById('totalRevenue').textContent = formatNumber(totalRevenue);
+                    document.getElementById('onlineRevenue').textContent = formatNumber(totalOnline);
+                    document.getElementById('offlineRevenue').textContent = formatNumber(totalOffline);
+
+                } catch (error) {
+                    console.error('Error loading revenue chart:', error);
+                    Toast('Không thể tải dữ liệu biểu đồ doanh thu');
+                }
+        }
+    </script>
+}
+    
+
