@@ -50,6 +50,14 @@ namespace Application.Service.Implementation
                         .Where(o => o.Type == "offline")
                             .SelectMany(o => o.OrderDetails)
                             .Sum(od => od.Quantity * od.Price),
+                    SoLuongOffline = monthOrders
+                        .Where(o => o.Type == "offline")
+                            .SelectMany(o => o.OrderDetails)
+                            .Count(),
+                    SoLuongOnline = monthOrders
+                        .Where(o => o.Type == "offline")
+                            .SelectMany(o => o.OrderDetails)
+                            .Count(),
                 });
 
                 currentDate = currentDate.AddMonths(1);
@@ -106,58 +114,64 @@ namespace Application.Service.Implementation
             return null;
         }
 
-        public async Task<List<ThongKeNhanVien>> ThongKeNhanVien(int beginMonth, int beginYear, int endMonth, int endYear)
+        public async Task<dynamic> ThongKeNhanVien(int beginMonth, int beginYear, int endMonth, int endYear)
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
+
+            Dictionary<string, int> labels = new Dictionary<string, int> ();
+            int labelsIndex = 0;
+            for (int year = beginYear; year <= endYear; year++)
+            {
+                int startMonth = (year == beginYear) ? beginMonth : 1;
+                int endMonthForYear = (year == endYear) ? endMonth : 12;
+
+                for (int month = startMonth; month <= endMonthForYear; month++)
+                {
+                    labels.Add(($"{month}-{year}"), labelsIndex);
+                    labelsIndex++;
+                }
+            }
+
+            Dictionary<int, ThongKeNhanVien> employees = new Dictionary<int, ThongKeNhanVien>();
+
 
             var startDate = new DateTime(beginYear, beginMonth, 1);
             var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
 
-            var employees = await _unitOfWork.Users.GetAll()
-                .Where(u => u.RoleId == 2)
-                .Include(u => u.EmployeeOrders)
-                    .ThenInclude(o => o.OrderDetails)
+            var orders = await _unitOfWork.Orders.GetAll()
+                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.Type=="offline")
+                .Include(u => u.Employee)
+                .Include(o => o.OrderDetails)
                 .ToListAsync();
 
-            var rs = new List<ThongKeNhanVien>();
-
-            foreach (var e in employees)
+            foreach(var o in orders)
             {
-                string TenNhanVien = e.Name;
-                decimal DoanhSo = e.EmployeeOrders
-                            .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
-                            .SelectMany(o => o.OrderDetails)
-                            .Sum(od => od.Quantity * od.Price);
-                int DonHang = e.EmployeeOrders.Count(o => o.OrderDate >= startDate && o.OrderDate <= endDate);
-                double TyLeHoanThanh = e.EmployeeOrders.Any() ?
-                    (double)e.EmployeeOrders.Count(o => o.Status == 4) / e.EmployeeOrders.Count() * 100 : 0;
+                int month = o.OrderDate.Month;
+                int year = o.OrderDate.Year;
 
-                ThongKeNhanVien a = new()
+                if (!employees.ContainsKey(o.EmployeeId.Value))
                 {
-                    TenNhanVien = TenNhanVien,
-                    DoanhSo = DoanhSo,
-                    DonHang = DonHang,
-                    TyLeHoanThanh = TyLeHoanThanh
-                };
-                rs.Add(a);
+                    employees.Add(o.EmployeeId.Value, new ThongKeNhanVien()
+                    {
+                        TenNhanVien = o.Employee.Username + " - " + o.Employee.Name,
+                        DoanhSo = new List<decimal>(new decimal[labels.Count]),
+                        DonHang = new List<int>(new int[labels.Count])
+                    });
 
+                }
+
+                employees[o.EmployeeId.Value].DoanhSo[labels[$"{month}-{year}"]] += o.OrderDetails.Sum(od => od.Price*od.Quantity);
+                employees[o.EmployeeId.Value].DonHang[labels[$"{month}-{year}"]]++;
             }
-            return rs;
 
-            //return employees.Select(e => new ThongKeNhanVien
-            //{
-            //    TenNhanVien = e.Name,
-            //    DoanhSo = e.EmployeeOrders
-            //                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
-            //                .SelectMany(o => o.OrderDetails)
-            //                .Sum(od => od.Quantity * od.Price),
-            //    DonHang = e.EmployeeOrders.Count(o => o.OrderDate >= startDate && o.OrderDate <= endDate),
-            //    TyLeHoanThanh = e.EmployeeOrders.Any() ?
-            //        (double)e.EmployeeOrders.Count(o => o.Status == 4) / e.EmployeeOrders.Count() * 100 : 0
-            //}).ToList();
+            return new
+            {
+                Labels = labels.Keys,
+                Employees = employees.Values.ToList(),
+            };
         }
 
-        public async Task<ThongKeSanPham> ThongKeSanPham(int beginMonth, int beginYear, int endMonth, int endYear)
+        public async Task<ThongKeSanPham> ThongKeTopSanPham(int beginMonth, int beginYear, int endMonth, int endYear)
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
 
@@ -201,7 +215,7 @@ namespace Application.Service.Implementation
             };
         }
 
-        public async Task<ThongKeDanhMuc> ThongKeDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear)
+        public async Task<ThongKeDanhMuc> ThongKeTopDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear)
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
 
@@ -356,5 +370,6 @@ namespace Application.Service.Implementation
                 endYear = maxYear;
             }
         }
+
     }
 }

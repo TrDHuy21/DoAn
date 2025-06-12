@@ -10,7 +10,10 @@ namespace Application.Models.StatisticsModel
     {
         public string Thang {  get; set; }
         public decimal DoanhThuOnline { get; set; }
+        public int SoLuongOnline { get; set; }
         public decimal DoanhThuOffline { get; set; }
+        public int SoLuongOffline { get; set; }
+
 
     }
 }

@@ -9,8 +9,8 @@ namespace Application.Models.StatisticsModel
     public class ThongKeNhanVien
     {
         public string TenNhanVien { get; set; }
-        public decimal DoanhSo { get; set; }
-        public int DonHang { get; set; }
-        public double TyLeHoanThanh { get; set; }
+        public List<decimal> DoanhSo { get; set; }
+        public List<int> DonHang { get; set; }
+
     }
 }

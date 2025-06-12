@@ -17,13 +17,13 @@ namespace Application.Service.Interface
         Task<ThongKeKhachHang> ThongKeKhachHang(int beginMonth, int beginYear, int endMonth, int endYear);
 
         // Thống kê nhân viên
-        Task<List<ThongKeNhanVien>> ThongKeNhanVien(int beginMonth, int beginYear, int endMonth, int endYear);
+        Task<dynamic> ThongKeNhanVien(int beginMonth, int beginYear, int endMonth, int endYear);
 
         // Thống kê sản phẩm
-        Task<ThongKeSanPham> ThongKeSanPham(int beginMonth, int beginYear, int endMonth, int endYear);
+        Task<ThongKeSanPham> ThongKeTopSanPham(int beginMonth, int beginYear, int endMonth, int endYear);
 
         // Thống kê danh mục
-        Task<ThongKeDanhMuc> ThongKeDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear);
+        Task<ThongKeDanhMuc> ThongKeTopDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear);
 
         // Thống kê khoảng giá
         Task<ThongKeKhoangGia> ThongKeKhoangGia(int beginMonth, int beginYear, int endMonth, int endYear);

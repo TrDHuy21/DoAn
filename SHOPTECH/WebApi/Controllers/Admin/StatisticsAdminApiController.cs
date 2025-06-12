@@ -107,8 +107,8 @@ namespace WebApi.Controllers.Admin
         /// <summary>
         /// Lấy thống kê sản phẩm theo khoảng thời gian
         /// </summary>
-        [HttpGet("thongkesanpham")]
-        public async Task<IActionResult> GetThongKeSanPham(
+        [HttpGet("thongketopsanpham")]
+        public async Task<IActionResult> GetThongKeTopSanPham(
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
@@ -116,7 +116,7 @@ namespace WebApi.Controllers.Admin
         {
             try
             {
-                var result = await _statisticsService.ThongKeSanPham(
+                var result = await _statisticsService.ThongKeTopSanPham(
                     beginMonth, beginYear, endMonth, endYear);
                 return Ok(result);
             }
@@ -129,8 +129,8 @@ namespace WebApi.Controllers.Admin
         /// <summary>
         /// Lấy thống kê danh mục theo khoảng thời gian
         /// </summary>
-        [HttpGet("thongkedanhmuc")]
-        public async Task<IActionResult> GetThongKeDanhMuc(
+        [HttpGet("thongketopdanhmuc")]
+        public async Task<IActionResult> GetThongKeTopDanhMuc(
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
@@ -138,7 +138,7 @@ namespace WebApi.Controllers.Admin
         {
             try
             {
-                var result = await _statisticsService.ThongKeDanhMuc(
+                var result = await _statisticsService.ThongKeTopDanhMuc(
                     beginMonth, beginYear, endMonth, endYear);
                 return Ok(result);
             }
@@ -192,9 +192,9 @@ namespace WebApi.Controllers.Admin
                         beginMonth, beginYear, endMonth, endYear),
                     ThongKeNhanVien = await _statisticsService.ThongKeNhanVien(
                         beginMonth, beginYear, endMonth, endYear),
-                    ThongKeSanPham = await _statisticsService.ThongKeSanPham(
+                    ThongKeSanPham = await _statisticsService.ThongKeTopSanPham(
                         beginMonth, beginYear, endMonth, endYear),
-                    ThongKeDanhMuc = await _statisticsService.ThongKeDanhMuc(
+                    ThongKeDanhMuc = await _statisticsService.ThongKeTopDanhMuc(
                         beginMonth, beginYear, endMonth, endYear),
                     ThongKeKhoangGia = await _statisticsService.ThongKeKhoangGia(
                         beginMonth, beginYear, endMonth, endYear)
