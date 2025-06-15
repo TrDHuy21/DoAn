@@ -157,7 +157,7 @@ namespace Application.Service.Implementation
                 .ThenInclude(x => x.Province)
                 .Include(x => x.OrderDetails)
                 .Where(x => status == null ? true : status == x.Status)
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.OrderDate)
                 .ToListAsync();
 
             return orders;
@@ -174,7 +174,7 @@ namespace Application.Service.Implementation
                 .Include(x => x.OrderDetails)
                 .ThenInclude(x => x.ProductDetail)
                 .Where(x => x.CustomerId == customerId)
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.OrderDate)
                 .ToListAsync();
 
             return orders;
@@ -192,7 +192,7 @@ namespace Application.Service.Implementation
                 .Include(x => x.OrderDetails)
                 .ThenInclude(x => x.ProductDetail)
                 .Where(x => x.EmployeeId == employeeId)
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.OrderDate)
                 .ToListAsync();
 
             return orders;

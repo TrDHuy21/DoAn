@@ -292,7 +292,7 @@
                     </a>
 
                     <!-- Nút cập nhật trạng thái -->
-                    @if (Model.Status != 8 && Model.Status != 4) // Không hiển thị với đơn đã hủy hoặc thành công
+                    @if (Model.Status != 8 && Model.Status != 4 && Model.Status != 5) // Không hiển thị với đơn đã hủy hoặc thành công
                     {
                         <button type="button" class="btn btn-warning me-2" onclick="updateOrderStatus(@Model.Id)">
                             <i class="fas fa-edit"></i> Cập nhật trạng thái
@@ -483,7 +483,7 @@
                 2: [4, 5], // Đang giao hàng -> Đơn hàng thành công || Giao hàng không thành công
                 3: [],     // Giao hàng thành công - không thể thay đổi
                 4: [],     // Đơn hàng thành công - không thể thay đổi
-                5: [6],    // Giao hàng không thành công -> Đang hoàn hàng
+                5: [],    // Giao hàng không thành công -> Đang hoàn hàng
                 6: [7],    // Đang hoàn hàng -> Hoàn hàng thành công
                 7: [],     // Hoàn hàng thành công - không thể thay đổi
                 8: []      // Đã hủy - không thể thay đổi
