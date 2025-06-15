@@ -55,7 +55,7 @@ namespace Application.Service.Implementation
                             .SelectMany(o => o.OrderDetails)
                             .Count(),
                     SoLuongOnline = monthOrders
-                        .Where(o => o.Type == "offline")
+                        .Where(o => o.Type == "online")
                             .SelectMany(o => o.OrderDetails)
                             .Count(),
                 });
@@ -118,7 +118,7 @@ namespace Application.Service.Implementation
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
 
-            Dictionary<string, int> labels = new Dictionary<string, int> ();
+            Dictionary<string, int> labels = new Dictionary<string, int>();
             int labelsIndex = 0;
             for (int year = beginYear; year <= endYear; year++)
             {
@@ -139,12 +139,12 @@ namespace Application.Service.Implementation
             var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
 
             var orders = await _unitOfWork.Orders.GetAll()
-                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.Type=="offline")
+                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.Type == "offline")
                 .Include(u => u.Employee)
                 .Include(o => o.OrderDetails)
                 .ToListAsync();
 
-            foreach(var o in orders)
+            foreach (var o in orders)
             {
                 int month = o.OrderDate.Month;
                 int year = o.OrderDate.Year;
@@ -160,7 +160,7 @@ namespace Application.Service.Implementation
 
                 }
 
-                employees[o.EmployeeId.Value].DoanhSo[labels[$"{month}-{year}"]] += o.OrderDetails.Sum(od => od.Price*od.Quantity);
+                employees[o.EmployeeId.Value].DoanhSo[labels[$"{month}-{year}"]] += o.OrderDetails.Sum(od => od.Price * od.Quantity);
                 employees[o.EmployeeId.Value].DonHang[labels[$"{month}-{year}"]]++;
             }
 
@@ -215,7 +215,7 @@ namespace Application.Service.Implementation
             };
         }
 
-        public async Task<ThongKeDanhMuc> ThongKeTopDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear)
+        public async Task<ThongKeDanhMuc> ThongKeTopDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear, int top = -1)
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
 
@@ -238,8 +238,9 @@ namespace Application.Service.Implementation
                     SoLuong = g.Sum(od => od.Quantity)
                 })
                 .OrderByDescending(c => c.SoLuong)
-                .Take(3)
                 .ToList();
+
+          
 
             var topCategoriesByRevenue = orderDetails
                 .GroupBy(od => new { od.ProductDetail.Product.CategoryId, od.ProductDetail.Product.Category.Name })
@@ -250,8 +251,13 @@ namespace Application.Service.Implementation
                     DoanhThu = g.Sum(od => od.Quantity * od.Price)
                 })
                 .OrderByDescending(c => c.DoanhThu)
-                .Take(3)
                 .ToList();
+
+            if (top != -1)
+            {
+                topCategoriesByRevenue = topCategoriesByRevenue.Take(top).ToList();
+                topCategoriesByQuantity = topCategoriesByQuantity.Take(top).ToList();
+            }
 
             return new ThongKeDanhMuc
             {
@@ -317,6 +323,66 @@ namespace Application.Service.Implementation
             };
         }
 
+        public async Task<List<ThongKeSanPhamKhoangGia>> ThongKeSanPhamTheoKhoangGia(int beginMonth, int beginYear, int endMonth, int endYear)
+        {
+            ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
+
+            var startDate = new DateTime(beginYear, beginMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
+
+            // Define price ranges in millions
+            var priceRanges = new[]
+            {
+                new { Min = 0, Max = 5000000, Label = "0-5 triệu" },
+                new { Min = 5000000, Max = 10000000, Label = "5-10 triệu" },
+                new { Min = 10000000, Max = 15000000, Label = "10-15 triệu" },
+                new { Min = 15000000, Max = 20000000, Label = "15-20 triệu" },
+                new { Min = 20000000, Max = int.MaxValue, Label = "20+ triệu" }
+            };
+
+            // Get all products and their sales data
+            var products = await _unitOfWork.Products.GetAll()
+                .Include(p => p.ProductDetails)
+                .ToListAsync();
+
+            var orderDetails = await _unitOfWork.OrderDetails.GetAll()
+                .Where(od => od.Order.OrderDate >= startDate && od.Order.OrderDate <= endDate)
+                .Include(od => od.ProductDetail)
+                .ToListAsync();
+
+            var result = new List<ThongKeSanPhamKhoangGia>();
+
+            foreach (var range in priceRanges)
+            {
+                // Get products in this price range
+                var productsInRange = products
+                    .Where(p => p.ProductDetails.Any(pd => pd.Price >= range.Min && pd.Price < range.Max))
+                    .ToList();
+
+                // Get sales data for products in this range
+                var salesInRange = orderDetails
+                    .Where(od => od.Price >= range.Min && od.Price < range.Max)
+                    .ToList();
+
+                // Calculate statistics
+                var totalProducts = productsInRange.Count;
+                var totalSold = salesInRange.Sum(od => od.Quantity);
+                var averagePrice = salesInRange.Any() 
+                    ? salesInRange.Average(od => od.Price) 
+                    : 0;
+
+                result.Add(new ThongKeSanPhamKhoangGia
+                {
+                    KhoangGia = range.Label,
+                    GiaTrungBinh = averagePrice,
+                    TongSoLoaiSanPham = totalProducts,
+                    TongSoSanPhamBanDuoc = totalSold
+                });
+            }
+
+            return result;
+        }
+
         private void ValidateAndControlTime(ref int beginMonth, ref int beginYear, ref int endMonth, ref int endYear)
         {
 
@@ -371,5 +437,104 @@ namespace Application.Service.Implementation
             }
         }
 
+        public async Task<ThongKeDanhMuc> ThongKeDoanhThuDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear)
+        {
+            ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
+
+            var startDate = new DateTime(beginYear, beginMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
+
+            // Get all order details within the time period with related product and category information
+            var orderDetails = await _unitOfWork.OrderDetails.GetAll()
+                .Where(od => od.Order.OrderDate >= startDate && od.Order.OrderDate <= endDate)
+                .Include(od => od.ProductDetail)
+                    .ThenInclude(pd => pd.Product)
+                        .ThenInclude(p => p.Category)
+                .ToListAsync();
+
+            // Calculate revenue for each category
+            var categoryRevenue = orderDetails
+                .GroupBy(od => new
+                {
+                    CategoryId = od.ProductDetail.Product.CategoryId,
+                    CategoryName = od.ProductDetail.Product.Category.Name
+                })
+                .Select(g => new TopDanhMuc
+                {
+                    Id = g.Key.CategoryId.Value,
+                    Ten = g.Key.CategoryName,
+                    DoanhThu = g.Sum(od => od.Quantity * od.Price)
+                })
+                .OrderByDescending(c => c.DoanhThu)
+                .ToList();
+
+            // Calculate total revenue across all categories
+            decimal totalRevenue = categoryRevenue.Sum(c => c.DoanhThu);
+
+            return new ThongKeDanhMuc
+            {
+                TopDanhMucTheoDoanhThu = categoryRevenue,
+            };
+        }
+
+        public async Task<List<ThongKeSanPhamKhoangGia>> ThongKeGiaSoLuongDoanhSo(int beginMonth, int beginYear, int endMonth, int endYear)
+        {
+            ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
+
+            var startDate = new DateTime(beginYear, beginMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
+
+            // Define price ranges in millions
+            var priceRanges = new[]
+            {
+                new { Min = 0, Max = 5000000, Label = "0-5 triệu" },
+                new { Min = 5000000, Max = 10000000, Label = "5-10 triệu" },
+                new { Min = 10000000, Max = 15000000, Label = "10-15 triệu" },
+                new { Min = 15000000, Max = 20000000, Label = "15-20 triệu" },
+                new { Min = 20000000, Max = int.MaxValue, Label = "20+ triệu" }
+            };
+
+            // Get all products and their sales data
+            var products = await _unitOfWork.Products.GetAll()
+                .Include(p => p.ProductDetails)
+                .ToListAsync();
+
+            var orderDetails = await _unitOfWork.OrderDetails.GetAll()
+                .Where(od => od.Order.OrderDate >= startDate && od.Order.OrderDate <= endDate)
+                .Include(od => od.ProductDetail)
+                .ToListAsync();
+
+            var result = new List<ThongKeSanPhamKhoangGia>();
+
+            foreach (var range in priceRanges)
+            {
+                // Get products in this price range
+                var productsInRange = products
+                    .Where(p => p.ProductDetails.Any(pd => pd.Price >= range.Min && pd.Price < range.Max))
+                    .ToList();
+
+                // Get sales data for products in this range
+                var salesInRange = orderDetails
+                    .Where(od => od.Price >= range.Min && od.Price < range.Max)
+                    .ToList();
+
+                // Calculate statistics
+                var totalProducts = productsInRange.Count;
+                var totalSold = salesInRange.Sum(od => od.Quantity);
+                var averagePrice = salesInRange.Any()
+                    ? salesInRange.Average(od => od.Price)
+                    : 0;
+
+                result.Add(new ThongKeSanPhamKhoangGia
+                {
+                    KhoangGia = range.Label,
+                    GiaTrungBinh = Math.Round(averagePrice),
+                    TongSoLoaiSanPham = totalProducts,
+                    TongSoSanPhamBanDuoc = totalSold
+                });
+            }
+
+            return result;
+        }
     }
 }

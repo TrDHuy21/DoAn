@@ -134,12 +134,13 @@ namespace WebApi.Controllers.Admin
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
-            [FromQuery] int endYear = 0)
+            [FromQuery] int endYear = 0,
+            [FromQuery] int top = -1)
         {
             try
             {
                 var result = await _statisticsService.ThongKeTopDanhMuc(
-                    beginMonth, beginYear, endMonth, endYear);
+                    beginMonth, beginYear, endMonth, endYear, top);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -195,7 +196,7 @@ namespace WebApi.Controllers.Admin
                     ThongKeSanPham = await _statisticsService.ThongKeTopSanPham(
                         beginMonth, beginYear, endMonth, endYear),
                     ThongKeDanhMuc = await _statisticsService.ThongKeTopDanhMuc(
-                        beginMonth, beginYear, endMonth, endYear),
+                        beginMonth, beginYear, endMonth, endYear, 3),
                     ThongKeKhoangGia = await _statisticsService.ThongKeKhoangGia(
                         beginMonth, beginYear, endMonth, endYear)
                 };
@@ -207,5 +208,45 @@ namespace WebApi.Controllers.Admin
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("thongkedoanhthudanhmuc")]
+        public async Task<IActionResult> ThongKeDoanhThuDanhMuc(
+            [FromQuery] int beginMonth = 0,
+            [FromQuery] int beginYear = 0,
+            [FromQuery] int endMonth = 0,
+            [FromQuery] int endYear = 0)
+        {
+            try
+            {
+                var result = await _statisticsService.ThongKeDoanhThuDanhMuc(
+                    beginMonth, beginYear, endMonth, endYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+        [HttpGet("thongkegiasoluongdoanhso")]
+        public async Task<IActionResult> ThongKeGiaSoLuongDoanhSo(
+         [FromQuery] int beginMonth = 0,
+         [FromQuery] int beginYear = 0,
+         [FromQuery] int endMonth = 0,
+         [FromQuery] int endYear = 0)
+        {
+            try
+            {
+                var result = await _statisticsService.ThongKeGiaSoLuongDoanhSo(
+                    beginMonth, beginYear, endMonth, endYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }

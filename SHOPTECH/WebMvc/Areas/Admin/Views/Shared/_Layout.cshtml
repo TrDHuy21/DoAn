@@ -38,7 +38,7 @@
             <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
                 <!-- Sidebar - Brand -->
-                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="~/">
                     <div class="sidebar-brand-icon rotate-n-15">
                         <i class="fas fa-laugh-wink"></i>
                     </div>
@@ -50,7 +50,7 @@
                 <li class="nav-item active">
                 <a class="nav-link" href="~/">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Home</span>
+                    <span>Trang chủ</span>
                 </a>
                 </li>
                 <hr class="sidebar-divider my-0">
@@ -58,34 +58,34 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="@Url.Action("GetAll", "BrandAdmin")">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Brand</span>
+                        <span>Quản lý nhãn hiệu</span>
                     </a>
                 </li>
 
                 <li class="nav-item active">
                     <a class="nav-link" href="@Url.Action("GetAll", "CategoryAdmin")">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Category</span>
+                        <span>Quản lý danh mục</span>
                     </a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="@Url.Action("getall", "ProductAdmin")">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Product</span>
+                        <span>Quản lý sản phẩm</span>
                     </a>
                 </li>
 
                 <li class="nav-item active">
                     <a class="nav-link" href="@Url.Action("Index", "OrderAdmin")">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Order</span>
+                        <span>Quản lý đơn hàng</span>
                     </a>
                 </li>
 
                 <li class="nav-item active">
                     <a class="nav-link" href="@Url.Action("Index", "UserAdmin")">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Account</span>
+                        <span>Quản lý tài khoản</span>
                     </a>
                 </li>
            
@@ -98,24 +98,12 @@
                     Interface
                 </div>
 
-
-
-                <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Thông kê</span>
+                <a class="nav-link" href="@Url.Action("ThongKeDoanhSo","StatisticsAdmin")">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Thống kê doanh số</span>
                 </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="@Url.Action("ThongKeDoanhSo","StatisticsAdmin")">Thông kê doanh số</a>
-                        <a class="collapse-item" href="">Thông kê theo sản phẩm</a>
-                        <a class="collapse-item" href="">Thông kê theo nhân viên</a>
-                        <a class="collapse-item" href="">Thông kê theo đơn hàng</a>
-                    </div>
-                </div>
-            </li>            
+            </li>         
 
         </ul>
         <!-- End of Sidebar -->
@@ -157,35 +145,6 @@
                             </div>
                         </li>
 
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                 aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 

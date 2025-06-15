@@ -527,6 +527,32 @@
     </div>
 @section Scripts {
      <script>
+
+         var test;
+         // Mảng màu nền cho các nhân viên
+        const backgroundColors = [
+            '#3498db', // Blue
+            '#2ecc71', // Green
+            '#e74c3c', // Red
+            '#f39c12', // Orange
+            '#9b59b6', // Purple
+            '#1abc9c', // Turquoise
+            '#34495e', // Dark Blue Grey
+            '#e67e22', // Carrot
+            '#95a5a6', // Concrete
+            '#f1c40f', // Yellow
+            '#8e44ad', // Wisteria
+            '#16a085', // Green Sea
+            '#2c3e50', // Midnight Blue
+            '#d35400', // Pumpkin
+            '#27ae60', // Nephritis
+            '#c0392b', // Alizarin
+            '#7f8c8d', // Asbestos
+            '#2980b9', // Belize Hole
+            '#8c52ff', // Light Purple
+            '#ff6b6b'  // Light Red
+        ];
+
         var onlineOrdersData = {
             labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
             data: [890, 952, 1024, 987, 1156, 1289, 1345, 1456, 1398, 1567, 1634, 1789]
@@ -693,13 +719,7 @@
                     datasets: [{
                         label: 'Tỷ lệ doanh thu (%)',
                         data: categoryData.data,
-                        backgroundColor: [
-                            '#3498db',
-                            '#2ecc71',
-                            '#e74c3c',
-                            '#f39c12',
-                            '#9b59b6'
-                        ]
+                        backgroundColor: backgroundColors
                     }]
                 },
                 options: {
@@ -878,7 +898,9 @@
 
              loadMonthlyRevenueChartAndOnlineOrdersChart(beginMonth, beginYear, endMonth, endYear);
              loadPhan3(beginMonth, beginYear, endMonth, endYear);
-             loadPhan4(beginMonth, beginYear, endMonth, endYear);
+             LoadTopProductAndCategory(beginMonth, beginYear, endMonth, endYear);
+             LoadPriceRange(beginMonth, beginYear, endMonth, endYear);
+             loadPriceQuantityRelationChart(beginMonth, beginYear, endMonth, endYear);
         }
 
         // Format number function
@@ -945,12 +967,6 @@
                 Toast('Không thể tải dữ liệu biểu đồ doanh thu');
             }
         }
-
-        // Mảng màu nền cho các nhân viên
-        const backgroundColors = [
-            '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
-            '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#8e44ad'
-        ];
 
         async function loadPhan3(beginMonth, beginYear, endMonth, endYear) {
             try {
@@ -1029,12 +1045,12 @@
             }
         }
 
-        async function loadPhan4(beginMonth, beginYear, endMonth, endYear) {
+        async function LoadTopProductAndCategory(beginMonth, beginYear, endMonth, endYear) {
             try {
                 let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongketopsanpham?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
                 if (!response.ok) throw new Error('Network response was not ok');
 
-                let response1 = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongketopdanhmuc?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                let response1 = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongketopdanhmuc?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}&top=3`);
                 if (!response1.ok) throw new Error('Network response was not ok');
 
                 const sanPhamData = await response.json();
@@ -1045,6 +1061,9 @@
                 updateTopSanPhamDoanhThu(sanPhamData.topSanPhamTheoDoanhThu);
                 updateTopDanhMucSoLuong(danhMucData.topDanhMucTheoSoLuong);
                 updateTopDanhMucDoanhThu(danhMucData.topDanhMucTheoDoanhThu);
+
+                // cập nhật biểu đồ tỷ lệ doanh thu các <a href="#"></a>
+                updateCategoryRevenueChart(danhMucData);
 
             } catch (error) {
                 console.error('Error loading product/category data:', error);
@@ -1140,6 +1159,67 @@
                 `;
                 container.insertAdjacentHTML('beforeend', itemHtml);
             });
+        }
+
+        function updateCategoryRevenueChart(data){
+            let totalQuantity = data.topDanhMucTheoSoLuong.reduce((sum, item) => sum + item.soLuong, 0);
+
+            let labels = data.topDanhMucTheoSoLuong.map(item => item.ten);
+            let percentages = data.topDanhMucTheoSoLuong.map(item =>
+                ((item.soLuong / totalQuantity) * 100).toFixed(1)
+            );
+
+            categoryRevenueChart.data.labels = labels;
+            categoryRevenueChart.data.datasets.data = percentages;
+            categoryRevenueChart.update();
+
+            return {
+                labels: labels,
+                data: percentages.map(p => parseFloat(p))
+            };
+        }
+
+        async function LoadPriceRange(beginMonth, beginYear, endMonth, endYear) {
+             try {
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongkekhoanggia?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                let data= await response.json();
+
+                priceRangeChart.data.datasets[0].data = Object.values(data.tyLeTheoKhoangGia)
+                priceRangeChart.update();
+
+                let duLieu = data.duLieuTheoThang.map(item => Object.values(item));
+                // Gán dữ liệu vào biểu đồ
+                priceRangeTrendChart.data.datasets[0].data = duLieu.map(month => month[0]);
+                priceRangeTrendChart.data.datasets[1].data = duLieu.map(month => month[1]);
+                priceRangeTrendChart.data.datasets[2].data = duLieu.map(month => month[2]);
+                priceRangeTrendChart.data.datasets[3].data = duLieu.map(month => month[3]);
+                priceRangeTrendChart.data.datasets[4].data = duLieu.map(month => month[4]);
+                priceRangeTrendChart.update();
+
+            } catch (error) {
+                console.error('Error loading product/category data:', error);
+                Toast('Không thể tải dữ liệu sản phẩm và danh mục');
+            }
+        }
+
+        async function loadPriceQuantityRelationChart(beginMonth, beginYear, endMonth, endYear) {
+             try {
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongkegiasoluongdoanhso?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                let data= await response.json();
+                let chartData = data.map(t => {
+                    return {
+                        x:(t.giaTrungBinh/1000000).toFixed(2),
+                        y: t.tongSoSanPhamBanDuoc,
+                        r: t.tongSoLoaiSanPham
+                    }})
+                priceQuantityRelationChart.data.datasets[0].data = chartData
+                priceQuantityRelationChart.update();
+
+            } catch (error) {
+                console.error('Error loading product/category data:', error);
+                Toast('Không thể tải dữ liệu sản phẩm và danh mục');
+            }
+
         }
 
         function getRankClass(index) {

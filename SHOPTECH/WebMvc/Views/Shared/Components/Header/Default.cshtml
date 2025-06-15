@@ -125,29 +125,6 @@
                                         </li>
                                     }
 
-                                    @if (user.Role == "Saler")
-                                    {
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <h6 class="dropdown-header text-primary fw-bold">
-                                                <i class="fas fa-store me-1"></i>
-                                                Người bán hàng
-                                            </h6>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item rounded-3" asp-action="Index" asp-controller="Saler">
-                                                <i class="fas fa-list me-2"></i>
-                                                Quản lý đơn hàng
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item rounded-3" asp-action="Reports" asp-controller="Saler">
-                                                <i class="fas fa-chart-bar me-2"></i>
-                                                Thống kê bán hàng
-                                            </a>
-                                        </li>
-                                    }
-
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item rounded-3 text-danger" asp-action="Logout" asp-controller="Account">

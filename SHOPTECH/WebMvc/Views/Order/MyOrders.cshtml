@@ -121,7 +121,7 @@
 			</div>
 		</div>
 	</div>
-	@if (Model.Any())
+	@if (Model != null && (Model?.Any() == null ? false : Model.Any()))
 	{
 		<div class="card shadow-sm border-0">
 			<div class="card-body p-0">

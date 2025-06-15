@@ -23,8 +23,8 @@ namespace Application.Dtos.BrandDtos
         public bool IsActive { get; set; }
 
         // Cho phép người dùng cập nhật hình ảnh (nếu có)
-        public IFormFile FormFile { get; set; }
-        public ImageFileDto Image { get; set; }
+        public IFormFile? FormFile { get; set; }
+        public ImageFileDto? Image { get; set; }
 
     }
 }

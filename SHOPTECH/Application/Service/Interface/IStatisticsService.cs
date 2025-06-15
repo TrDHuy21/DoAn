@@ -23,9 +23,15 @@ namespace Application.Service.Interface
         Task<ThongKeSanPham> ThongKeTopSanPham(int beginMonth, int beginYear, int endMonth, int endYear);
 
         // Thống kê danh mục
-        Task<ThongKeDanhMuc> ThongKeTopDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear);
+        Task<ThongKeDanhMuc> ThongKeTopDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear, int top);
 
         // Thống kê khoảng giá
         Task<ThongKeKhoangGia> ThongKeKhoangGia(int beginMonth, int beginYear, int endMonth, int endYear);
-     }
+
+        // thông kê doanh thu theo theo danh mục
+        Task<ThongKeDanhMuc> ThongKeDoanhThuDanhMuc(int beginMonth, int beginYear, int endMonth, int endYear);
+
+        // thông kế giá, số lượng, doanh số.
+        Task<List<ThongKeSanPhamKhoangGia>> ThongKeGiaSoLuongDoanhSo(int beginMonth, int beginYear, int endMonth, int endYear);
+    }
 }
