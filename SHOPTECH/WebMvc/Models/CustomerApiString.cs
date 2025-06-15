@@ -89,6 +89,6 @@ namespace WebMvc.Models
         public static string USER_ADMIN_PROFILE() => BASE_URL + "/UserApi/profile";
         public static string USER_REGISTER() => BASE_URL + "/UserApi/register";
 
-
+        internal static string CHAT() => BASE_URL + "/chat/send";
     }
 }

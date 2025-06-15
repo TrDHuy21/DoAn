@@ -27,21 +27,5 @@ namespace WebMvc.Areas.Admin.Controllers
             return View();
         }
 
-        public async Task<IActionResult> DoanhThuThang(int month, int year)
-        {
-            try
-            {
-                var result = await _apiService.GetAsync(AdminApiString.STATISTICS_ADMIN_DOANHTHUTHANG());
-                if (!result.IsSuccessStatusCode)
-                {
-                    return Json(new { success = false, message = "Failed to retrieve data." });
-                }
-                return Json(new { success = true, data = result });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
-        }
     }
 }
