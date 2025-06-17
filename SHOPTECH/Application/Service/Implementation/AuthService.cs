@@ -18,11 +18,13 @@ namespace Application.Service.Implementation
     {
         protected readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly IPasswordService _passwordService;
 
-        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration)
+        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration, IPasswordService passwordService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _passwordService = passwordService;
         }
 
         public string? GenerateToken(User User)
@@ -79,7 +81,12 @@ namespace Application.Service.Implementation
                     throw new InvalidOperationException("This Account is not active");
                 }
 
-                if(user.Password != loginDto.Password)
+                if (!_passwordService.VerifyPassword(user.HashedPassword, loginDto.Password))
+                {
+                    throw new InvalidOperationException("Password is wrong");
+                }
+
+                if (user.Password != loginDto.Password)
                 {
                     throw new InvalidOperationException("Password is wrong");
                 }

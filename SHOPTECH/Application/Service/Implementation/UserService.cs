@@ -22,13 +22,15 @@ namespace Application.Service.Implementation
         protected readonly IImageFileService _imageFileService;
         protected readonly IMapper _mapper;
         protected readonly IHttpContextAccessor _httpContextAccessor;
+        protected readonly IPasswordService _passwordService;
 
-        public UserService(IUnitOfWork unitOfWork, IImageFileService imageFileService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public UserService(IUnitOfWork unitOfWork, IImageFileService imageFileService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IPasswordService passwordService)
         {
             _unitOfWork = unitOfWork;
             _imageFileService = imageFileService;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _passwordService = passwordService;
         }
 
         public async Task<User?> AddAsync(AddUserDto userDto)
@@ -159,6 +161,7 @@ namespace Application.Service.Implementation
                 var user = _mapper.Map<User>(registerUser);
                 user.UrlName = "";
                 user.IsActive = true; // Mặc định người dùng mới được kích hoạt
+                user.HashedPassword = _passwordService.HashPassword(registerUser.Password);
                 BaseEntityService<User>.Add(user);
                 await _unitOfWork.Users.AddAsync(user);
                 int rs = await _unitOfWork.SaveChangeAsync();

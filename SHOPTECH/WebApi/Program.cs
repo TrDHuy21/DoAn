@@ -3,11 +3,13 @@ using System.Text;
 using Application.Models.EmailModel;
 using Application.Service.Implementation;
 using Application.Service.Interface;
+using Domain.Enity;
 using GenerativeAI;
 using Infrastructure.Context;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
@@ -72,7 +74,8 @@ namespace WebApi
             builder.Services.AddTransient<IProductImageService, ProductImageService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IStatisticsService, StatisticsService>();
-
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            builder.Services.AddScoped<IPasswordService, PasswordService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
