@@ -480,6 +480,7 @@ namespace Application.Service.Implementation
                 {
                     throw new ArgumentException("Search string cannot be empty", nameof(str));
                 }
+                str = str.Trim();
                 var productDetails = await _unitOfWork.ProductDetails.GetAll()
                     .Include(x => x.Image)
                     .Where(x => x.Name.Contains(str))

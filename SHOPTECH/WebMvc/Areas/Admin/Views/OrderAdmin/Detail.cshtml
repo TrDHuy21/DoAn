@@ -2,709 +2,740 @@
 @model Application.Dtos.OrderDtos.DetailOrderDto
 
 @{
-    ViewData["Title"] = "Chi tiết đơn hàng";
-    string GetStatusText(int? status)
-    {
-        return status switch
-        {
-            0 => "Chờ xác nhận",
-            1 => "Đã xác nhận",
-            2 => "Đang giao hàng",
-            3 => "Giao hàng thành công",
-            4 => "Đơn hàng thành công",
-            5 => "Giao hàng không thành công",
-            6 => "Đang hoàn hàng",
-            7 => "Hoàn hàng thành công",
-            8 => "Đã hủy",
-            _ => "Không xác định"
-        };
-    }
+	ViewData["Title"] = "Chi tiết đơn hàng";
+	string GetStatusText(int? status)
+	{
+		return status switch
+		{
+			0 => "Chờ xác nhận",
+			1 => "Đã xác nhận",
+			2 => "Đang giao hàng",
+			3 => "Giao hàng thành công",
+			4 => "Đơn hàng thành công",
+			5 => "Giao hàng không thành công",
+			6 => "Đang hoàn hàng",
+			7 => "Hoàn hàng thành công",
+			8 => "Đã hủy",
+			_ => "Không xác định"
+		};
+	}
 
-    string GetStatusClass(int? status)
-    {
-        return status switch
-        {
-            0 => "warning",
-            1 => "info",
-            2 => "primary",
-            3 => "success",
-            4 => "success",
-            5 => "danger",
-            6 => "warning",
-            7 => "info",
-            8 => "secondary",
-            _ => "secondary"
-        };
-    }
+	string GetStatusClass(int? status)
+	{
+		return status switch
+		{
+			0 => "warning",
+			1 => "info",
+			2 => "primary",
+			3 => "success",
+			4 => "success",
+			5 => "danger",
+			6 => "warning",
+			7 => "info",
+			8 => "secondary",
+			_ => "secondary"
+		};
+	}
 }
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Chi tiết đơn hàng #@Model.Id</h4>
-                    <span class="badge bg-@GetStatusClass(Model.Status) bg-lg text-light">
-                        @GetStatusText(Model.Status)
-                    </span>
-                </div>
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<h4 class="mb-0">Chi tiết đơn hàng #@Model.Id</h4>
+					<span class="badge bg-@GetStatusClass(Model.Status) bg-lg text-light">
+						@GetStatusText(Model.Status)
+					</span>
+				</div>
 
-                <div class="card-body">
-                    <!-- Thông tin cơ bản -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="card border-left-primary">
-                                <div class="card-body">
-                                    <h6 class="card-title text-primary">
-                                        <i class="fas fa-info-circle"></i> Thông tin đơn hàng
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Mã đơn:</strong></div>
-                                        <div class="col-sm-8">#@Model.Id</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Ngày đặt:</strong></div>
-                                        <div class="col-sm-8">@Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Mã vận đơn:</strong></div>
-                                        <div class="col-sm-8">
-                                            @if (!string.IsNullOrEmpty(Model.TrackingCode))
-                                            {
-                                                <span class="">@Model.TrackingCode</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">Chưa có</span>
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Loại đơn:</strong></div>
-                                        <div class="col-sm-8">
-                                            <span class="text-light badge bg-@(Model.Type == "online" ? "success" : "warning")">
-                                                @(Model.Type == "online" ? "Online" : "Offline")
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+				<div class="card-body">
+					<!-- Thông tin cơ bản -->
+					<div class="row mb-4">
+						<div class="col-md-6">
+							<div class="card border-left-primary">
+								<div class="card-body">
+									<h6 class="card-title text-primary">
+										<i class="fas fa-info-circle"></i> Thông tin đơn hàng
+									</h6>
+									<div class="row">
+										<div class="col-sm-4"><strong>Mã đơn:</strong></div>
+										<div class="col-sm-8">#@Model.Id</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4"><strong>Ngày đặt:</strong></div>
+										<div class="col-sm-8">@Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4"><strong>Mã vận đơn:</strong></div>
+										<div class="col-sm-8">
+											@if (!string.IsNullOrEmpty(Model.TrackingCode))
+											{
+												<span class="">@Model.TrackingCode</span>
+											}
+											else
+											{
+												<span class="text-muted">Chưa có</span>
+											}
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4"><strong>Loại đơn:</strong></div>
+										<div class="col-sm-8">
+											<span class="text-light badge bg-@(Model.Type == "online" ? "success" : "warning")">
+												@(Model.Type == "online" ? "Online" : "Offline")
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="col-md-6">
-                            <div class="card border-left-info">
-                                <div class="card-body">
-                                    <h6 class="card-title text-info">
-                                        <i class="fas fa-user"></i> Thông tin khách hàng
-                                    </h6>
-                                    @if (Model.Customer != null)
-                                    {
-                                        <div class="row">
-                                            <div class="col-sm-4"><strong>Tài khoản:</strong></div>
-                                            <div class="col-sm-8">@Model.Customer.Name</div>
-                                        </div>
-                                    }
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Người nhận:</strong></div>
-                                        <div class="col-sm-8">@Model.Name</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Số điện thoại:</strong></div>
-                                        <div class="col-sm-8">@Model.Phone</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4"><strong>Ghi chú:</strong></div>
-                                        <div class="col-sm-8">
-                                            <em class="text-muted">@Model.CustomerNote</em>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+						<div class="col-md-6">
+							<div class="card border-left-info">
+								<div class="card-body">
+									<h6 class="card-title text-info">
+										<i class="fas fa-user"></i> Thông tin khách hàng
+									</h6>
+									@if (Model.Customer != null)
+									{
+										<div class="row">
+											<div class="col-sm-4"><strong>Tài khoản:</strong></div>
+											<div class="col-sm-8">@Model.Customer.Name</div>
+										</div>
+									}
+									<div class="row">
+										<div class="col-sm-4"><strong>Người nhận:</strong></div>
+										<div class="col-sm-8">@Model.Name</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4"><strong>Số điện thoại:</strong></div>
+										<div class="col-sm-8">@Model.Phone</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4"><strong>Ghi chú:</strong></div>
+										<div class="col-sm-8">
+											<em class="text-muted">@Model.CustomerNote</em>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                    <!-- Địa chỉ giao hàng -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card border-left-success">
-                                <div class="card-body">
-                                    <h6 class="card-title text-success">
-                                        <i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <address>
-                                                <strong>@Model.Address</strong><br>
-                                                @if (Model.Ward != null)
-                                                {
-                                                    @Model.Ward.Name
-                                                    <text>, </text>
-                                                }
-                                                @if (Model.District != null)
-                                                {
-                                                    @Model.District.Name
-                                                    <text>, </text>
-                                                }
-                                                @if (Model.Province != null)
-                                                {
-                                                    @Model.Province.Name
-                                                }
-                                            </address>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+					<!-- Địa chỉ giao hàng -->
+					<div class="row mb-4">
+						<div class="col-12">
+							<div class="card border-left-success">
+								<div class="card-body">
+									<h6 class="card-title text-success">
+										<i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng
+									</h6>
+									<div class="row">
+										<div class="col-md-12">
+											<address>
+												<strong>@Model.Address</strong><br>
+												@if (Model.Ward != null)
+												{
+													@Model.Ward.Name
+													<text>, </text>
+												}
+												@if (Model.District != null)
+												{
+													@Model.District.Name
+													<text>, </text>
+												}
+												@if (Model.Province != null)
+												{
+													@Model.Province.Name
+												}
+											</address>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                    <!-- Thông tin nhân viên -->
-                    @if (Model.Employee != null)
-                    {
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card border-left-warning">
-                                    <div class="card-body">
-                                        <h6 class="card-title text-warning">
-                                            <i class="fas fa-user-tie"></i> Nhân viên xử lý
-                                        </h6>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <strong>Tên nhân viên:</strong> @Model.Employee.Name
-                                            </div>
-                                            @if (!string.IsNullOrEmpty(Model.EmployeeNote))
-                                            {
-                                                <div class="col-md-6">
-                                                    <strong>Ghi chú:</strong> <em class="text-muted">@Model.EmployeeNote</em>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    
-                    <!-- Chi tiết sản phẩm -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="card-title mb-0">
-                                        <i class="fas fa-shopping-cart"></i> Chi tiết sản phẩm
-                                    </h6>
-                                </div>
-                                <div class="card-body p-0">
-                                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
-                                    {
-                                        <div class="table-responsive">
-                                            <table class="table table-hover mb-0">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                        <th width="80">Hình ảnh</th>
-                                                        <th>Tên sản phẩm</th>
-                                                        <th>Màu sắc</th>
-                                                        <th width="100" class="text-center">Số lượng</th>
-                                                        <th width="120" class="text-right">Đơn giá</th>
-                                                        <th width="120" class="text-right">Thành tiền</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @{
-                                                        decimal totalAmount = 0;
-                                                    }
-                                                    @foreach (var item in Model.OrderDetails)
-                                                    {
-                                                        var lineTotal = item.Price * item.Quantity;
-                                                        totalAmount += lineTotal;
+					<!-- Thông tin nhân viên -->
+					@if (Model.Employee != null)
+					{
+						<div class="row mb-4">
+							<div class="col-12">
+								<div class="card border-left-warning">
+									<div class="card-body">
+										<h6 class="card-title text-warning">
+											<i class="fas fa-user-tie"></i> Nhân viên xử lý
+										</h6>
+										<div class="row">
+											<div class="col-md-6">
+												<strong>Tên nhân viên:</strong> @Model.Employee.Name
+											</div>
+											@if (!string.IsNullOrEmpty(Model.EmployeeNote))
+											{
+												<div class="col-md-6">
+													<strong>Ghi chú:</strong> <em class="text-muted">@Model.EmployeeNote</em>
+												</div>
+											}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
 
-                                                        <tr>
-                                                            <td>
-                                                                @if (item.ProductDetail.Image != null)
-                                                                {
-                                                                    var base64String = Convert.ToBase64String(item.ProductDetail.Image.Data);
-                                                                    var imageSrc = $"data:{item.ProductDetail.Image.Type};base64,{base64String}";
-                                                                    <img src="@imageSrc"
-                                                                         alt="@item.ProductDetail.Name"
-                                                                         class="img-thumbnail"
-                                                                         style="width: 60px; height: 60px; object-fit: cover;">
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="bg-light d-flex align-items-center justify-content-center"
-                                                                         style="width: 60px; height: 60px; border-radius: 4px;">
-                                                                        <i class="fas fa-image text-muted"></i>
-                                                                    </div>
-                                                                }
-                                                            </td>
-                                                            <td>
-                                                                <strong>@item.ProductDetail.Name</strong><br>
-                                                                <small class="text-muted">ID: @item.ProductDetail.Id</small>
-                                                            </td>
-                                                            <td>
-                                                                @if (!string.IsNullOrEmpty(item.ProductDetail.ColorName))
-                                                                {
-                                                                    <span class="badge bg-secondary text-light">@item.ProductDetail.ColorName</span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <span class="text-muted">-</span>
-                                                                }
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-primary text-light">@item.Quantity</span>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <strong>@item.Price.ToString("#,##0") ₫</strong>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <strong class="text-success">@lineTotal.ToString("#,##0") ₫</strong>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                                <tfoot class="thead-light">
-                                                    <tr>
-                                                        <th colspan="5" class="text-right">Tổng cộng:</th>
-                                                        <th class="text-right">
-                                                            <span class="text-success mb-0">@totalAmount.ToString("#,##0") ₫</span>
-                                                        </th>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="text-center py-4">
-                                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                            <p class="text-muted">Không có sản phẩm nào trong đơn hàng</p>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+					<!-- Chi tiết sản phẩm -->
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<h6 class="card-title mb-0">
+										<i class="fas fa-shopping-cart"></i> Chi tiết sản phẩm
+									</h6>
+								</div>
+								<div class="card-body p-0">
+									@if (Model.OrderDetails != null && Model.OrderDetails.Any())
+									{
+										<div class="table-responsive">
+											<table class="table table-hover mb-0">
+												<thead class="thead-light">
+													<tr>
+														<th width="80">Hình ảnh</th>
+														<th>Tên sản phẩm</th>
+														<th>Màu sắc</th>
+														<th width="100" class="text-center">Số lượng</th>
+														<th width="120" class="text-right">Đơn giá</th>
+														<th width="120" class="text-right">Thành tiền</th>
+													</tr>
+												</thead>
+												<tbody>
+													@{
+														decimal totalAmount = 0;
+													}
+													@foreach (var item in Model.OrderDetails)
+													{
+														var lineTotal = item.Price * item.Quantity;
+														totalAmount += lineTotal;
 
-                <div class="card-footer text-right">
-                    <a href="javascript:history.back()" class="btn btn-secondary me-2">
-                        <i class="fas fa-arrow-left"></i> Quay lại
-                    </a>
+														<tr>
+															<td>
+																@if (item.ProductDetail.Image != null)
+																{
+																	var base64String = Convert.ToBase64String(item.ProductDetail.Image.Data);
+																	var imageSrc = $"data:{item.ProductDetail.Image.Type};base64,{base64String}";
+																	<img src="@imageSrc"
+																		 alt="@item.ProductDetail.Name"
+																		 class="img-thumbnail"
+																		 style="width: 60px; height: 60px; object-fit: cover;">
+																}
+																else
+																{
+																	<div class="bg-light d-flex align-items-center justify-content-center"
+																		 style="width: 60px; height: 60px; border-radius: 4px;">
+																		<i class="fas fa-image text-muted"></i>
+																	</div>
+																}
+															</td>
+															<td>
+																<strong>@item.ProductDetail.Name</strong><br>
+																<small class="text-muted">ID: @item.ProductDetail.Id</small>
+															</td>
+															<td>
+																@if (!string.IsNullOrEmpty(item.ProductDetail.ColorName))
+																{
+																	<span class="badge bg-secondary text-light">@item.ProductDetail.ColorName</span>
+																}
+																else
+																{
+																	<span class="text-muted">-</span>
+																}
+															</td>
+															<td class="text-center">
+																<span class="badge bg-primary text-light">@item.Quantity</span>
+															</td>
+															<td class="text-right">
+																<strong>@item.Price.ToString("#,##0") ₫</strong>
+															</td>
+															<td class="text-right">
+																<strong class="text-success">@lineTotal.ToString("#,##0") ₫</strong>
+															</td>
+														</tr>
+													}
+												</tbody>
+												<tfoot class="thead-light">
+													<tr>
+														<th colspan="5" class="text-right">Tổng cộng:</th>
+														<th class="text-right">
+															<span class="text-success mb-0">@totalAmount.ToString("#,##0") ₫</span>
+														</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									}
+									else
+									{
+										<div class="text-center py-4">
+											<i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+											<p class="text-muted">Không có sản phẩm nào trong đơn hàng</p>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                    <!-- Nút cập nhật trạng thái -->
-                    @if (Model.Status != 8 && Model.Status != 4 && Model.Status != 5) // Không hiển thị với đơn đã hủy hoặc thành công
-                    {
-                        <button type="button" class="btn btn-warning me-2" onclick="updateOrderStatus(@Model.Id)">
-                            <i class="fas fa-edit"></i> Cập nhật trạng thái
-                        </button>
-                    }
+				<div class="card-footer text-right">
+					<a href="javascript:history.back()" class="btn btn-secondary me-2">
+						<i class="fas fa-arrow-left"></i> Quay lại
+					</a>
 
-                    <button type="button" class="btn btn-primary" onclick="window.print()">
-                        <i class="fas fa-print"></i> In đơn hàng
-                    </button>
-                </div>
-            
-                <!-- Log xử lý đơn hàng -->
-                @if (!string.IsNullOrEmpty(Model.EmployeeNote))
-                {
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card border-left-secondary">
-                                <div class="card-body">
-                                    <h6 class="card-title text-secondary">
-                                        <i class="fas fa-clipboard-list"></i> Log xử lý đơn hàng
-                                    </h6>
-                                    <div class="alert alert-light border-0 mb-0" style="background-color: #f8f9fa;">
-                                        <div class="employee-notes">
-                                            @{
-                                                var notes = Model.EmployeeNote.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                                            }
-                                            @foreach (var note in notes)
-                                            {
-                                                if (!string.IsNullOrWhiteSpace(note))
-                                                {
-                                                    <div class="note-entry mb-2 p-2 bg-white rounded border-left border-primary" style="border-left-width: 3px !important;">
-                                                        <i class="fas fa-chevron-right text-primary me-2"></i>
-                                                        <span class="text-dark">@note.Trim()</span>
-                                                    </div>
-                                                }
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
+					<!-- Nút cập nhật trạng thái -->
+					@if (Model.Status != 8 && Model.Status != 4 && Model.Status != 5) // Không hiển thị với đơn đã hủy hoặc thành công
+					{
+						<button type="button" class="btn btn-warning me-2" onclick="updateOrderStatus(@Model.Id)">
+							<i class="fas fa-edit"></i> Cập nhật trạng thái
+						</button>
+					}
+
+					@if (Model.Status == 4)
+					{
+						<button type="button" class="btn btn-primary" onclick="downloadBill(@Model.Id)">
+							<i class="fas fa-print"></i> In đơn hàng
+						</button>
+					}
+				</div>
+
+				<!-- Log xử lý đơn hàng -->
+				@if (!string.IsNullOrEmpty(Model.EmployeeNote))
+				{
+					<div class="row mb-4">
+						<div class="col-12">
+							<div class="card border-left-secondary">
+								<div class="card-body">
+									<h6 class="card-title text-secondary">
+										<i class="fas fa-clipboard-list"></i> Log xử lý đơn hàng
+									</h6>
+									<div class="alert alert-light border-0 mb-0" style="background-color: #f8f9fa;">
+										<div class="employee-notes">
+											@{
+												var notes = Model.EmployeeNote.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+											}
+											@foreach (var note in notes)
+											{
+												if (!string.IsNullOrWhiteSpace(note))
+												{
+													<div class="note-entry mb-2 p-2 bg-white rounded border-left border-primary" style="border-left-width: 3px !important;">
+														<i class="fas fa-chevron-right text-primary me-2"></i>
+														<span class="text-dark">@note.Trim()</span>
+													</div>
+												}
+											}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal xác nhận hủy đơn hàng (Bootstrap 5) -->
 <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelOrderModalLabel">
-                    <i class="fas fa-exclamation-triangle text-warning"></i> Xác nhận hủy đơn hàng
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc chắn muốn hủy đơn hàng <strong>#<span id="orderIdToCancel"></span></strong> không?</p>
-                <p class="text-muted small">Lưu ý: Hành động này không thể hoàn tác.</p>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="cancelOrderModalLabel">
+					<i class="fas fa-exclamation-triangle text-warning"></i> Xác nhận hủy đơn hàng
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Bạn có chắc chắn muốn hủy đơn hàng <strong>#<span id="orderIdToCancel"></span></strong> không?</p>
+				<p class="text-muted small">Lưu ý: Hành động này không thể hoàn tác.</p>
 
-                <div class="mb-3 mt-3">
-                    <label for="cancelReason" class="form-label">Lý do hủy đơn hàng:</label>
-                    <textarea class="form-control" id="cancelReason" rows="3" placeholder="Nhập lý do hủy đơn hàng (tùy chọn)"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i> Hủy bỏ
-                </button>
-                <button type="button" class="btn btn-danger" onclick="confirmCancelOrder()">
-                    <i class="fas fa-check"></i> Xác nhận hủy
-                </button>
-            </div>
-        </div>
-    </div>
+				<div class="mb-3 mt-3">
+					<label for="cancelReason" class="form-label">Lý do hủy đơn hàng:</label>
+					<textarea class="form-control" id="cancelReason" rows="3" placeholder="Nhập lý do hủy đơn hàng (tùy chọn)"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="fas fa-times"></i> Hủy bỏ
+				</button>
+				<button type="button" class="btn btn-danger" onclick="confirmCancelOrder()">
+					<i class="fas fa-check"></i> Xác nhận hủy
+				</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal cập nhật trạng thái đơn hàng -->
 <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateStatusModalLabel">
-                    <i class="fas fa-edit text-warning"></i> Cập nhật trạng thái đơn hàng
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="updateStatusForm">
-                    <input type="hidden" id="updateOrderId" />
-                    <input type="hidden" id="currentStatus" />
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="updateStatusModalLabel">
+					<i class="fas fa-edit text-warning"></i> Cập nhật trạng thái đơn hàng
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="updateStatusForm">
+					<input type="hidden" id="updateOrderId" />
+					<input type="hidden" id="currentStatus" />
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">
-                                <i class="fas fa-flag"></i> Trạng thái hiện tại
-                            </label>
-                            <div class="alert alert-info mb-3">
-                                <strong id="currentStatusText"></strong>
-                            </div>
-                        </div>
-                    </div>
+					<div class="row">
+						<div class="col-md-12 mb-3">
+							<label class="form-label">
+								<i class="fas fa-flag"></i> Trạng thái hiện tại
+							</label>
+							<div class="alert alert-info mb-3">
+								<strong id="currentStatusText"></strong>
+							</div>
+						</div>
+					</div>
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="orderStatus" class="form-label">
-                                <i class="fas fa-flag"></i> Trạng thái mới <span class="text-danger">*</span>
-                            </label>
-                            <select class="form-select" id="orderStatus" required>
-                                <option value="">-- Chọn trạng thái --</option>
-                            </select>
-                        </div>
-                    </div>
+					<div class="row">
+						<div class="col-md-12 mb-3">
+							<label for="orderStatus" class="form-label">
+								<i class="fas fa-flag"></i> Trạng thái mới <span class="text-danger">*</span>
+							</label>
+							<select class="form-select" id="orderStatus" required>
+								<option value="">-- Chọn trạng thái --</option>
+							</select>
+						</div>
+					</div>
 
-                    <div class="row" id="trackingCodeSection" style="display: none;">
-                        <div class="col-md-12 mb-3">
-                            <label for="trackingCode" class="form-label">
-                                <i class="fas fa-barcode"></i> Mã vận đơn <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" id="trackingCode" placeholder="Nhập mã vận đơn">
-                            <small class="form-text text-muted">Bắt buộc khi chuyển sang trạng thái "Đang giao hàng"</small>
-                        </div>
-                    </div>
+					<div class="row" id="trackingCodeSection" style="display: none;">
+						<div class="col-md-12 mb-3">
+							<label for="trackingCode" class="form-label">
+								<i class="fas fa-barcode"></i> Mã vận đơn <span class="text-danger">*</span>
+							</label>
+							<input type="text" class="form-control" id="trackingCode" placeholder="Nhập mã vận đơn">
+							<small class="form-text text-muted">Bắt buộc khi chuyển sang trạng thái "Đang giao hàng"</small>
+						</div>
+					</div>
 
-                    <div class="row" id="trackingCodeDisplay" style="display: none;">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">
-                                <i class="fas fa-barcode"></i> Mã vận đơn hiện tại
-                            </label>
-                            <div class="alert alert-secondary">
-                                <span id="currentTrackingCode"></span>
-                            </div>
-                        </div>
-                    </div>
+					<div class="row" id="trackingCodeDisplay" style="display: none;">
+						<div class="col-md-12 mb-3">
+							<label class="form-label">
+								<i class="fas fa-barcode"></i> Mã vận đơn hiện tại
+							</label>
+							<div class="alert alert-secondary">
+								<span id="currentTrackingCode"></span>
+							</div>
+						</div>
+					</div>
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="employeeNote" class="form-label">
-                                <i class="fas fa-sticky-note"></i> Ghi chú nhân viên
-                            </label>
-                            <textarea class="form-control" id="employeeNote" rows="3" placeholder="Nhập ghi chú của nhân viên"></textarea>
-                        </div>
-                    </div>
+					<div class="row">
+						<div class="col-md-12 mb-3">
+							<label for="employeeNote" class="form-label">
+								<i class="fas fa-sticky-note"></i> Ghi chú nhân viên
+							</label>
+							<textarea class="form-control" id="employeeNote" rows="3" placeholder="Nhập ghi chú của nhân viên"></textarea>
+						</div>
+					</div>
 
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <strong>Lưu ý:</strong> Vui lòng kiểm tra kỹ thông tin trước khi cập nhật. Một số thay đổi có thể không thể hoàn tác.
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i> Hủy bỏ
-                </button>
-                <button type="button" class="btn btn-warning" onclick="confirmUpdateStatus()">
-                    <i class="fas fa-save"></i> Cập nhật trạng thái
-                </button>
-            </div>
-        </div>
-    </div>
+					<div class="alert alert-warning" role="alert">
+						<i class="fas fa-exclamation-triangle"></i>
+						<strong>Lưu ý:</strong> Vui lòng kiểm tra kỹ thông tin trước khi cập nhật. Một số thay đổi có thể không thể hoàn tác.
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					<i class="fas fa-times"></i> Hủy bỏ
+				</button>
+				<button type="button" class="btn btn-warning" onclick="confirmUpdateStatus()">
+					<i class="fas fa-save"></i> Cập nhật trạng thái
+				</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    <script>
-        // Function để lấy text trạng thái
-        function getStatusText(status) {
-            const statusTexts = {
-                0: "Chờ xác nhận",
-                1: "Đã xác nhận",
-                2: "Đang giao hàng",
-                3: "Giao hàng thành công",
-                4: "Đơn hàng thành công",
-                5: "Giao hàng không thành công",
-                6: "Đang hoàn hàng",
-                7: "Hoàn hàng thành công",
-                8: "Đã hủy"
-            };
-            return statusTexts[status] || "Không xác định";
-        }
+	<script>
+		// Function để lấy text trạng thái
+		function getStatusText(status) {
+			const statusTexts = {
+				0: "Chờ xác nhận",
+				1: "Đã xác nhận",
+				2: "Đang giao hàng",
+				3: "Giao hàng thành công",
+				4: "Đơn hàng thành công",
+				5: "Giao hàng không thành công",
+				6: "Đang hoàn hàng",
+				7: "Hoàn hàng thành công",
+				8: "Đã hủy"
+			};
+			return statusTexts[status] || "Không xác định";
+		}
 
-        // Function để lấy các trạng thái có thể chuyển đổi
-        function getAvailableStatuses(currentStatus) {
-            const statusMap = {
-                0: [1, 8], // Chờ xác nhận -> Đã xác nhận || Hủy
-                1: [2, 8], // Đã xác nhận -> Đang giao hàng || Hủy
-                2: [4, 5], // Đang giao hàng -> Đơn hàng thành công || Giao hàng không thành công
-                3: [],     // Giao hàng thành công - không thể thay đổi
-                4: [],     // Đơn hàng thành công - không thể thay đổi
-                5: [],    // Giao hàng không thành công -> Đang hoàn hàng
-                6: [7],    // Đang hoàn hàng -> Hoàn hàng thành công
-                7: [],     // Hoàn hàng thành công - không thể thay đổi
-                8: []      // Đã hủy - không thể thay đổi
-            };
-            return statusMap[currentStatus] || [];
-        }
+		// Function để lấy các trạng thái có thể chuyển đổi
+		function getAvailableStatuses(currentStatus) {
+			const statusMap = {
+				0: [1, 8], // Chờ xác nhận -> Đã xác nhận || Hủy
+				1: [2, 8], // Đã xác nhận -> Đang giao hàng || Hủy
+				2: [4, 5], // Đang giao hàng -> Đơn hàng thành công || Giao hàng không thành công
+				3: [],     // Giao hàng thành công - không thể thay đổi
+				4: [],     // Đơn hàng thành công - không thể thay đổi
+				5: [],    // Giao hàng không thành công -> Đang hoàn hàng
+				6: [7],    // Đang hoàn hàng -> Hoàn hàng thành công
+				7: [],     // Hoàn hàng thành công - không thể thay đổi
+				8: []      // Đã hủy - không thể thay đổi
+			};
+			return statusMap[currentStatus] || [];
+		}
 
-        // Function để xử lý hiển thị tracking code
-        function handleTrackingCodeDisplay(currentStatus, currentTrackingCode) {
-            const trackingSection = document.getElementById('trackingCodeSection');
-            const trackingDisplay = document.getElementById('trackingCodeDisplay');
+		// Function để xử lý hiển thị tracking code
+		function handleTrackingCodeDisplay(currentStatus, currentTrackingCode) {
+			const trackingSection = document.getElementById('trackingCodeSection');
+			const trackingDisplay = document.getElementById('trackingCodeDisplay');
 
-            // Nếu trạng thái hiện tại >= 2 (đang giao hàng trở lên) và có tracking code
-            if (currentStatus >= 2 && currentTrackingCode) {
-                trackingDisplay.style.display = 'block';
-                document.getElementById('currentTrackingCode').textContent = currentTrackingCode || 'Chưa có';
-                trackingSection.style.display = 'none';
-            } else {
-                trackingDisplay.style.display = 'none';
-                trackingSection.style.display = 'none';
-            }
-        }
+			// Nếu trạng thái hiện tại >= 2 (đang giao hàng trở lên) và có tracking code
+			if (currentStatus >= 2 && currentTrackingCode) {
+				trackingDisplay.style.display = 'block';
+				document.getElementById('currentTrackingCode').textContent = currentTrackingCode || 'Chưa có';
+				trackingSection.style.display = 'none';
+			} else {
+				trackingDisplay.style.display = 'none';
+				trackingSection.style.display = 'none';
+			}
+		}
 
-        // Function để xử lý yêu cầu tracking code
-        function handleTrackingCodeRequirement(selectedStatus, currentStatus) {
-            const trackingSection = document.getElementById('trackingCodeSection');
-            const trackingInput = document.getElementById('trackingCode');
+		// Function để xử lý yêu cầu tracking code
+		function handleTrackingCodeRequirement(selectedStatus, currentStatus) {
+			const trackingSection = document.getElementById('trackingCodeSection');
+			const trackingInput = document.getElementById('trackingCode');
 
-            // Nếu chuyển sang trạng thái "Đang giao hàng" (2) từ trạng thái thấp hơn
-            if (selectedStatus === 2 && currentStatus < 2) {
-                trackingSection.style.display = 'block';
-                trackingInput.required = true;
-            } else {
-                trackingSection.style.display = 'none';
-                trackingInput.required = false;
-            }
-        }
+			// Nếu chuyển sang trạng thái "Đang giao hàng" (2) từ trạng thái thấp hơn
+			if (selectedStatus === 2 && currentStatus < 2) {
+				trackingSection.style.display = 'block';
+				trackingInput.required = true;
+			} else {
+				trackingSection.style.display = 'none';
+				trackingInput.required = false;
+			}
+		}
 
-        // Debug function - kiểm tra xem function có được gọi không
-        function cancelOrder(orderId) {
-            console.log('cancelOrder called with ID:', orderId);
+		// Debug function - kiểm tra xem function có được gọi không
+		function cancelOrder(orderId) {
+			console.log('cancelOrder called with ID:', orderId);
 
-            try {
-                // Set order ID vào modal
-                document.getElementById('orderIdToCancel').textContent = orderId;
+			try {
+				// Set order ID vào modal
+				document.getElementById('orderIdToCancel').textContent = orderId;
 
-                // Bootstrap 5 syntax để hiển thị modal
-                var modal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
-                modal.show();
+				// Bootstrap 5 syntax để hiển thị modal
+				var modal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+				modal.show();
 
-                console.log('Modal should be shown now');
-            } catch (error) {
-                console.error('Error in cancelOrder:', error);
-                // Fallback nếu Bootstrap 5 không có
-                $('#cancelOrderModal').modal('show');
-            }
-        }
+				console.log('Modal should be shown now');
+			} catch (error) {
+				console.error('Error in cancelOrder:', error);
+				// Fallback nếu Bootstrap 5 không có
+				$('#cancelOrderModal').modal('show');
+			}
+		}
 
-        function confirmCancelOrder() {
-            console.log('confirmCancelOrder called');
+		function confirmCancelOrder() {
+			console.log('confirmCancelOrder called');
 
-            var orderId = document.getElementById('orderIdToCancel').textContent;
-            var cancelReason = document.getElementById('cancelReason').value;
+			var orderId = document.getElementById('orderIdToCancel').textContent;
+			var cancelReason = document.getElementById('cancelReason').value;
 
-            console.log('Order ID:', orderId, 'Reason:', cancelReason);
+			console.log('Order ID:', orderId, 'Reason:', cancelReason);
 
-            // Gửi request để hủy đơn hàng
-            $.ajax({
-                url: '/Order/Status',
-                type: 'POST',
-                data: {
-                    Id: orderId,
-                    CustomerNote: cancelReason,
-                    Status: 8
-                },
-                success: function(response) {
-                    console.log('Ajax success:', response);
-                    if (response.success) {
-                        alert('Đơn hàng đã được hủy thành công!');
-                        location.reload();
-                    } else {
-                        alert('Có lỗi xảy ra: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Ajax error:', xhr, status, error);
-                    alert('Có lỗi xảy ra khi hủy đơn hàng. Vui lòng thử lại!');
-                }
-            });
+			// Gửi request để hủy đơn hàng
+			$.ajax({
+				url: '/Order/Status',
+				type: 'POST',
+				data: {
+					Id: orderId,
+					CustomerNote: cancelReason,
+					Status: 8
+				},
+				success: function(response) {
+					console.log('Ajax success:', response);
+					if (response.success) {
+						alert('Đơn hàng đã được hủy thành công!');
+						location.reload();
+					} else {
+						alert('Có lỗi xảy ra: ' + response.message);
+					}
+				},
+				error: function(xhr, status, error) {
+					console.error('Ajax error:', xhr, status, error);
+					alert('Có lỗi xảy ra khi hủy đơn hàng. Vui lòng thử lại!');
+				}
+			});
 
-            // Đóng modal (Bootstrap 5)
-            try {
-                var modal = bootstrap.Modal.getInstance(document.getElementById('cancelOrderModal'));
-                modal.hide();
-            } catch (error) {
-                // Fallback cho Bootstrap 4
-                $('#cancelOrderModal').modal('hide');
-            }
-        }
+			// Đóng modal (Bootstrap 5)
+			try {
+				var modal = bootstrap.Modal.getInstance(document.getElementById('cancelOrderModal'));
+				modal.hide();
+			} catch (error) {
+				// Fallback cho Bootstrap 4
+				$('#cancelOrderModal').modal('hide');
+			}
+		}
 
-        // Function để mở modal cập nhật trạng thái - ĐÃ CẬP NHẬT
-        function updateOrderStatus(orderId) {
-            console.log('updateOrderStatus called with ID:', orderId);
+		// Function để mở modal cập nhật trạng thái - ĐÃ CẬP NHẬT
+		function updateOrderStatus(orderId) {
+			console.log('updateOrderStatus called with ID:', orderId);
 
-            try {
-                // Lấy trạng thái hiện tại từ Model
-                const currentStatus = @Model.Status;
-                const currentTrackingCode = '@Model.TrackingCode';
+			try {
+				// Lấy trạng thái hiện tại từ Model
+				const currentStatus = @Model.Status;
+				const currentTrackingCode = '@Model.TrackingCode';
 
-                // Set order ID và trạng thái hiện tại vào modal
-                document.getElementById('updateOrderId').value = orderId;
-                document.getElementById('currentStatus').value = currentStatus;
-                document.getElementById('currentStatusText').textContent = getStatusText(currentStatus);
+				// Set order ID và trạng thái hiện tại vào modal
+				document.getElementById('updateOrderId').value = orderId;
+				document.getElementById('currentStatus').value = currentStatus;
+				document.getElementById('currentStatusText').textContent = getStatusText(currentStatus);
 
-                // Reset form
-                document.getElementById('updateStatusForm').reset();
-                document.getElementById('updateOrderId').value = orderId;
-                document.getElementById('currentStatus').value = currentStatus;
+				// Reset form
+				document.getElementById('updateStatusForm').reset();
+				document.getElementById('updateOrderId').value = orderId;
+				document.getElementById('currentStatus').value = currentStatus;
 
-                // Populate available statuses
-                const statusSelect = document.getElementById('orderStatus');
-                statusSelect.innerHTML = '<option value="">-- Chọn trạng thái --</option>';
+				// Populate available statuses
+				const statusSelect = document.getElementById('orderStatus');
+				statusSelect.innerHTML = '<option value="">-- Chọn trạng thái --</option>';
 
-                const availableStatuses = getAvailableStatuses(currentStatus);
-                availableStatuses.forEach(status => {
-                    const option = document.createElement('option');
-                    option.value = status;
-                    option.textContent = getStatusText(status);
-                    statusSelect.appendChild(option);
-                });
+				const availableStatuses = getAvailableStatuses(currentStatus);
+				availableStatuses.forEach(status => {
+					const option = document.createElement('option');
+					option.value = status;
+					option.textContent = getStatusText(status);
+					statusSelect.appendChild(option);
+				});
 
-                // Hiển thị/ẩn tracking code section
-                handleTrackingCodeDisplay(currentStatus, currentTrackingCode);
+				// Hiển thị/ẩn tracking code section
+				handleTrackingCodeDisplay(currentStatus, currentTrackingCode);
 
-                // Add event listener cho status change
-                statusSelect.addEventListener('change', function() {
-                    const selectedStatus = parseInt(this.value);
-                    handleTrackingCodeRequirement(selectedStatus, currentStatus);
-                });
+				// Add event listener cho status change
+				statusSelect.addEventListener('change', function() {
+					const selectedStatus = parseInt(this.value);
+					handleTrackingCodeRequirement(selectedStatus, currentStatus);
+				});
 
-                // Bootstrap 5 syntax để hiển thị modal
-                var modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
-                modal.show();
+				// Bootstrap 5 syntax để hiển thị modal
+				var modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+				modal.show();
 
-                console.log('Update status modal should be shown now');
-            } catch (error) {
-                console.error('Error in updateOrderStatus:', error);
-                // Fallback nếu Bootstrap 5 không có
-                $('#updateStatusModal').modal('show');
-            }
-        }
+				console.log('Update status modal should be shown now');
+			} catch (error) {
+				console.error('Error in updateOrderStatus:', error);
+				// Fallback nếu Bootstrap 5 không có
+				$('#updateStatusModal').modal('show');
+			}
+		}
 
-        // Function để xác nhận cập nhật trạng thái - ĐÃ CẬP NHẬT
-        function confirmUpdateStatus() {
-            console.log('confirmUpdateStatus called');
+		// Function để xác nhận cập nhật trạng thái - ĐÃ CẬP NHẬT
+		function confirmUpdateStatus() {
+			console.log('confirmUpdateStatus called');
 
-            var orderId = document.getElementById('updateOrderId').value;
-            var status = document.getElementById('orderStatus').value;
-            var trackingCode = document.getElementById('trackingCode').value;
-            var employeeNote = document.getElementById('employeeNote').value;
-            var currentStatus = parseInt(document.getElementById('currentStatus').value);
+			var orderId = document.getElementById('updateOrderId').value;
+			var status = document.getElementById('orderStatus').value;
+			var trackingCode = document.getElementById('trackingCode').value;
+			var employeeNote = document.getElementById('employeeNote').value;
+			var currentStatus = parseInt(document.getElementById('currentStatus').value);
 
-            // Validate form
-            if (!status) {
-                alert('Vui lòng chọn trạng thái đơn hàng!');
-                return;
-            }
+			// Validate form
+			if (!status) {
+				alert('Vui lòng chọn trạng thái đơn hàng!');
+				return;
+			}
 
-            // Validate tracking code khi chuyển sang đang giao hàng
-            if (parseInt(status) === 2 && currentStatus < 2 && !trackingCode.trim()) {
-                alert('Vui lòng nhập mã vận đơn khi chuyển sang trạng thái "Đang giao hàng"!');
-                return;
-            }
+			// Validate tracking code khi chuyển sang đang giao hàng
+			if (parseInt(status) === 2 && currentStatus < 2 && !trackingCode.trim()) {
+				alert('Vui lòng nhập mã vận đơn khi chuyển sang trạng thái "Đang giao hàng"!');
+				return;
+			}
 
-            console.log('Order ID:', orderId, 'Status:', status, 'TrackingCode:', trackingCode, 'EmployeeNote:', employeeNote);
+			console.log('Order ID:', orderId, 'Status:', status, 'TrackingCode:', trackingCode, 'EmployeeNote:', employeeNote);
 
-            // Gửi request để cập nhật đơn hàng
-            $.ajax({
-                url: '/admin/orderadmin/updatestatus',
-                type: 'POST',
-                data: {
-                    Id: orderId,
-                    Status: status,
-                    TrackingCode: trackingCode,
-                    EmployeeNote: employeeNote
-                },
-                success: function(response) {
-                    console.log('Ajax success:', response);
-                    if (response.success) {
-                        alert('Trạng thái đơn hàng đã được cập nhật thành công!');
-                        location.reload();
-                    } else {
-                        alert('Có lỗi xảy ra: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Ajax error:', xhr, status, error);
-                    alert('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại!');
-                }
-            });
+			// Gửi request để cập nhật đơn hàng
+			$.ajax({
+				url: '/admin/orderadmin/updatestatus',
+				type: 'POST',
+				data: {
+					Id: orderId,
+					Status: status,
+					TrackingCode: trackingCode,
+					EmployeeNote: employeeNote
+				},
+				success: function(response) {
+					console.log('Ajax success:', response);
+					if (response.success) {
+						alert('Trạng thái đơn hàng đã được cập nhật thành công!');
+						location.reload();
+					} else {
+						alert('Có lỗi xảy ra: ' + response.message);
+					}
+				},
+				error: function(xhr, status, error) {
+					console.error('Ajax error:', xhr, status, error);
+					alert('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại!');
+				}
+			});
 
-            // Đóng modal (Bootstrap 5)
-            try {
-                var modal = bootstrap.Modal.getInstance(document.getElementById('updateStatusModal'));
-                modal.hide();
-            } catch (error) {
-                // Fallback cho Bootstrap 4
-                $('#updateStatusModal').modal('hide');
-            }
-        }
+			// Đóng modal (Bootstrap 5)
+			try {
+				var modal = bootstrap.Modal.getInstance(document.getElementById('updateStatusModal'));
+				modal.hide();
+			} catch (error) {
+				// Fallback cho Bootstrap 4
+				$('#updateStatusModal').modal('hide');
+			}
+		}
 
-        // Test function để kiểm tra
-        function testModal() {
-            console.log('Testing modal...');
-            cancelOrder(123);
-        }
+		// Test function để kiểm tra
+		function testModal() {
+			console.log('Testing modal...');
+			cancelOrder(123);
+		}
 
-        // Test function cho update status modal
-        function testUpdateModal() {
-            console.log('Testing update status modal...');
-            updateOrderStatus(123);
-        }
-    </script>
+		// Test function cho update status modal
+		function testUpdateModal() {
+			console.log('Testing update status modal...');
+			updateOrderStatus(123);
+		}
+
+				function downloadBill(id) {
+			fetch('/Order/ExportBill/' + id, {
+				method: 'GET',
+				headers: {
+					'Accept': 'application/pdf'
+				}
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Failed to download bill');
+				}
+				return response.blob();
+			})
+			.then(blob => {
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = `HoaDon_${id}.pdf`;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+			})
+			.catch(error => {
+				alert('Lỗi khi tải hóa đơn: ' + error.message);
+			});
+		}
+	</script>
 }

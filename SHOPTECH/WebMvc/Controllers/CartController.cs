@@ -47,13 +47,14 @@ namespace WebMvc.Controllers
                 var response = await _apiService.PostAsync(CustomerApiString.CART_ADD(productDetailId), productDetailId);
                 if(!response.IsSuccessStatusCode)
                 {
-                    throw new Exception();
+                    var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(message.Message);
                 }
                 TempData["SuccessMessage"] = "Thêm sản phẩm thành công.";
             }
-            catch
+            catch(Exception ex)
             {
-                TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình lấy dữ liệu giỏ hàng.";
+                TempData["ErrorMessage"] = ex.Message;
             }
             return Redirect(Request.Headers["Referer"].ToString());
         }
@@ -124,7 +125,8 @@ namespace WebMvc.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                TempData["ErrorMessage"] = ex.Message;
+                return BadRequest(ex.Message);
             }
             return View();
         }
@@ -152,6 +154,7 @@ namespace WebMvc.Controllers
             }
             catch (Exception ex)
             {
+                TempData["ErrorMessage"] = ex.Message;
                 return BadRequest();
             }
             return View();

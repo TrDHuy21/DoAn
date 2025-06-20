@@ -89,6 +89,7 @@ namespace WebMvc.Controllers
         {
             try
             {
+                
                 var response = await _httpClient.GetAsync(CustomerApiString.PRODUCT_DETAIL_SEARCH(name));
                 if (!response.IsSuccessStatusCode)
                 {

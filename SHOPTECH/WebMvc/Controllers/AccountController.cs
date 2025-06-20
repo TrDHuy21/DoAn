@@ -65,7 +65,9 @@ namespace WebMvc.Controllers
                     }
                     else
                     {
-                        TempData["ErrorMessage"] = "Login failed. Please check your account and password";
+                        var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+                        TempData["ErrorMessage"] = errorResponse.Message;
                     }
                 }
                 catch (Exception ex)

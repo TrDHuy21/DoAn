@@ -36,19 +36,19 @@ namespace WebApi.Controllers
             try
             {
                 var result = await _cartService.AddAysnc(productDetailId);
-                if(result)
+                if (result)
                 {
                     return Ok(result);
                 }
                 else
                 {
-                    throw new Exception("Looix");
+                    throw new Exception("Lỗi");
                 }
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message});
             }
         }
         [HttpDelete("remove/{productDetailId}")]

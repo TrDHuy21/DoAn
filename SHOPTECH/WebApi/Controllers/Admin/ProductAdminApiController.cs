@@ -69,7 +69,7 @@ namespace WebApi.Controllers.Admin
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorResponse { Message = $"Failed to add product: {ex.Message}" });
+                return BadRequest(new ErrorResponse { Message = $"Lỗi tạo sản phẩm: {ex.Message}" });
             }
         }
 

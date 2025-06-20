@@ -119,19 +119,19 @@
 		});
 
 		$('#userNameFilter').on('keyup change', function () {
-			table.column(3).search(this.value).draw();
+			table.column(2).search(this.value).draw();
 		});
 
 		$('#phoneFilter').on('keyup change', function () {
-			table.column(2).search(this.value).draw();
+			table.column(1).search(this.value).draw();
 		});
 
 		$('#roleFilter').on('change', function () {
 			var val = this.value;
 			if (val === "") {
-				table.column(5).search('').draw();
+				table.column(4).search('').draw();
 			} else {
-				table.column(5).search(this.value).draw();
+				table.column(4).search(this.value).draw();
 			}
 		});
 	});

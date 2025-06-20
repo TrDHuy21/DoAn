@@ -50,6 +50,12 @@ namespace Application.Service.Implementation
                     throw new KeyNotFoundException($"Brand with ID {productDto.CategoryId} not found");
                 }
 
+                if((
+                    await _unitOfWork.Products.GetAll().Where(p => p.Name.Equals(productDto.Name)).AnyAsync()
+                    ))
+                {
+                    throw new Exception("Tên sản phẩm bị trùng");
+                }
 
                 await _unitOfWork.BeginTransactionAsync();
 

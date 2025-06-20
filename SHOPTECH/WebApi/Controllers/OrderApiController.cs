@@ -14,14 +14,18 @@ namespace WebApi.Controllers
     public class OrderApiController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IExportBill _exportBill;
         private readonly IMapper _mapper;
 
-
-        public OrderApiController(IOrderService orderService, IMapper mapper)
+        public OrderApiController(IOrderService orderService, IExportBill exportBill, IMapper mapper)
         {
             _orderService = orderService;
+            _exportBill = exportBill;
             _mapper = mapper;
         }
+
+
+
 
         /*
             1. getbyid
@@ -92,7 +96,7 @@ namespace WebApi.Controllers
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.InnerException);
 
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -113,7 +117,8 @@ namespace WebApi.Controllers
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.InnerException);
 
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
+
             }
         }
 
@@ -133,5 +138,13 @@ namespace WebApi.Controllers
                 });
             }
         }
+
+        [HttpGet("ExportBill/{id}")]
+        public async Task<IActionResult> ExportBill(int id)
+        {
+            var pdfBytes = _exportBill.GenerateInvoicePdf(id);
+            return File(pdfBytes, "application/pdf", $"HoaDon_{id}.pdf");
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Dtos.OrderDtos;
+using Application.Models;
 using Domain.Enity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,11 +66,13 @@ namespace WebMvc.Controllers
                 }
                 else
                 {
-                    throw new Exception("Lỗi khi tạo đơn hàng");
+                    var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(message.Message);
                 }
             }
             catch (Exception ex)
             {
+                TempData["ErrorMessage"] = ex.Message;
                 ModelState.AddModelError("", ex.Message);
             }
             return Redirect(Request.Headers["Referer"].ToString());
@@ -81,7 +84,7 @@ namespace WebMvc.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     throw new Exception("Lỗi khi tạo đơn hàng");
                 }
@@ -94,11 +97,13 @@ namespace WebMvc.Controllers
                 }
                 else
                 {
-                    throw new Exception("Lỗi khi tạo đơn hàng");
+                    var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(message.Message);
                 }
             }
             catch (Exception ex)
             {
+                TempData["ErrorMessage"] = ex.Message;
                 ModelState.AddModelError("", ex.Message);
             }
             return Redirect(Request.Headers["Referer"].ToString());
@@ -135,7 +140,7 @@ namespace WebMvc.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
                     throw new Exception();
                 }
@@ -147,20 +152,46 @@ namespace WebMvc.Controllers
                     {
                         success = true
                     });
-                } else
+                }
+                else
                 {
-                    return Ok(new {
+                    return Ok(new
+                    {
                         success = false,
                         message = "Đã xảy ra lỗi"
                     });
                 }
-                
+
             }
             catch (Exception ex)
-            { 
+            {
                 return BadRequest();
             }
         }
 
+        [HttpGet("ExportBill/{id}")]
+        public async Task<IActionResult> ExportBill(int id)
+        {
+            try
+            {
+                var response = await _apiService.GetAsync(CustomerApiString.ORDER_EXPORTBILL(id));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+                    return File(pdfBytes, "application/pdf", $"HoaDon_{id}.pdf");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Không thể tải file hóa đơn từ API";
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Lỗi trong quá trình lấy dữ liệu";
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+        }
     }
 }

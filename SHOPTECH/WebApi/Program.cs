@@ -3,6 +3,8 @@ using System.Text;
 using Application.Models.EmailModel;
 using Application.Service.Implementation;
 using Application.Service.Interface;
+using DinkToPdf.Contracts;
+using DinkToPdf;
 using Domain.Enity;
 using GenerativeAI;
 using Infrastructure.Context;
@@ -52,6 +54,9 @@ namespace WebApi
             builder.Services.Configure<EmailSettings>(
                 builder.Configuration.GetSection("EmailSettings"));
 
+            // Thêm dịch vụ DinkToPdf
+            builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
             builder.Services.AddSingleton<IManagerChatSession, ManagerChatSession>();
             builder.Services.AddScoped<IGeminiService, GeminiService>();
 
@@ -76,6 +81,8 @@ namespace WebApi
             builder.Services.AddScoped<IStatisticsService, StatisticsService>();
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
+            builder.Services.AddScoped<IExportBill, ExportBill>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

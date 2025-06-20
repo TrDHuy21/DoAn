@@ -45,12 +45,16 @@
                                 <div class="card mb-3 border-0 bg-light">
                                     <div class="card-body">
                                         <div class="row align-items-center">
-                                            @{
+                                            @if (item.ProductDetail.Image != null)
+                                            {
                                                 var base64String = Convert.ToBase64String(item.ProductDetail.Image.Data);
                                                 var imageSrc = $"data:{item.ProductDetail.Image.Type};base64,{base64String}";
+                                                <img src="@imageSrc" class="img-fluid rounded" style="max-height: 80px; object-fit: cover;" alt="@item.ProductDetail.Name" />
+
+                                            } else {
+                                                <img src="" class="img-fluid rounded" style="max-height: 80px; object-fit: cover;" alt="@item.ProductDetail.Name" />
                                             }
                                             <div class="col-md-2 col-3 text-center">
-                                                <img src="@imageSrc" class="img-fluid rounded" style="max-height: 80px; object-fit: cover;" alt="@item.ProductDetail.Name" />
                                             </div>
                                             <div class="col-md-6 col-9">
                                                 <h5 class="card-title mb-1">@item.ProductDetail.Name</h5>

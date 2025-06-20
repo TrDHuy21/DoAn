@@ -46,8 +46,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <form asp-action="Search" asp-controller="ProductDetail" method="get" class="d-flex mx-lg-4 my-2 my-lg-0">
-                        <input class="form-control rounded-pill me-2" type="search" name="name" placeholder="Bạn cần tìm gì hôm nay?">
+                    <form asp-action="Search" asp-controller="ProductDetail" method="get" class="d-flex mx-lg-4 my-1 my-lg-0 w-50" onsubmit="return validateSearch()">
+                        <input class="form-control rounded-pill me-2" type="search" name="name" id="searchInput" placeholder="Bạn cần tìm gì hôm nay?">
                         <button class="btn btn-primary rounded-pill px-4" type="submit">
                             <i class="fas fa-search me-1"></i> Tìm
                         </button>
@@ -92,7 +92,7 @@
                                     <li>
                                         <a class="dropdown-item rounded-3" asp-action="MyOrders" asp-controller="Order">
                                             <i class="fas fa-shopping-bag me-2"></i>
-                                            Đơn hàng 
+                                            Đơn hàng
                                         </a>
                                     </li>
 
@@ -150,3 +150,13 @@
         </nav>
     </div>
 </header>
+
+<script>
+    function validateSearch() {
+        var searchInput = document.getElementById("searchInput").value.trim();
+        if (searchInput === "") {
+            return false; // Ngăn form gửi đi
+        }
+        return true; // Cho phép form gửi đi
+    }
+</script>

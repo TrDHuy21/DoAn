@@ -167,7 +167,7 @@
 		table = $('#ordersTable').DataTable({
 			"lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
 			"ordering": false,
-			"searching": false,
+			"searching": true,
 			"paging": false
 		});
 
@@ -192,7 +192,7 @@
 			if (selectedType === '') {
 				table.column(3).search('').draw();
 			} else {
-				const typeText = selectedType === 'online' ? 'Online' : 'Offline';
+				const typeText = selectedType === 'Online' ? 'Online' : 'Offline';
 				table.column(3).search(typeText).draw();
 			}
 		});

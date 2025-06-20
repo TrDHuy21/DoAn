@@ -46,4 +46,112 @@ function removeFilter(filterName, filterValue) {
         // Chuyển hướng đến URL mới 
         window.location.href = currentUrl.toString();
     }
-} 
+}
+
+// Hàm xử lý bộ lọc giá
+function applyPriceFilter() {
+    const minPrice = document.getElementById('minPrice').value;
+    const maxPrice = document.getElementById('maxPrice').value;
+
+    // Validate input
+    if (minPrice && maxPrice && parseInt(minPrice) > parseInt(maxPrice)) {
+        alert('Giá tối thiểu không thể lớn hơn giá tối đa!');
+        return;
+    }
+
+    let currentUrl = new URL(window.location.href);
+    let searchParams = currentUrl.searchParams;
+
+    // Xóa các tham số giá cũ
+    searchParams.delete('min_price');
+    searchParams.delete('max_price');
+
+    // Thêm giá mới nếu có giá trị
+    if (minPrice && minPrice > 0) {
+        searchParams.set('min_price', minPrice);
+    }
+    if (maxPrice && maxPrice > 0) {
+        searchParams.set('max_price', maxPrice);
+    }
+
+    // Chuyển hướng đến URL mới
+    window.location.href = currentUrl.toString();
+}
+
+// Hàm xóa bộ lọc giá
+function clearPriceFilter() {
+    let currentUrl = new URL(window.location.href);
+    let searchParams = currentUrl.searchParams;
+
+    // Xóa các tham số giá
+    searchParams.delete('min_price');
+    searchParams.delete('max_price');
+
+    // Chuyển hướng đến URL mới
+    window.location.href = currentUrl.toString();
+}
+
+// Hàm áp dụng sắp xếp
+function applySorting(order, direction) {
+    let currentUrl = new URL(window.location.href);
+    let searchParams = currentUrl.searchParams;
+
+    // Xóa các tham số sắp xếp cũ
+    searchParams.delete('order');
+    searchParams.delete('dir');
+
+    // Thêm sắp xếp mới
+    if (order && direction) {
+        searchParams.set('order', order);
+        searchParams.set('dir', direction);
+    }
+
+    // Chuyển hướng đến URL mới
+    window.location.href = currentUrl.toString();
+}
+
+// Hàm xóa sắp xếp
+function clearSorting() {
+    let currentUrl = new URL(window.location.href);
+    let searchParams = currentUrl.searchParams;
+
+    // Xóa các tham số sắp xếp
+    searchParams.delete('order');
+    searchParams.delete('dir');
+
+    // Chuyển hướng đến URL mới
+    window.location.href = currentUrl.toString();
+}
+
+// Xử lý sự kiện khi trang tải xong
+document.addEventListener('DOMContentLoaded', function () {
+    // Xử lý Enter key cho input giá
+    const minPriceInput = document.getElementById('minPrice');
+    const maxPriceInput = document.getElementById('maxPrice');
+
+    if (minPriceInput) {
+        minPriceInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyPriceFilter();
+            }
+        });
+    }
+
+    if (maxPriceInput) {
+        maxPriceInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyPriceFilter();
+            }
+        });
+    }
+
+    // Ngăn dropdown đóng khi click vào bên trong price filter
+    const priceDropdown = document.querySelector('#dropdown-price + .dropdown-menu');
+    if (priceDropdown) {
+        priceDropdown.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+    }
+});

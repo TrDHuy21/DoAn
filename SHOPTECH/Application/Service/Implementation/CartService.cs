@@ -47,7 +47,12 @@ namespace Application.Service.Implementation
                 var productDetail = await _unitOfWork.ProductDetails.GetByIdAsync(productDetailId);
                 if (productDetail == null)
                 {
-                    throw new Exception("Product detail not found");
+                    throw new Exception("Không tìm thấy sản phẩm");
+                }
+
+                if (productDetail.Quantity <=0)
+                {
+                    throw new Exception("Sản phẩm đã hết hàng");
                 }
 
                 var cart = await _unitOfWork.Carts.GetByIdAsync((productDetailId, userId));

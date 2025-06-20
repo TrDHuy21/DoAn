@@ -298,9 +298,12 @@
                         </button>
                     }
 
-                    <button type="button" class="btn btn-primary" onclick="window.print()">
-                        <i class="fas fa-print"></i> In đơn hàng
-                    </button>
+                    @if (Model.Status == 4) {
+                        <button type="button" class="btn btn-primary" onclick="downloadBill(@Model.Id)">
+                            <i class="fas fa-print"></i> In đơn hàng
+                        </button>
+                    }
+                    
                 </div>
             </div>
         </div>
@@ -405,6 +408,34 @@
         function testModal() {
             console.log('Testing modal...');
             cancelOrder(123);
+        }
+
+                function downloadBill(id) {
+            fetch('/Order/ExportBill/' + id, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to download bill');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `HoaDon_${id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                alert('Lỗi khi tải hóa đơn: ' + error.message);
+            });
         }
     </script>
 }

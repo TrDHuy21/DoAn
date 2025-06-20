@@ -38,10 +38,13 @@
 						<td>
 							<input type="checkbox" class="form-check-input item-select" name="selectedItems" value="@item.ProductDetailId">
 						</td>
-						@{
+						@if (item.Image != null)
+						{
 							var base64String = Convert.ToBase64String(item.Image.Data);
 							var imageSrc = $"data:{item.Image.Type};base64,{base64String}";
 							<td><img src="@imageSrc" alt="@item.ProductName" class="img-thumbnail" style="width: 80px; height: auto;" /></td>
+						} else {
+							<td><img src="" alt="@item.ProductName" class="img-thumbnail" style="width: 80px; height: auto;" /></td>
 						}
 						<td>@item.ProductName</td>
 						<td class="item-price">@item.Price.ToString("N0") đ</td>

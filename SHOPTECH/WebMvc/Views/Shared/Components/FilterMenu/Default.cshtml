@@ -1,76 +1,256 @@
-﻿ @using Application.Dtos.ProductAttributeDtos
+﻿@using Application.Dtos.ProductAttributeDtos
 @{
-	var productAttributes = ViewData["ProductAttributes"] != null ? ViewData["ProductAttributes"] as List<FilterMenuDto> : new List<FilterMenuDto>();
-	var queryParams = ViewData["QueryParams"] != null ? ViewData["QueryParams"] as List<FilterMenuDto>: new List<FilterMenuDto>();
-	var currentUrl = Context.Request.Path;
-	var categoryName = ViewData["CategoryName"] != null  ? ViewData["CategoryName"] as string : string.Empty;
+    var productAttributes = ViewData["ProductAttributes"] != null ? ViewData["ProductAttributes"] as List<FilterMenuDto> : new List<FilterMenuDto>();
+    var queryParams = ViewData["QueryParams"] != null ? ViewData["QueryParams"] as List<FilterMenuDto> : new List<FilterMenuDto>();
+    var currentUrl = Context.Request.Path;
+    var categoryName = ViewData["CategoryName"] != null ? ViewData["CategoryName"] as string : string.Empty;
+    
+    // Get current URL parameters for price and sort
+    var minPrice = Context.Request.Query["min_price"].ToString();
+    var maxPrice = Context.Request.Query["max_price"].ToString();
+    var sortOrder = Context.Request.Query["order"].ToString();
+    var sortDir = Context.Request.Query["dir"].ToString();
+    
+    var hasPriceFilter = !string.IsNullOrEmpty(minPrice) || !string.IsNullOrEmpty(maxPrice);
+    var hasSortFilter = !string.IsNullOrEmpty(sortOrder) && !string.IsNullOrEmpty(sortDir);
 }
 
-<!-- Chọn theo tiêu chí -->
+<!-- Filter Section -->
+<div class="container my-5">
+    <h5 class="mb-3 fw-bold text-dark">Chọn theo tiêu chí</h5>
+    <div class="d-flex flex-wrap gap-2">
+        
+        <!-- Price Filter - First -->
+        <div class="dropdown">
+            <button class="btn btn-outline-dark btn-sm dropdown-toggle rounded-pill @(hasPriceFilter ? "active-filter border-primary text-primary" : "")"
+                    type="button"
+                    id="dropdown-price"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                @if (hasPriceFilter)
+                {
+                    @if (!string.IsNullOrEmpty(minPrice) && !string.IsNullOrEmpty(maxPrice))
+                    {
+                        <span>@(Convert.ToInt32(minPrice).ToString("N0")) - @(Convert.ToInt32(maxPrice).ToString("N0")) VNĐ</span>
+                    }
+                    else if (!string.IsNullOrEmpty(minPrice))
+                    {
+                        <span>Từ @(Convert.ToInt32(minPrice).ToString("N0")) VNĐ</span>
+                    }
+                    else if (!string.IsNullOrEmpty(maxPrice))
+                    {
+                        <span>Đến @(Convert.ToInt32(maxPrice).ToString("N0")) VNĐ</span>
+                    }
+                }
+                else
+                {
+                    <span>Giá</span>
+                }
+            </button>
+            <div class="dropdown-menu shadow-sm border-0 p-3" aria-labelledby="dropdown-price" style="min-width: 250px;">
+                <div class="mb-3">
+                    <label class="form-label small">Giá từ (VNĐ)</label>
+                    <input type="number" class="form-control form-control-sm" id="minPrice" 
+                           placeholder="0" min="0" value="@minPrice">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Giá đến (VNĐ)</label>
+                    <input type="number" class="form-control form-control-sm" id="maxPrice" 
+                           placeholder="999999999" min="0" value="@maxPrice">
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm" onclick="applyPriceFilter()">Áp dụng</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="clearPriceFilter()">Xóa</button>
+                </div>
+            </div>
+        </div>
 
-<div class="container mt-4">
-	<h5>Chọn theo tiêu chí</h5>
-	@if (productAttributes != null && productAttributes.Any())
-	{
-		<div class="mb-3">
-			@foreach (var item in productAttributes)
-			{	
-				var isActive = queryParams?.Any(f => f.Name == item.Name) == true;
-				<div class="dropdown d-inline-block me-2 mb-2">
-					<button class="filter-btn @(isActive ? "active-filter" : "")"
-							type="button"
-							id="dropdown-@item.UrlName"
-							data-bs-toggle="dropdown"
-							aria-expanded="false">
-						@item.Name <i class="bi bi-chevron-down"></i>
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdown-@item.UrlName">
-						@for (int i = 0; i < item.Values.Count; i++)
-						{
-							<li>
-								<a class="dropdown-item" href="javascript:void(0);"
-								   onclick="addFilter('@item.UrlName', '@item.UrlValues[i]')">@item.Values[i]</a>
-							</li>
-						}
+        <!-- Product Attributes Filters -->
+        @if (productAttributes != null && productAttributes.Any())
+        {
+            @foreach (var item in productAttributes)
+            {
+                var isActive = queryParams?.Any(f => f.Name == item.Name) == true;
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark btn-sm dropdown-toggle rounded-pill @(isActive ? "active-filter border-primary text-primary" : "")"
+                            type="button"
+                            id="dropdown-@item.UrlName"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        @item.Name
+                    </button>
+                    <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="dropdown-@item.UrlName">
+                        @for (int i = 0; i < item.Values.Count; i++)
+                        {
+                            <li>
+                                <a class="dropdown-item py-2" href="javascript:void(0);"
+                                   onclick="addFilter('@item.UrlName', '@item.UrlValues[i]')">@item.Values[i]</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
 
-					</ul>
-				</div>
-			}
-		</div>
-	}
+        <!-- Sort Filter - Last -->
+        <div class="dropdown">
+            <button class="btn btn-outline-dark btn-sm dropdown-toggle rounded-pill @(hasSortFilter ? "active-filter border-primary text-primary" : "")"
+                    type="button"
+                    id="dropdown-sort"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                @if (hasSortFilter)
+                {
+                    @if (sortOrder == "name" && sortDir == "asc")
+                    {
+                        <span>Tên A → Z</span>
+                    }
+                    else if (sortOrder == "name" && sortDir == "desc")
+                    {
+                        <span>Tên Z → A</span>
+                    }
+                    else if (sortOrder == "price" && sortDir == "asc")
+                    {
+                        <span>Giá tăng dần</span>
+                    }
+                    else if (sortOrder == "price" && sortDir == "desc")
+                    {
+                        <span>Giá giảm dần</span>
+                    }
+                }
+                else
+                {
+                    <span>Sắp xếp</span>
+                }
+            </button>
+            <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="dropdown-sort">
+                <li><a class="dropdown-item py-2" href="javascript:void(0);" onclick="applySorting('name', 'asc')">Tên A → Z</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0);" onclick="applySorting('name', 'desc')">Tên Z → A</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0);" onclick="applySorting('price', 'asc')">Giá tăng dần</a></li>
+                <li><a class="dropdown-item py-2" href="javascript:void(0);" onclick="applySorting('price', 'desc')">Giá giảm dần</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
 
-<!-- Đang lọc theo -->
-@if (queryParams != null && queryParams.Any())
+<!-- Active Filters Section -->
+@if ((queryParams != null && queryParams.Any()) || hasPriceFilter || hasSortFilter)
 {
-	<div class="container mt-4">
-		<h5>Đang lọc theo</h5>
+    <div class="container mb-5">
+        <h5 class="mb-3 fw-bold text-dark">Đang lọc theo</h5>
+        <div class="d-flex flex-wrap gap-2">
+            
+            <!-- Price Filter Badge -->
+            @if (hasPriceFilter)
+            {
+                <span class="badge bg-primary rounded-pill px-3 py-2 d-flex align-items-center gap-2">
+                    <a href="javascript:void(0);"
+                       onclick="clearPriceFilter()"
+                       class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="bi bi-x-circle me-1"></i> 
+                        Giá: 
+                        @if (!string.IsNullOrEmpty(minPrice) && !string.IsNullOrEmpty(maxPrice))
+                        {
+                             <span> 
+                                 @(Convert.ToInt32(minPrice).ToString("N0")) - @(Convert.ToInt32(maxPrice).ToString("N0")) VNĐ
+                            </span>
+                        }
+                        else if (!string.IsNullOrEmpty(minPrice))
+                        {
+                            <span>từ @(Convert.ToInt32(minPrice).ToString("N0")) VNĐ</span>
+                        }
+                        else if (!string.IsNullOrEmpty(maxPrice))
+                        {
+                            <span>đến @(Convert.ToInt32(maxPrice).ToString("N0")) VNĐ</span>
+                        }
+                    </a>
+                </span>
+            }
 
-		<div class="mb-3">
-			@foreach (var filter in queryParams)
-			{
-				for (int i = 0; i < filter.Values.Count; i++)
-				{
-					<span class="badge bg-danger rounded-pill p-2 me-2 mb-2">
-						<a href="javascript:void(0);"
-						   onclick="removeFilter('@filter.UrlName', '@filter.UrlValues[i]')"
-						   class="text-white text-decoration-none">
-							<i class="bi bi-x-circle"></i> @filter.Name: @filter.Values[i]
-						</a>
-					</span>
-				}
+            <!-- Product Attributes Filter Badges -->
+            @if (queryParams != null && queryParams.Any())
+            {
+                @foreach (var filter in queryParams)
+                {
+                    for (int i = 0; i < filter.Values.Count; i++)
+                    {
+                        <span class="badge bg-primary rounded-pill px-3 py-2 d-flex align-items-center gap-2">
+                            <a href="javascript:void(0);"
+                               onclick="removeFilter('@filter.UrlName', '@filter.UrlValues[i]')"
+                               class="text-white text-decoration-none d-flex align-items-center">
+                                <i class="bi bi-x-circle me-1"></i> @filter.Name: @filter.Values[i]
+                            </a>
+                        </span>
+                    }
+                }
+            }
 
-			}
-			@if (queryParams.Any())
-			{
-				<span class="badge bg-danger rounded-pill p-2 me-2 mb-2">
-					<a href="/productdetail/@categoryName" class="text-white text-decoration-none">
-						<i class="bi bi-x-circle"></i> Xóa tất cả
-					</a>
-				</span>
-			}
-		</div>
-	</div>
+            <!-- Sort Filter Badge -->
+            @if (hasSortFilter)
+            {
+                <span class="badge bg-primary rounded-pill px-3 py-2 d-flex align-items-center gap-2">
+                    <a href="javascript:void(0);"
+                       onclick="clearSorting()"
+                       class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="bi bi-x-circle me-1"></i> 
+                        Sắp xếp: 
+                        @if (sortOrder == "name" && sortDir == "asc")
+                        {
+                            <span>Tên A → Z</span>
+                        }
+                        else if (sortOrder == "name" && sortDir == "desc")
+                        {
+                            <span>Tên Z → A</span>
+                        }
+                        else if (sortOrder == "price" && sortDir == "asc")
+                        {
+                            <span>Giá tăng dần</span>
+                        }
+                        else if (sortOrder == "price" && sortDir == "desc")
+                        {
+                            <span>Giá giảm dần</span>
+                        }
+                    </a>
+                </span>
+            }
+
+            <!-- Clear All Badge -->
+            @if ((queryParams != null && queryParams.Any()) || hasPriceFilter || hasSortFilter)
+            {
+                <span class="badge bg-danger rounded-pill px-3 py-2 d-flex align-items-center gap-2">
+                    <a href="/productdetail/@categoryName" class="text-white text-decoration-none d-flex align-items-center">
+                        <i class="bi bi-x-circle me-1"></i> Xóa tất cả
+                    </a>
+                </span>
+            }
+        </div>
+    </div>
 }
 
+<style>
+    .active-filter {
+        background-color: #e7f1ff !important;
+    }
 
+    .dropdown-menu {
+        min-width: 200px;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Prevent dropdown from closing when clicking inside price filter */
+    .dropdown-menu {
+        cursor: default;
+    }
+    
+    .dropdown-menu .dropdown-item {
+        cursor: pointer;
+    }
+</style>

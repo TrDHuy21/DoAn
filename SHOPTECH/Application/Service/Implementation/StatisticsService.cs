@@ -397,7 +397,7 @@ namespace Application.Service.Implementation
             int maxMonth = currentMonth;
 
             if (beginMonth < 1 || beginMonth > 12 || endMonth < 1 || endMonth > 12 ||
-              endYear < beginYear || endYear <= 0 || beginYear <= 0)
+              endYear < beginYear || endYear <= 0 || beginYear <= 0 || (endYear == beginYear && beginMonth > endMonth))
             {
                 // Trường hợp số âm, số tháng không hợp lệ
                 beginMonth = 1;
