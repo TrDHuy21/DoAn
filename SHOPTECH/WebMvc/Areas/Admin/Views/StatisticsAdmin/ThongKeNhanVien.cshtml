@@ -1,0 +1,505 @@
+﻿
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #3498db;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .top-list {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .top-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+        .top-item:last-child {
+            border-bottom: none;
+        }
+
+    .rank-badge {
+        background: #3498db;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+        .rank-badge.gold {
+            background: #f39c12;
+        }
+
+        .rank-badge.silver {
+            background: #95a5a6;
+        }
+
+        .rank-badge.bronze {
+            background: #e67e22;
+        }
+
+    .date-filter {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .employee-table {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .table th {
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        border-color: #ecf0f1;
+    }
+</style>
+<div class="dashboard-header">
+    <div class="container">
+        <h1 class="text-center"><i class="fas fa-chart-line"></i> Dashboard Thống Kê Doanh Số Nhân Viên</h1>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Bộ lọc thời gian -->
+    <div class="row">
+        <div class="col-12">
+            <div class="date-filter">
+                <h5><i class="fas fa-calendar-alt"></i> Chọn Thời Gian</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Tháng/Năm Bắt Đầu:</label>
+                        <input type="month" class="form-control" id="startDate" value="2025-01">
+                    </div>
+                    <div class="col-md-4">
+                        <label>Tháng/Năm Kết Thúc:</label>
+                        <input type="month" class="form-control" id="endDate" value="2025-06">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-primary" onclick="updateData()">
+                            <i class="fas fa-search"></i> Cập Nhật
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="employee-table">
+                <h5><i class="fas fa-list"></i> Danh Sách Doanh Số Nhân Viên</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên Nhân Viên</th>
+                            <th>Doanh Số</th>
+                            <th>Số Lượng Đơn Hàng</th>
+                            <th>Tỷ Lệ Doanh Thu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTable">
+                        <tr>
+                            <td>Nguyễn Văn A</td>
+                            <td>245 triệu</td>
+                            <td>156</td>
+                            <td><span class="badge badge-success">98%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Trần Thị B</td>
+                            <td>198 triệu</td>
+                            <td>134</td>
+                            <td><span class="badge badge-success">95%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Lê Văn C</td>
+                            <td>167 triệu</td>
+                            <td>98</td>
+                            <td><span class="badge badge-warning">89%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Phạm Thị D</td>
+                            <td>143 triệu</td>
+                            <td>87</td>
+                            <td><span class="badge badge-warning">85%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Hoàng Văn E</td>
+                            <td>122 triệu</td>
+                            <td>76</td>
+                            <td><span class="badge badge-danger">78%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Vũ Thị F</td>
+                            <td>108 triệu</td>
+                            <td>65</td>
+                            <td><span class="badge badge-danger">72%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Đỗ Văn G</td>
+                            <td>89 triệu</td>
+                            <td>54</td>
+                            <td><span class="badge badge-danger">68%</span></td>
+                        </tr>
+                        <tr>
+                            <td>Bùi Thị H</td>
+                            <td>76 triệu</td>
+                            <td>43</td>
+                            <td><span class="badge badge-danger">65%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="chart-container">
+                <h5><i class="fas fa-bar-chart"></i> Doanh Số Nhân Viên Theo Tháng</h5>
+                <canvas id="employeeSalesChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script>
+
+         var test;
+         // Mảng màu nền cho các nhân viên
+        const backgroundColors = [
+            '#3498db', // Blue
+            '#2ecc71', // Green
+            '#e74c3c', // Red
+            '#f39c12', // Orange
+            '#9b59b6', // Purple
+            '#1abc9c', // Turquoise
+            '#34495e', // Dark Blue Grey
+            '#e67e22', // Carrot
+            '#95a5a6', // Concrete
+            '#f1c40f', // Yellow
+            '#8e44ad', // Wisteria
+            '#16a085', // Green Sea
+            '#2c3e50', // Midnight Blue
+            '#d35400', // Pumpkin
+            '#27ae60', // Nephritis
+            '#c0392b', // Alizarin
+            '#7f8c8d', // Asbestos
+            '#2980b9', // Belize Hole
+            '#8c52ff', // Light Purple
+            '#ff6b6b'  // Light Red
+        ];
+        var employeeData = {
+            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+            datasets: [
+                {
+                    label: 'Nguyễn Văn A',
+                    data: [25, 32, 28, 35, 42, 38],
+                    backgroundColor: '#3498db'
+                },
+                {
+                    label: 'Trần Thị B',
+                    data: [22, 28, 25, 31, 35, 33],
+                    backgroundColor: '#2ecc71'
+                },
+                {
+                    label: 'Lê Văn C',
+                    data: [18, 23, 21, 26, 29, 27],
+                    backgroundColor: '#e74c3c'
+                },
+                {
+                    label: 'Phạm Thị D',
+                    data: [15, 19, 17, 22, 25, 23],
+                    backgroundColor: '#f39c12'
+                },
+                {
+                    label: 'Hoàng Văn E',
+                    data: [12, 16, 14, 18, 21, 19],
+                    backgroundColor: '#9b59b6'
+                }
+            ]
+        };
+
+        // Biểu đồ doanh số nhân viên
+        const eEmployeeSalesChart = document.getElementById('employeeSalesChart').getContext('2d');
+        let employeeSalesChart = new Chart(eEmployeeSalesChart, {
+                type: 'bar',
+                data: employeeData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value); // Sử dụng hàm formatNumber
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        // Update data function
+        function updateData() {
+            const startEl = document.getElementById('startDate');
+            const endEl = document.getElementById('endDate');
+
+            let [beginYear, beginMonth] = startEl.value.split('-').map(Number);
+            let [endYear, endMonth] = endEl.value.split('-').map(Number);
+
+            let result = validateAndControlTime(beginMonth, beginYear, endMonth, endYear);
+
+            // Load các functions với validated data
+            loadPhan3(result.beginMonth, result.beginYear, result.endMonth, result.endYear);
+
+            // Update inputs với format đúng
+            startEl.value = `${result.beginYear}-${result.beginMonth.toString().padStart(2, '0')}`;
+            endEl.value = `${result.endYear}-${result.endMonth.toString().padStart(2, '0')}`;
+
+            alert(`Đã thống kê dữ liệu từ ${result.beginMonth}/${result.beginYear} -> ${result.endMonth}/${result.endYear}`);
+        }
+
+        // Format number function
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(1) + ' tỷ';
+            } else if (num >= 1000000) {
+                return (num / 1000000).toFixed(0) + ' triệu';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(0) + 'k';
+            }
+            return num.toString();
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateData();
+        });
+
+        // Responsive chart resize
+        window.addEventListener('resize', function() {
+            Chart.helpers.each(Chart.instances, function(instance) {
+                instance.resize();
+            });
+        });
+
+        async function loadPhan3(beginMonth, beginYear, endMonth, endYear) {
+            try {
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongkenhanvien?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+
+                // Cập nhật employeeTable
+                updateEmployeeTable(data.employees);
+
+                // Cập nhật biểu đồ employeeSalesChart
+                updateEmployeeSalesChart(data);
+
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+                Toast('Không thể tải dữ liệu biểu đồ doanh thu');
+            }
+        }
+
+        function updateEmployeeTable(employees) {
+            const tableBody = document.getElementById('employeeTable');
+            tableBody.innerHTML = '';
+            let totalRevenue = 0;
+
+            // Tính tổng doanh thu
+            employees.forEach(employee => {
+              employee.doanhSo.forEach(doanhSo => {
+                totalRevenue += doanhSo;
+              });
+            });
+
+            employees.forEach(employee => {
+                // Tính tổng doanh số và đơn hàng
+                let tongDoanhSo = employee.doanhSo.reduce((sum, value) => sum + value, 0);
+                let tongDonHang = employee.donHang.reduce((sum, value) => sum + value, 0);
+
+                // Tỷ lệ hoàn thành mặc định (có thể tính toán dựa trên logic nghiệp vụ)
+                // Ví dụ: dựa trên số đơn hàng hoặc doanh số
+                let tyLeDoanhSo = (tongDoanhSo / totalRevenue) * 100;
+                let tongDoanhSoStr = formatNumber(tongDoanhSo);
+                const row = `
+                    <tr>
+                        <td>${employee.tenNhanVien}</td>
+                        <td>${tongDoanhSoStr}</td>
+                        <td>${tongDonHang}</td>
+                        <td><span class="badge badge-success">${Math.round(tyLeDoanhSo)}%</span></td>
+                    </tr>
+                `;
+
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function updateEmployeeSalesChart(data) {
+            // Chuẩn bị dữ liệu cho biểu đồ
+            const datasets = data.employees.map((employee, index) => ({
+                label: employee.tenNhanVien,
+                data: employee.doanhSo,
+                backgroundColor: backgroundColors[index % backgroundColors.length]
+            }));
+
+            // Cập nhật dữ liệu biểu đồ
+            employeeData.labels = data.labels;
+            employeeData.datasets = datasets;
+
+            // Cập nhật biểu đồ
+            if (employeeSalesChart) {
+                employeeSalesChart.data = employeeData;
+                employeeSalesChart.update();
+            }
+        }
+
+        function getRankClass(index) {
+            switch (index) {
+                case 0: return 'gold';
+                case 1: return 'silver';
+                case 2: return 'bronze';
+                default: return '';
+            }
+        }
+
+        function validateAndControlTime(beginMonth, beginYear, endMonth, endYear) {
+            // Lấy năm và tháng hiện tại
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() trả về 0-11, nên cần +1
+
+            // Thiết lập min và max
+            const minYear = 2024;
+            const minMonth = 1; // Tháng 1
+            const maxYear = currentYear;
+            const maxMonth = currentMonth;
+
+            // Kiểm tra các điều kiện không hợp lệ
+            if (beginMonth < 1 || beginMonth > 12 || endMonth < 1 || endMonth > 12 ||
+                endYear < beginYear || endYear <= 0 || beginYear <= 0 ||
+                (endYear === beginYear && beginMonth > endMonth)) {
+                // Trường hợp số âm, số tháng không hợp lệ
+                return {
+                    beginMonth: 1,
+                    beginYear: currentYear,
+                    endMonth: currentMonth,
+                    endYear: currentYear
+                };
+            }
+
+            // Điều chỉnh endYear và endMonth nếu nhỏ hơn min
+            if (endYear < minYear) {
+                endYear = minYear;
+                endMonth = minMonth;
+            }
+
+            // Điều chỉnh beginYear và beginMonth nếu nhỏ hơn min
+            if (beginYear < minYear) {
+                beginYear = minYear;
+                beginMonth = minMonth;
+            }
+
+            // Kiểm tra beginMonth khi beginYear bằng minYear
+            if (beginYear === minYear && beginMonth < minMonth) {
+                beginYear = minYear;
+                beginMonth = minMonth;
+            }
+
+            // Điều chỉnh nếu vượt quá max
+            if (endYear > maxYear) {
+                endMonth = maxMonth;
+                endYear = maxYear;
+            }
+
+            // Kiểm tra endMonth khi endYear bằng maxYear
+            if (endYear === maxYear && endMonth > maxMonth) {
+                endMonth = maxMonth;
+                endYear = maxYear;
+            }
+
+            return {
+                beginMonth: beginMonth,
+                beginYear: beginYear,
+                endMonth: endMonth,
+                endYear: endYear
+            };
+        }
+    </script>
+}
+
+

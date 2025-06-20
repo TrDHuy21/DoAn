@@ -27,5 +27,17 @@ namespace WebMvc.Areas.Admin.Controllers
             return View();
         }
 
+        [HttpGet("ThongKeTongQuan")]
+        public IActionResult ThongKeTongQuan()
+        {
+            return View();
+        }
+
+        [HttpGet("ThongKeNhanVien")]
+        public IActionResult ThongKeNhanVien()
+        {
+            return View();
+        }
+
     }
 }

@@ -103,7 +103,22 @@
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Thống kê doanh số</span>
                 </a>
-            </li>         
+            </li>    
+            
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                   aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Thống kê</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="@Url.Action("ThongKeTongQuan","StatisticsAdmin")">Tổng quan</a>
+                        <a class="collapse-item" href="@Url.Action("ThongKeNhanVien","StatisticsAdmin")">Thống kê doanh số nhân viên</a>
+                        <a class="collapse-item" href="blank.html">Thông kê danh mục - sản phẩm</a>
+                    </div>
+                </div>
+            </li>
 
         </ul>
         <!-- End of Sidebar -->

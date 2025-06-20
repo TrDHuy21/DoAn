@@ -1,0 +1,491 @@
+﻿
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #3498db;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .top-list {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .top-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+        .top-item:last-child {
+            border-bottom: none;
+        }
+
+    .rank-badge {
+        background: #3498db;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+        .rank-badge.gold {
+            background: #f39c12;
+        }
+
+        .rank-badge.silver {
+            background: #95a5a6;
+        }
+
+        .rank-badge.bronze {
+            background: #e67e22;
+        }
+
+    .date-filter {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .employee-table {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .table th {
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        border-color: #ecf0f1;
+    }
+</style>
+<div class="dashboard-header">
+    <div class="container">
+        <h1 class="text-center"><i class="fas fa-chart-line"></i>Thống Kê Tổng Quan</h1>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Bộ lọc thời gian -->
+    <div class="row">
+        <div class="col-12">
+            <div class="date-filter">
+                <h5><i class="fas fa-calendar-alt"></i> Chọn Thời Gian</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Tháng/Năm Bắt Đầu:</label>
+                        <input type="month" class="form-control" id="startDate" value="2025-01">
+                    </div>
+                    <div class="col-md-4">
+                        <label>Tháng/Năm Kết Thúc:</label>
+                        <input type="month" class="form-control" id="endDate" value="2025-06">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-primary" onclick="updateData()">
+                            <i class="fas fa-search"></i> Cập Nhật
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" id="totalRevenue">2.5 tỷ</div>
+                <div class="stat-label">Tổng Doanh Thu</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-success" id="onlineRevenue">1.8 tỷ</div>
+                <div class="stat-label">Doanh Thu Online</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-info" id="offlineRevenue">700 triệu</div>
+                <div class="stat-label">Doanh Thu Offline</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" id="totalOrders">15,245</div>
+                <div class="stat-label">Tổng Đơn Hàng</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-success" id="onlineOrders">12,180</div>
+                <div class="stat-label">Đơn Hàng Online</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number text-info" id="offlineOrders">3,065</div>
+                <div class="stat-label">Đơn Hàng Offline</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="chart-container">
+                <h5><i class="fas fa-area-chart"></i> Biểu Đồ Doanh Số Theo Tháng</h5>
+                <canvas id="monthlyRevenueChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+     <div class="row">
+            <div class="col-12">
+                <div class="chart-container">
+                    <h5><i class="fas fa-line-chart"></i> Số Lượng Đơn Hàng Theo Tháng</h5>
+                    <canvas id="onlineOrdersChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+</div>
+@section Scripts {
+    <script>
+
+         var test;
+
+        var onlineOrdersData = {
+            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+            data: [890, 952, 1024, 987, 1156, 1289, 1345, 1456, 1398, 1567, 1634, 1789]
+        };
+
+
+
+        // bieu do doanh so theo thang
+        const eMonthlyRevenueChart = document.getElementById('monthlyRevenueChart').getContext('2d');
+        let monthlyRevenueChart = new Chart(eMonthlyRevenueChart, {
+            type: 'line',
+            data: {
+                labels: null,
+                datasets: [
+                    {
+                        label: 'Online',
+                        data: null,
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Offline',
+                        data:null,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatNumber(value); // Sử dụng hàm formatNumber
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + formatNumber(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+          const eOnlineOrdersChart = document.getElementById('onlineOrdersChart').getContext('2d');
+        let onlineOrdersChart = new Chart(eOnlineOrdersChart, {
+                type: 'line',
+                data: {
+                    labels: onlineOrdersData.labels,
+                    datasets: [
+                        {
+                            label: 'Online',
+                            data: null,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Offline',
+                            data:null,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' đơn';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+
+        // Update data function
+        function updateData() {
+            const startEl = document.getElementById('startDate');
+            const endEl = document.getElementById('endDate');
+
+            let [beginYear, beginMonth] = startEl.value.split('-').map(Number);
+            let [endYear, endMonth] = endEl.value.split('-').map(Number);
+
+            let result = validateAndControlTime(beginMonth, beginYear, endMonth, endYear);
+
+            // Load các functions với validated data
+            loadMonthlyRevenueChartAndOnlineOrdersChart(result.beginMonth, result.beginYear, result.endMonth, result.endYear);
+           
+            // Update inputs với format đúng
+            startEl.value = `${result.beginYear}-${result.beginMonth.toString().padStart(2, '0')}`;
+            endEl.value = `${result.endYear}-${result.endMonth.toString().padStart(2, '0')}`;
+
+            alert(`Đã thống kê dữ liệu từ ${result.beginMonth}/${result.beginYear} -> ${result.endMonth}/${result.endYear}`);
+        }
+
+        // Format number function
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(1) + ' tỷ';
+            } else if (num >= 1000000) {
+                return (num / 1000000).toFixed(0) + ' triệu';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(0) + 'k';
+            }
+            return num.toString();
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateData();
+        });
+
+        // Responsive chart resize
+        window.addEventListener('resize', function() {
+            Chart.helpers.each(Chart.instances, function(instance) {
+                instance.resize();
+            });
+        });
+
+        async function loadMonthlyRevenueChartAndOnlineOrdersChart(beginMonth, beginYear, endMonth, endYear) {
+            try {
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/doanhthuvadonhang?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                let data = await response.json();
+                console.log(data);
+                monthlyRevenueChart.data.labels = data.map(data => data.thang);
+                monthlyRevenueChart.data.datasets[0].data = data.map(data => data.doanhThuOnline);
+                monthlyRevenueChart.data.datasets[1].data = data.map(data => data.doanhThuOffline);
+                monthlyRevenueChart.update();
+
+                onlineOrdersChart.data.labels = data.map(data => data.thang);
+                onlineOrdersChart.data.datasets[0].data =  data.map(data => data.soLuongOnline);
+                onlineOrdersChart.update();
+
+                onlineOrdersChart.data.labels = data.map(data => data.thang);
+                onlineOrdersChart.data.datasets[1].data =  data.map(data => data.soLuongOffline);
+                onlineOrdersChart.update();
+
+                const totalRevenueOnline = data.map(data => data.doanhThuOnline).reduce((sum, value) => sum + value, 0);
+                const totalRevenueOffline = data.map(data => data.doanhThuOffline).reduce((sum, value) => sum + value, 0);
+
+                const totalOrderOnline = data.map(data => data.soLuongOnline).reduce((sum, value) => sum + value, 0);
+                const totalOrderOffline = data.map(data => data.soLuongOffline).reduce((sum, value) => sum + value, 0);
+
+
+                const totalRevenue = totalRevenueOnline + totalRevenueOffline;
+                const totalOrder = totalOrderOnline + totalOrderOffline;
+
+                // Cập nhật các stat-number với format
+                document.getElementById('totalRevenue').textContent = formatNumber(totalRevenue);
+                document.getElementById('onlineRevenue').textContent = formatNumber(totalRevenueOnline);
+                document.getElementById('offlineRevenue').textContent = formatNumber(totalRevenueOffline);
+
+                document.getElementById('totalOrders').textContent = totalOrder;
+                document.getElementById('onlineOrders').textContent = totalOrderOnline;
+                document.getElementById('offlineOrders').textContent = totalOrderOffline;
+
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+                Toast('Không thể tải dữ liệu biểu đồ doanh thu');
+            }
+        }
+
+        function getRankClass(index) {
+            switch (index) {
+                case 0: return 'gold';
+                case 1: return 'silver';
+                case 2: return 'bronze';
+                default: return '';
+            }
+        }
+
+        function validateAndControlTime(beginMonth, beginYear, endMonth, endYear) {
+            // Lấy năm và tháng hiện tại
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() trả về 0-11, nên cần +1
+
+            // Thiết lập min và max
+            const minYear = 2024;
+            const minMonth = 1; // Tháng 1
+            const maxYear = currentYear;
+            const maxMonth = currentMonth;
+
+            // Kiểm tra các điều kiện không hợp lệ
+            if (beginMonth < 1 || beginMonth > 12 || endMonth < 1 || endMonth > 12 ||
+                endYear < beginYear || endYear <= 0 || beginYear <= 0 ||
+                (endYear === beginYear && beginMonth > endMonth)) {
+                // Trường hợp số âm, số tháng không hợp lệ
+                return {
+                    beginMonth: 1,
+                    beginYear: currentYear,
+                    endMonth: currentMonth,
+                    endYear: currentYear
+                };
+            }
+
+            // Điều chỉnh endYear và endMonth nếu nhỏ hơn min
+            if (endYear < minYear) {
+                endYear = minYear;
+                endMonth = minMonth;
+            }
+
+            // Điều chỉnh beginYear và beginMonth nếu nhỏ hơn min
+            if (beginYear < minYear) {
+                beginYear = minYear;
+                beginMonth = minMonth;
+            }
+
+            // Kiểm tra beginMonth khi beginYear bằng minYear
+            if (beginYear === minYear && beginMonth < minMonth) {
+                beginYear = minYear;
+                beginMonth = minMonth;
+            }
+
+            // Điều chỉnh nếu vượt quá max
+            if (endYear > maxYear) {
+                endMonth = maxMonth;
+                endYear = maxYear;
+            }
+
+            // Kiểm tra endMonth khi endYear bằng maxYear
+            if (endYear === maxYear && endMonth > maxMonth) {
+                endMonth = maxMonth;
+                endYear = maxYear;
+            }
+
+            return {
+                beginMonth: beginMonth,
+                beginYear: beginYear,
+                endMonth: endMonth,
+                endYear: endYear
+            };
+        }
+    </script>
+}
+
+
