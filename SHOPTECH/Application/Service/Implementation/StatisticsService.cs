@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Application.Service.Implementation
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<DoanhThuVaDonHang>> DoanhThuVoiDonHang(int beginMonth, int beginYear, int endMonth, int endYear)
+        public async Task<List<DoanhThuVaDonHang>> DoanhThuVoiDonHang(int beginMonth, int beginYear, int endMonth, int endYear, string categoryUrlName = "")
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
             var startDate = new DateTime(beginYear, beginMonth, 1);
@@ -28,7 +29,14 @@ namespace Application.Service.Implementation
 
             var orders = await _unitOfWork.Orders.GetAll()
                 .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
-                .Include(o => o.OrderDetails)
+                .SelectMany(o => o.OrderDetails)
+                .Where(od => categoryUrlName == "" ? true : od.ProductDetail.Product.Category.UrlName == categoryUrlName)
+                .Select(od => new {
+                    OrderDate = od.Order.OrderDate,
+                    Type = od.Order.Type,
+                    Quantity = od.Quantity,
+                    Price = od.Price,
+                })
                 .ToListAsync();
 
             var result = new List<DoanhThuVaDonHang>();
@@ -44,26 +52,33 @@ namespace Application.Service.Implementation
                     Thang = $"{currentDate.Month}/{currentDate.Year}",
                     DoanhThuOnline = monthOrders
                         .Where(o => o.Type == "online")
-                        .SelectMany(o => o.OrderDetails)
                         .Sum(od => od.Quantity * od.Price),
                     DoanhThuOffline = monthOrders
                         .Where(o => o.Type == "offline")
-                            .SelectMany(o => o.OrderDetails)
-                            .Sum(od => od.Quantity * od.Price),
+                        .Sum(od => od.Quantity * od.Price),
                     SoLuongOffline = monthOrders
                         .Where(o => o.Type == "offline")
-                            .SelectMany(o => o.OrderDetails)
-                            .Count(),
+                        .Count(),
                     SoLuongOnline = monthOrders
                         .Where(o => o.Type == "online")
-                            .SelectMany(o => o.OrderDetails)
-                            .Count(),
+                        .Count(),
                 });
 
                 currentDate = currentDate.AddMonths(1);
             }
 
             return result;
+        }
+
+        private bool checkCategoryOfProductDetail(int productDetailId, string categoryUrlName)
+        {
+            if (string.IsNullOrEmpty(categoryUrlName))
+            {
+                return true; // Không lọc theo danh mục
+            }
+            var category = _unitOfWork.ProductDetails.GetAll().Where(pd => pd.Id == productDetailId)
+                .Select(pd => pd.Product.Category.UrlName).AsNoTracking().First();
+            return category == categoryUrlName;
         }
 
         public async Task<dynamic> SoLuongDonHang(int beginMonth, int beginYear, int endMonth, int endYear)
@@ -171,7 +186,7 @@ namespace Application.Service.Implementation
             };
         }
 
-        public async Task<ThongKeSanPham> ThongKeTopSanPham(int beginMonth, int beginYear, int endMonth, int endYear)
+        public async Task<ThongKeSanPham> ThongKeTopSanPham(int beginMonth, int beginYear, int endMonth, int endYear, string categoryUrlName ="")
         {
             ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
 
@@ -180,6 +195,7 @@ namespace Application.Service.Implementation
 
             var orderDetails = await _unitOfWork.OrderDetails.GetAll()
                 .Where(od => od.Order.OrderDate >= startDate && od.Order.OrderDate <= endDate)
+                .Where(od => categoryUrlName == "" ? true : od.ProductDetail.Product.Category.UrlName == categoryUrlName)
                 .Include(od => od.ProductDetail)
                     .ThenInclude(pd => pd.Product)
                 .ToListAsync();
@@ -240,7 +256,7 @@ namespace Application.Service.Implementation
                 .OrderByDescending(c => c.SoLuong)
                 .ToList();
 
-          
+
 
             var topCategoriesByRevenue = orderDetails
                 .GroupBy(od => new { od.ProductDetail.Product.CategoryId, od.ProductDetail.Product.Category.Name })
@@ -322,6 +338,110 @@ namespace Application.Service.Implementation
                 DuLieuTheoThang = monthlyData
             };
         }
+        public async Task<ThongKeKhoangGia> ThongKeKhoangGia(
+            int beginMonth,
+            int beginYear,
+            int endMonth,
+            int endYear,
+            decimal minPrice = 0,
+            decimal maxPrice = 0,
+            decimal priceStep = 0,
+            string categoryUrlName = "")
+        {
+            ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
+            if (maxPrice <= 0)
+            {
+                maxPrice = await _unitOfWork.OrderDetails.GetAll()
+                    .MaxAsync(od => od.Price);
+            }
+            priceStep = priceStep == 0 ? 2500000 : priceStep;
+            // Validate price parameters
+            if (minPrice < 0 || maxPrice <= minPrice || priceStep <= 0)
+            {
+                throw new ArgumentException("Invalid price parameters. Ensure minPrice >= 0, maxPrice > minPrice, and priceStep > 0");
+            }
+
+            var startDate = new DateTime(beginYear, beginMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
+
+            var orderDetails = await _unitOfWork.OrderDetails.GetAll()
+                .Where(od => od.Order.OrderDate >= startDate && od.Order.OrderDate <= endDate)
+                .Where(od => categoryUrlName == "" ? true : od.ProductDetail.Product.Category.UrlName == categoryUrlName)
+                .Include(od => od.ProductDetail)
+                .Include(od => od.Order)
+                .ToListAsync();
+
+            // Generate dynamic price ranges based on input parameters
+            var priceRanges = new List<dynamic>();
+            decimal currentMin = minPrice;
+
+            while (currentMin < maxPrice)
+            {
+                decimal currentMax = Math.Min(currentMin + priceStep, maxPrice);
+
+                string label;
+
+                label = $"{FormatPriceToTrieu(currentMin)}-{FormatPriceToTrieu(currentMin + priceStep)} triệu";
+
+                priceRanges.Add(new
+                {
+                    Min = currentMin,
+                    Max = currentMin + priceStep,
+                    Label = label,
+                    IsLast = false
+                });
+                currentMin += priceStep;
+            }
+
+            priceRanges.Add(new
+            {
+                Min = currentMin,
+                Max = currentMin + priceStep,
+                Label = $"{FormatPriceToTrieu(currentMin)}+ triệu",
+                IsLast = true
+            });
+
+            // Generate monthly data
+            var monthlyData = new List<Dictionary<string, int>>();
+            var currentDate = startDate;
+
+            while (currentDate <= endDate)
+            {
+                var monthOrders = orderDetails.Where(od =>
+                    od.Order.OrderDate.Year == currentDate.Year &&
+                    od.Order.OrderDate.Month == currentDate.Month);
+
+                var monthData = new Dictionary<string, int>();
+
+                foreach (var range in priceRanges)
+                {
+                    monthData[range.Label] = monthOrders
+                        .Count(od =>
+                            od.Price >= range.Min &&
+                            (range.IsLast ? od.Price <= range.Max : od.Price < range.Max));
+                }
+
+                monthlyData.Add(monthData);
+                currentDate = currentDate.AddMonths(1);
+            }
+
+            // Calculate percentage by range
+            var totalByRange = priceRanges.Select(range => new
+            {
+                Range = (string)range.Label,
+                Percentage = orderDetails.Any() ?
+                    (double)orderDetails.Count(od =>
+                        od.Price >= range.Min &&
+                        (range.IsLast ? od.Price <= range.Max : od.Price < range.Max)) /
+                    orderDetails.Count * 100 : 0
+            }).ToList();
+
+            return new ThongKeKhoangGia
+            {
+                TyLeTheoKhoangGia = totalByRange.ToDictionary(x => x.Range, x => x.Percentage),
+                DuLieuTheoThang = monthlyData
+            };
+        }
 
         public async Task<List<ThongKeSanPhamKhoangGia>> ThongKeSanPhamTheoKhoangGia(int beginMonth, int beginYear, int endMonth, int endYear)
         {
@@ -367,8 +487,8 @@ namespace Application.Service.Implementation
                 // Calculate statistics
                 var totalProducts = productsInRange.Count;
                 var totalSold = salesInRange.Sum(od => od.Quantity);
-                var averagePrice = salesInRange.Any() 
-                    ? salesInRange.Average(od => od.Price) 
+                var averagePrice = salesInRange.Any()
+                    ? salesInRange.Average(od => od.Price)
                     : 0;
 
                 result.Add(new ThongKeSanPhamKhoangGia
@@ -535,6 +655,138 @@ namespace Application.Service.Implementation
             }
 
             return result;
+        }
+
+
+        public async Task<List<ThongKeSanPhamKhoangGia>> ThongKeGiaSoLuongDoanhSo(
+            int beginMonth,
+            int beginYear,
+            int endMonth,
+            int endYear,
+            decimal minPrice = 0,
+            decimal maxPrice = 0,
+            decimal priceStep = 0,
+            string categoryUrlName = "")
+        {
+            ValidateAndControlTime(ref beginMonth, ref beginYear, ref endMonth, ref endYear);
+            if (maxPrice <= 0)
+            {
+                maxPrice = await _unitOfWork.OrderDetails.GetAll()
+                    .MaxAsync(od => od.Price);
+            }
+            priceStep = priceStep == 0 ? 2500000 : priceStep;
+            // Validate price parameters
+            if (minPrice < 0 || maxPrice <= minPrice || priceStep <= 0)
+            {
+                throw new ArgumentException("Invalid price parameters. Ensure minPrice >= 0, maxPrice > minPrice, and priceStep > 0");
+            }
+
+            var startDate = new DateTime(beginYear, beginMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, 1).AddMonths(1).AddDays(-1);
+
+            // Generate dynamic price ranges based on input parameters
+            var priceRanges = new List<dynamic>();
+            decimal currentMin = minPrice;
+
+            while (currentMin < maxPrice)
+            {
+                decimal currentMax = Math.Min(currentMin + priceStep, maxPrice);
+
+                string label;
+
+                label = $"{FormatPriceToTrieu(currentMin)}-{FormatPriceToTrieu(currentMin + priceStep)} triệu";
+
+                priceRanges.Add(new
+                {
+                    Min = currentMin,
+                    Max = currentMin + priceStep,
+                    Label = label,
+                    IsLast = false
+                });
+                currentMin += priceStep;
+            }
+
+            priceRanges.Add(new
+            {
+                Min = currentMin,
+                Max = currentMin + priceStep,
+                Label = $"{FormatPriceToTrieu(currentMin)}+ triệu",
+                IsLast = true
+            });
+
+
+            // Get all products and their sales data
+            var products = await _unitOfWork.Products.GetAll()
+                .Where(p => categoryUrlName == "" ? true : p.Category.UrlName == categoryUrlName)
+                .Include(p => p.ProductDetails)
+                .ToListAsync();
+
+            var orderDetails = await _unitOfWork.OrderDetails.GetAll()
+                .Where(od => od.Order.OrderDate >= startDate && od.Order.OrderDate <= endDate)
+                .Where(od => categoryUrlName == "" ? true : od.ProductDetail.Product.Category.UrlName == categoryUrlName)
+                .Include(od => od.ProductDetail)
+                .ToListAsync();
+
+            var result = new List<ThongKeSanPhamKhoangGia>();
+
+            foreach (var range in priceRanges)
+            {
+                // Get products in this price range
+                var productsInRange = products
+                    .Where(p => p.ProductDetails.Any(pd =>
+                        pd.Price >= range.Min &&
+                        (range.IsLast ? pd.Price <= range.Max : pd.Price < range.Max)))
+                    .ToList();
+
+                // Get sales data for products in this range
+                var salesInRange = orderDetails
+                    .Where(od =>
+                        od.Price >= range.Min &&
+                        (range.IsLast ? od.Price <= range.Max : od.Price < range.Max))
+                    .ToList();
+
+                // Calculate statistics
+                var totalProducts = productsInRange.Count;
+                var totalSold = salesInRange.Sum(od => od.Quantity);
+                var averagePrice = salesInRange.Any()
+                    ? salesInRange.Average(od => od.Price)
+                    : 0;
+
+                result.Add(new ThongKeSanPhamKhoangGia
+                {
+                    KhoangGia = range.Label,
+                    GiaTrungBinh = Math.Round(averagePrice),
+                    TongSoLoaiSanPham = totalProducts,
+                    TongSoSanPhamBanDuoc = totalSold
+                });
+            }
+
+            return result;
+        }
+
+        // Helper method to format price to "triệu" format
+        private string FormatPriceToTrieu(decimal price)
+        {
+            if (price >= 1000000)
+            {
+                decimal trieu = price / 1000000;
+                if (trieu == Math.Floor(trieu))
+                {
+                    return trieu.ToString("0");
+                }
+                else
+                {
+                    return trieu.ToString("0.#");
+                }
+            }
+            else if (price >= 1000)
+            {
+                return $"{price / 1000}k";
+            }
+            else
+            {
+                return price.ToString("0");
+            }
         }
     }
 }

@@ -24,12 +24,14 @@ namespace WebApi.Controllers.Admin
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
-            [FromQuery] int endYear = 0)
+            [FromQuery] int endYear = 0, 
+            [FromQuery] string categoryUrlName = ""
+            )
         {
             try
             {
                 var result = await _statisticsService.DoanhThuVoiDonHang(
-                    beginMonth, beginYear, endMonth, endYear);
+                    beginMonth, beginYear, endMonth, endYear, categoryUrlName);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -112,12 +114,14 @@ namespace WebApi.Controllers.Admin
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
-            [FromQuery] int endYear = 0)
+            [FromQuery] int endYear = 0,
+            [FromQuery] string categoryUrlName = ""
+            )
         {
             try
             {
                 var result = await _statisticsService.ThongKeTopSanPham(
-                    beginMonth, beginYear, endMonth, endYear);
+                    beginMonth, beginYear, endMonth, endYear, categoryUrlName);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -153,7 +157,7 @@ namespace WebApi.Controllers.Admin
         /// Lấy thống kê khoảng giá theo khoảng thời gian
         /// </summary>
         [HttpGet("thongkekhoanggia")]
-        public async Task<IActionResult> GetThongKeKhoangGia(
+        public async  Task<IActionResult> GetThongKeKhoangGia(
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
@@ -171,36 +175,22 @@ namespace WebApi.Controllers.Admin
             }
         }
 
-        /// <summary>
-        /// Lấy tất cả thống kê theo khoảng thời gian
-        /// </summary>
-        [HttpGet("tatcathongke")]
-        public async Task<IActionResult> GetAllStatistics(
+        [HttpGet("thongkekhoanggiav2")]
+        public async Task<IActionResult> GetThongKeKhoangGiaV2(
             [FromQuery] int beginMonth = 0,
             [FromQuery] int beginYear = 0,
             [FromQuery] int endMonth = 0,
-            [FromQuery] int endYear = 0)
+            [FromQuery] int endYear = 0,
+            [FromQuery] decimal minPrice = 0,
+            [FromQuery] decimal maxPrice = 0,
+            [FromQuery] decimal priceStep = 0,
+            [FromQuery] string categoryUrlName = ""
+            )
         {
             try
             {
-                var result = new
-                {
-                    DoanhThuVaDonHang = await _statisticsService.DoanhThuVoiDonHang(
-                        beginMonth, beginYear, endMonth, endYear),
-                    SoLuongDonHang = await _statisticsService.SoLuongDonHang(
-                        beginMonth, beginYear, endMonth, endYear),
-                    ThongKeKhachHang = await _statisticsService.ThongKeKhachHang(
-                        beginMonth, beginYear, endMonth, endYear),
-                    ThongKeNhanVien = await _statisticsService.ThongKeNhanVien(
-                        beginMonth, beginYear, endMonth, endYear),
-                    ThongKeSanPham = await _statisticsService.ThongKeTopSanPham(
-                        beginMonth, beginYear, endMonth, endYear),
-                    ThongKeDanhMuc = await _statisticsService.ThongKeTopDanhMuc(
-                        beginMonth, beginYear, endMonth, endYear, 3),
-                    ThongKeKhoangGia = await _statisticsService.ThongKeKhoangGia(
-                        beginMonth, beginYear, endMonth, endYear)
-                };
-
+                var result = await _statisticsService.ThongKeKhoangGia(
+                    beginMonth, beginYear, endMonth, endYear, minPrice, maxPrice, priceStep, categoryUrlName);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -240,6 +230,29 @@ namespace WebApi.Controllers.Admin
             {
                 var result = await _statisticsService.ThongKeGiaSoLuongDoanhSo(
                     beginMonth, beginYear, endMonth, endYear);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("thongkegiasoluongdoanhsov2")]
+        public async Task<IActionResult> ThongKeGiaSoLuongDoanhSov2(
+         [FromQuery] int beginMonth = 0,
+         [FromQuery] int beginYear = 0,
+         [FromQuery] int endMonth = 0,
+         [FromQuery] int endYear = 0,
+         [FromQuery] decimal minPrice = 0,
+         [FromQuery] decimal maxPrice = 0,
+         [FromQuery] decimal priceStep = 0,
+         [FromQuery] string categoryUrlName = "")
+        {
+            try
+            {
+                var result = await _statisticsService.ThongKeGiaSoLuongDoanhSo(
+                    beginMonth, beginYear, endMonth, endYear, minPrice, maxPrice, priceStep, categoryUrlName);
                 return Ok(result);
             }
             catch (Exception ex)

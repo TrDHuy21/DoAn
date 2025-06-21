@@ -1,4 +1,10 @@
-﻿
+﻿@using Application.Dtos.CategoryDtos
+@{
+    var categories = ViewData["Categories"] as List<IndexCategoryDto>
+         ?? new List<IndexCategoryDto>();
+}
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <style>
     body {
@@ -127,26 +133,36 @@
 </style>
 <div class="dashboard-header">
     <div class="container">
-        <h1 class="text-center"><i class="fas fa-chart-line"></i>Thống Kê Tổng Quan</h1>
+        <h1 class="text-center"><i class="fas fa-chart-line"></i> Dashboard Thống Kê Sản Phẩm - Danh Mục</h1>
     </div>
 </div>
 
 <div class="container">
-    <!-- Bộ lọc thời gian -->
+    <!-- Bộ lọc -->
     <div class="row">
         <div class="col-12">
             <div class="date-filter">
                 <h5><i class="fas fa-calendar-alt"></i> Chọn Thời Gian</h5>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Tháng/Năm Bắt Đầu:</label>
                         <input type="month" class="form-control" id="startDate" value="2025-01">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Tháng/Năm Kết Thúc:</label>
                         <input type="month" class="form-control" id="endDate" value="2025-06">
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-3">
+                        <label>Danh Mục:</label>
+
+                        <select class="form-control" id="category">
+							@foreach(var category in categories)
+							{
+								<option value="@category.UrlName">@category.Name</option>
+							}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
                         <button class="btn btn-primary" onclick="updateData()">
                             <i class="fas fa-search"></i> Cập Nhật
                         </button>
@@ -155,16 +171,13 @@
             </div>
         </div>
     </div>
-
-   
-
-    <!-- Phần 1: Tổng Quan -->
+    
+    <!-- phần 1 -->
     <div class="row">
         <div class="col-12">
-            <h2 class="section-title"><i class="fas fa-chart-pie"></i> Phần 1: Tổng quan đơn hàng</h2>
+            <h2 class="section-title"><i class="fas fa-chart-pie"></i> Doanh số</h2>
         </div>
     </div>
-
     <div class="row">
         <div class="col-md-3">
             <div class="stat-card">
@@ -216,22 +229,12 @@
         </div>
     </div>
 
-     <div class="row">
-            <div class="col-12">
-                <div class="chart-container">
-                    <h5><i class="fas fa-line-chart"></i> Số Lượng Đơn Hàng Theo Tháng</h5>
-                    <canvas id="onlineOrdersChart" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-
-    <!-- Phần 2: Tổng Quan sản phâm -->
+    <!-- phần 2-->
     <div class="row">
         <div class="col-12">
-            <h2 class="section-title"><i class="fas fa-chart-pie"></i> Phần 2: Tổng quan sản phẩm và danh mục</h2>
+            <h2 class="section-title"><i class="fas fa-chart-pie"></i> Top Sản phẩm</h2>
         </div>
     </div>
-
     <div class="row">
         <div class="col-md-6">
             <div class="top-list" id="top-sanpham-soluong">
@@ -273,7 +276,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-6">
             <div class="top-list" id="top-sanpham-doanhthu">
                 <h5><i class="fas fa-dollar-sign"></i> Top 5 Sản Phẩm Doanh Thu Cao</h5>
@@ -316,67 +318,52 @@
         </div>
     </div>
 
+    <!-- phần 3-->
     <div class="row">
-        <div class="col-md-6">
-            <div class="top-list" id="top-danhmuc-soluong">
-                <h5><i class="fas fa-medal"></i> Top 3 Danh Mục Bán Chạy (Số Lượng)</h5>
-                <div class="top-item">
-                    <div class="d-flex align-items-center">
-                        <div class="rank-badge gold">1</div>
-                        <span>Điện Thoại</span>
-                    </div>
-                    <span class="text-success font-weight-bold">5,678 sp</span>
-                </div>
-                <div class="top-item">
-                    <div class="d-flex align-items-center">
-                        <div class="rank-badge silver">2</div>
-                        <span>Laptop</span>
-                    </div>
-                    <span class="text-success font-weight-bold">3,456 sp</span>
-                </div>
-                <div class="top-item">
-                    <div class="d-flex align-items-center">
-                        <div class="rank-badge bronze">3</div>
-                        <span>Phụ Kiện</span>
-                    </div>
-                    <span class="text-success font-weight-bold">2,890 sp</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="top-list" id="top-danhmuc-doanhthu">
-                <h5><i class="fas fa-chart-bar"></i> Top 3 Danh Mục Doanh Thu Cao</h5>
-                <div class="top-item">
-                    <div class="d-flex align-items-center">
-                        <div class="rank-badge gold">1</div>
-                        <span>Điện Thoại</span>
-                    </div>
-                    <span class="text-primary font-weight-bold">1.2 tỷ</span>
-                </div>
-                <div class="top-item">
-                    <div class="d-flex align-items-center">
-                        <div class="rank-badge silver">2</div>
-                        <span>Laptop</span>
-                    </div>
-                    <span class="text-primary font-weight-bold">890 triệu</span>
-                </div>
-                <div class="top-item">
-                    <div class="d-flex align-items-center">
-                        <div class="rank-badge bronze">3</div>
-                        <span>Tablet</span>
-                    </div>
-                    <span class="text-primary font-weight-bold">456 triệu</span>
-                </div>
-            </div>
+        <div class="col-12">
+            <h2 class="section-title"><i class="fas fa-chart-pie"></i> Thống kê khoảng giá</h2>
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-12 mt-3">
+            <h6><i class="fas fa-filter"></i> Nhập khoảng giá</h6>
+        </div>
+        <div class="col-md-4 mt-3">
+            <label>Giá Tối Thiểu (Triệu):</label>
+            <input type="number" class="form-control" id="minPrice" placeholder="Nhập giá tối thiểu" min="0" value="0">
+            <div class="text-danger" id="minPriceError"></div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <label>Giá Tối Đa  (Triệu):</label>
+            <input type="number" class="form-control" id="maxPrice" placeholder="Nhập giá tối đa" min="0" value="40">
+            <div class="text-danger" id="maxPriceError"></div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <label>Bước nhảy  (Triệu):</label>
+            <input type="number" class="form-control" id="priceStep" placeholder="Nhập bước giá" min="0" value="10">
+            <div class="text-danger" id="priceStepError"></div>
+        </div>
+        <div class="col-md-12 mt-3 d-flex justify-content-end">
+            <button class="btn btn-primary" onclick="filterData()">
+                <i class="fas fa-search"></i> Lọc
+            </button>
+        </div>
+    </div>
+
+    <br /><br />
 
     <div class="row">
         <div class="col-md-6">
             <div class="chart-container">
-                <h5><i class="fas fa-chart-bar"></i> Tỷ Lệ Doanh Thu Theo Danh Mục</h5>
-                <canvas id="categoryRevenueChart" height="200"></canvas>
+                <h5><i class="fas fa-line-chart"></i> Số Lượng Bán Theo Khoảng Giá Theo Tháng</h5>
+                <canvas id="priceRangeTrendChart" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <h5><i class="fas fa-scatter-plot"></i> Quan Hệ Giá - Số Lượng - Doanh Số</h5>
+                <canvas id="priceQuantityRelationChart" height="200"></canvas>
             </div>
         </div>
     </div>
@@ -385,11 +372,12 @@
     <script>
 
          var test;
-         const backgroundColors = [
+         // Mảng màu nền cho các nhân viên
+        const backgroundColors = [
             '#3498db', // Blue
             '#2ecc71', // Green
             '#e74c3c', // Red
-            '#f39c12', // Orange 
+            '#f39c12', // Orange
             '#9b59b6', // Purple
             '#1abc9c', // Turquoise
             '#34495e', // Dark Blue Grey
@@ -407,17 +395,54 @@
             '#8c52ff', // Light Purple
             '#ff6b6b'  // Light Red
         ];
+
         var onlineOrdersData = {
             labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
             data: [890, 952, 1024, 987, 1156, 1289, 1345, 1456, 1398, 1567, 1634, 1789]
         };
 
-         var categoryData = {
+        var employeeData = {
+            labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+            datasets: [
+                {
+                    label: 'Nguyễn Văn A',
+                    data: [25, 32, 28, 35, 42, 38],
+                    backgroundColor: '#3498db'
+                },
+                {
+                    label: 'Trần Thị B',
+                    data: [22, 28, 25, 31, 35, 33],
+                    backgroundColor: '#2ecc71'
+                },
+                {
+                    label: 'Lê Văn C',
+                    data: [18, 23, 21, 26, 29, 27],
+                    backgroundColor: '#e74c3c'
+                },
+                {
+                    label: 'Phạm Thị D',
+                    data: [15, 19, 17, 22, 25, 23],
+                    backgroundColor: '#f39c12'
+                },
+                {
+                    label: 'Hoàng Văn E',
+                    data: [12, 16, 14, 18, 21, 19],
+                    backgroundColor: '#9b59b6'
+                }
+            ]
+        };
+
+        var categoryData = {
             labels: ['Điện Thoại', 'Laptop', 'Tablet', 'Phụ Kiện', 'Đồng Hồ'],
             data: [48, 35.6, 18.2, 12.8, 8.4]
         };
 
-        // bieu do doanh so theo thang
+        var priceRangeData = {
+            labels: ['0-5 triệu', '5-10 triệu', '10-15 triệu', '15-20 triệu', '20+ triệu'],
+            data: [15.2, 28.5, 32.1, 18.7, 5.5]
+        };
+
+        // Biểu đồ doanh thu theo tháng
         const eMonthlyRevenueChart = document.getElementById('monthlyRevenueChart').getContext('2d');
         let monthlyRevenueChart = new Chart(eMonthlyRevenueChart, {
             type: 'line',
@@ -469,26 +494,41 @@
             }
         });
 
-        const eOnlineOrdersChart = document.getElementById('onlineOrdersChart').getContext('2d');
-        let onlineOrdersChart = new Chart(eOnlineOrdersChart, {
+        // Biểu đồ xu hướng khoảng giá
+        const ePriceRangeTrendChart = document.getElementById('priceRangeTrendChart').getContext('2d');
+        let priceRangeTrendChart = new Chart(ePriceRangeTrendChart, {
                 type: 'line',
                 data: {
-                    labels: onlineOrdersData.labels,
+                    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
                     datasets: [
                         {
-                            label: 'Online',
-                            data: null,
-                            borderColor: '#2ecc71',
-                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                            fill: true,
+                            label: '0-5 triệu',
+                            data: [120, 135, 128, 142, 156, 149],
+                            borderColor: '#3498db',
                             tension: 0.4
                         },
                         {
-                            label: 'Offline',
-                            data:null,
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                            fill: true,
+                            label: '5-10 triệu',
+                            data: [89, 95, 102, 98, 106, 112],
+                            borderColor: '#2ecc71',
+                            tension: 0.4
+                        },
+                        {
+                            label: '10-15 triệu',
+                            data: [67, 72, 69, 78, 85, 82],
+                            borderColor: '#e74c3c',
+                            tension: 0.4
+                        },
+                        {
+                            label: '15-20 triệu',
+                            data: [45, 52, 48, 56, 63, 59],
+                            borderColor: '#f39c12',
+                            tension: 0.4
+                        },
+                        {
+                            label: '20+ triệu',
+                            data: [23, 28, 25, 31, 35, 33],
+                            borderColor: '#9b59b6',
                             tension: 0.4
                         }
                     ]
@@ -500,41 +540,71 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return value + ' đơn';
+                                    return value + ' sp';
                                 }
                             }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true
                         }
                     }
                 }
             });
 
-        const eCategoryRevenueChart = document.getElementById('categoryRevenueChart').getContext('2d');
-        let categoryRevenueChart = new Chart(eCategoryRevenueChart, {
-                type: 'bar',
+        // Biểu đồ mối quan hệ giá-số lượng (Bubble Chart)
+        const ePriceQuantityRelationChart = document.getElementById('priceQuantityRelationChart').getContext('2d');
+        let priceQuantityRelationChart = new Chart(ePriceQuantityRelationChart, {
+                type: 'bubble',
                 data: {
-                    labels: categoryData.labels,
                     datasets: [{
-                        label: 'Tỷ lệ doanh thu (%)',
-                        data: categoryData.data,
-                        backgroundColor: backgroundColors
+                        label: 'Khoảng giá',
+                        data: [
+                            {x: 2.5, y: 1456, r: 15}, // 0-5 triệu: giá trung bình 2.5, số lượng bán 1456, số sản phẩm 15
+                            {x: 7.5, y: 892, r: 25},  // 5-10 triệu
+                            {x: 12.5, y: 634, r: 18}, // 10-15 triệu
+                            {x: 17.5, y: 345, r: 12}, // 15-20 triệu
+                            {x: 25, y: 156, r: 8}     // 20+ triệu
+                        ],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.6)',
+                            'rgba(46, 204, 113, 0.6)',
+                            'rgba(231, 76, 60, 0.6)',
+                            'rgba(243, 156, 18, 0.6)',
+                            'rgba(155, 89, 182, 0.6)'
+                        ],
+                        borderColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#9b59b6'
+                        ]
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
                     responsive: true,
                     scales: {
                         x: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
+                            title: {
+                                display: true,
+                                text: 'Giá Trung Bình (triệu đồng)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Doanh số (Trăm Triệu)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.parsed;
+                                    return `Giá: ${point.x} triệu, Doanh số: ${point.y}, Số sản phẩm: ${context.raw.r/4}`;
                                 }
                             }
+                        },
+                        legend: {
+                            display: false
                         }
                     }
                 }
@@ -544,21 +614,46 @@
         function updateData() {
             const startEl = document.getElementById('startDate');
             const endEl = document.getElementById('endDate');
+            const category = document.getElementById('category');
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const priceStep = document.getElementById('priceStep').value;
 
             let [beginYear, beginMonth] = startEl.value.split('-').map(Number);
             let [endYear, endMonth] = endEl.value.split('-').map(Number);
 
             let result = validateAndControlTime(beginMonth, beginYear, endMonth, endYear);
+            let categoryUrlName = category.value;
 
             // Load các functions với validated data
-            loadMonthlyRevenueChartAndOnlineOrdersChart(result.beginMonth, result.beginYear, result.endMonth, result.endYear);
-            LoadTopProductAndCategory(result.beginMonth, result.beginYear, result.endMonth, result.endYear);
-
+            loadMonthlyRevenueChartAndOnlineOrdersChart(result.beginMonth, result.beginYear, result.endMonth, result.endYear, categoryUrlName);
+            LoadTopProductAndCategory(result.beginMonth, result.beginYear, result.endMonth, result.endYear, categoryUrlName);
+            filterData();
             // Update inputs với format đúng
             startEl.value = `${result.beginYear}-${result.beginMonth.toString().padStart(2, '0')}`;
             endEl.value = `${result.endYear}-${result.endMonth.toString().padStart(2, '0')}`;
 
             alert(`Đã thống kê dữ liệu từ ${result.beginMonth}/${result.beginYear} -> ${result.endMonth}/${result.endYear}`);
+        }
+
+        function filterData() {
+            const startEl = document.getElementById('startDate');
+            const endEl = document.getElementById('endDate');
+            const category = document.getElementById('category');
+            const minPrice = document.getElementById('minPrice').value*1000000;
+            const maxPrice = document.getElementById('maxPrice').value*1000000;
+            const priceStep = document.getElementById('priceStep').value*1000000;
+
+            let [beginYear, beginMonth] = startEl.value.split('-').map(Number);
+            let [endYear, endMonth] = endEl.value.split('-').map(Number);
+
+            let result = validateAndControlTime(beginMonth, beginYear, endMonth, endYear);
+            let categoryUrlName = category.value;
+
+            LoadPriceRange(result.beginMonth, result.beginYear, result.endMonth, result.endYear, minPrice, maxPrice, priceStep, categoryUrlName);
+            loadPriceQuantityRelationChart(result.beginMonth, result.beginYear, result.endMonth, result.endYear, minPrice, maxPrice, priceStep, categoryUrlName);
+
+
         }
 
         // Format number function
@@ -585,25 +680,17 @@
             });
         });
 
-        async function loadMonthlyRevenueChartAndOnlineOrdersChart(beginMonth, beginYear, endMonth, endYear) {
+        // phan 1 : doanh so
+        async function loadMonthlyRevenueChartAndOnlineOrdersChart(beginMonth, beginYear, endMonth, endYear, categoryUrlName) {
             try {
-                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/doanhthuvadonhang?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/doanhthuvadonhang?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}&categoryUrlName=${categoryUrlName}`);
                 if (!response.ok) throw new Error('Network response was not ok');
 
                 let data = await response.json();
-                console.log(data);
                 monthlyRevenueChart.data.labels = data.map(data => data.thang);
                 monthlyRevenueChart.data.datasets[0].data = data.map(data => data.doanhThuOnline);
                 monthlyRevenueChart.data.datasets[1].data = data.map(data => data.doanhThuOffline);
                 monthlyRevenueChart.update();
-
-                onlineOrdersChart.data.labels = data.map(data => data.thang);
-                onlineOrdersChart.data.datasets[0].data =  data.map(data => data.soLuongOnline);
-                onlineOrdersChart.update();
-
-                onlineOrdersChart.data.labels = data.map(data => data.thang);
-                onlineOrdersChart.data.datasets[1].data =  data.map(data => data.soLuongOffline);
-                onlineOrdersChart.update();
 
                 const totalRevenueOnline = data.map(data => data.doanhThuOnline).reduce((sum, value) => sum + value, 0);
                 const totalRevenueOffline = data.map(data => data.doanhThuOffline).reduce((sum, value) => sum + value, 0);
@@ -630,33 +717,28 @@
             }
         }
 
-
-        async function LoadTopProductAndCategory(beginMonth, beginYear, endMonth, endYear) {
+        // phan 2 top san pham
+        async function LoadTopProductAndCategory(beginMonth, beginYear, endMonth, endYear, categoryUrlName) {
             try {
-                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongketopsanpham?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongketopsanpham?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}&categoryUrlName=${categoryUrlName}`);
                 if (!response.ok) throw new Error('Network response was not ok');
 
-                let response1 = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongketopdanhmuc?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}`);
-                if (!response1.ok) throw new Error('Network response was not ok');
-
                 const sanPhamData = await response.json();
-                const danhMucData = await response1.json();
 
                 // Cập nhật các danh sách top sản phẩm và top danh mục
                 updateTopSanPhamSoLuong(sanPhamData.topSanPhamTheoSoLuong);
                 updateTopSanPhamDoanhThu(sanPhamData.topSanPhamTheoDoanhThu);
-                updateTopDanhMucSoLuong(danhMucData.topDanhMucTheoSoLuong);
-                updateTopDanhMucDoanhThu(danhMucData.topDanhMucTheoDoanhThu);
+           
 
                 // cập nhật biểu đồ tỷ lệ doanh thu các <a href="#"></a>
-                updateCategoryRevenueChart(danhMucData);
+              
 
             } catch (error) {
                 console.error('Error loading product/category data:', error);
                 Toast('Không thể tải dữ liệu sản phẩm và danh mục');
             }
         }
-        
+
         function updateTopSanPhamSoLuong(data) {
             const container = document.getElementById('top-sanpham-soluong');
             if (!container) return;
@@ -702,70 +784,66 @@
             });
         }
 
-        function updateTopDanhMucSoLuong(data) {
-            const container = document.getElementById('top-danhmuc-soluong');
-            if (!container) return;
+        // thong ke doanh thu khoang gia theo thang
+        async function LoadPriceRange(beginMonth, beginYear, endMonth, endYear, minPrice, maxPrice, priceStep, categoryUrlName) {
+             try {
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongkekhoanggiav2?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}&minPrice=${minPrice}&maxPrice=${maxPrice}&priceStep=${priceStep}&categoryUrlName=${categoryUrlName}`);
+                let data= await response.json();
+                priceRangeTrendChart.data.labels = createMonthLabels(beginMonth, beginYear, endMonth, endYear);
 
-            const items = container.querySelectorAll('.top-item');
-            items.forEach(item => item.remove());
+                let duLieuTheoThang = data.duLieuTheoThang.map(item => Object.values(item));
+               
+                const allPriceRanges = new Set();
+                duLieuTheoThang.forEach(thang => {
+                    Object.keys(thang).forEach(khoangGia => {
+                        allPriceRanges.add(khoangGia);
+                    });
+                });
 
-            data.slice(0, 3).forEach((item, index) => {
-                const rankClass = getRankClass(index);
-                const itemHtml = `
-                    <div class="top-item">
-                        <div class="d-flex align-items-center">
-                            <div class="rank-badge ${rankClass}">${index + 1}</div>
-                            <span>${item.ten}</span>
-                        </div>
-                        <span class="text-success font-weight-bold">${item.soLuong.toLocaleString()} sp</span>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', itemHtml);
-            });
+                const priceRanges = Object.keys(data.duLieuTheoThang[0]);
+                console.log("priceRanges");
+                console.log(priceRanges);
+
+                // Tạo datasets
+                const datasets = priceRanges.map((khoangGia, index) => {
+                    const dataValues = data.duLieuTheoThang.map(monthData => monthData[khoangGia]);
+
+                    return {
+                        label: khoangGia,
+                        data: dataValues,
+                        borderColor: backgroundColors[index % backgroundColors.length],
+                        tension: 0.4
+                    };
+                });
+
+                priceRangeTrendChart.data.datasets = datasets;
+                priceRangeTrendChart.update();
+
+            } catch (error) {
+                console.error('Error loading product/category data:', error);
+                Toast('Không thể tải dữ liệu sản phẩm và danh mục');
+            }
         }
 
-        function updateTopDanhMucDoanhThu(data) {
-            const container = document.getElementById('top-danhmuc-doanhthu');
-            if (!container) return;
+        // thong ke quan he:doanh thu- khoang gia - so luong
+        async function loadPriceQuantityRelationChart(beginMonth, beginYear, endMonth, endYear, minPrice, maxPrice, priceStep, categoryUrlName) {
+             try {
+                let response = await fetch(`http://localhost:5114/api/StatisticsAdminApi/thongkegiasoluongdoanhsov2?beginMonth=${beginMonth}&beginYear=${beginYear}&endMonth=${endMonth}&endYear=${endYear}&minPrice=${minPrice}&maxPrice=${maxPrice}&priceStep=${priceStep}&categoryUrlName=${categoryUrlName}`);
+                let data= await response.json();
+                let chartData = data.map(t => {
+                    return {
+                        x:(t.giaTrungBinh/1000000).toFixed(2),
+                        y: (t.tongSoSanPhamBanDuoc * t.giaTrungBinh / 100000000).toFixed(2),
+                        r: t.tongSoLoaiSanPham * 4
+                    }})
+                priceQuantityRelationChart.data.datasets[0].data = chartData
+                priceQuantityRelationChart.update();
 
-            const items = container.querySelectorAll('.top-item');
-            items.forEach(item => item.remove());
+            } catch (error) {
+                console.error('Error loading product/category data:', error);
+                Toast('Không thể tải dữ liệu sản phẩm và danh mục');
+            }
 
-            data.slice(0, 3).forEach((item, index) => {
-                const rankClass = getRankClass(index);
-                const doanhThuFormatted = formatNumber(item.doanhThu);
-                const itemHtml = `
-                    <div class="top-item">
-                        <div class="d-flex align-items-center">
-                            <div class="rank-badge ${rankClass}">${index + 1}</div>
-                            <span>${item.ten}</span>
-                        </div>
-                        <span class="text-primary font-weight-bold">${doanhThuFormatted}</span>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', itemHtml);
-            });
-        }
-
-        function updateCategoryRevenueChart(data){
-            let totalRevenue = data.topDanhMucTheoDoanhThu.reduce((sum, item) => sum + item.doanhThu, 0);
-            console.log("totalRevenue");
-            console.log(totalRevenue);
-
-            let labels = data.topDanhMucTheoDoanhThu.map(item => item.ten);
-            let percentages = data.topDanhMucTheoDoanhThu.map(item =>
-                ((item.doanhThu / totalRevenue) * 100).toFixed(1)
-            );
-            console.log("percentages");
-            console.log(percentages);
-            categoryRevenueChart.data.labels = labels;
-            categoryRevenueChart.data.datasets[0].data = percentages;
-            categoryRevenueChart.update();
-
-            return {
-                labels: labels,
-                data: percentages.map(p => parseFloat(p))
-            };
         }
 
         function getRankClass(index) {
@@ -838,6 +916,25 @@
                 endMonth: endMonth,
                 endYear: endYear
             };
+        }
+
+        function createMonthLabels(beginMonth, beginYear, endMonth, endYear) {
+            const labels = [];
+            let currentMonth = beginMonth;
+            let currentYear = beginYear;
+
+            while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+                const monthStr = currentMonth.toString().padStart(2, '0');
+                labels.push(`${monthStr}/${currentYear}`);
+
+                currentMonth++;
+                if (currentMonth > 12) {
+                    currentMonth = 1;
+                    currentYear++;
+                }
+            }
+
+            return labels;
         }
     </script>
 }
