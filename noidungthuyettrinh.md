@@ -93,4 +93,29 @@
     mà các loại sản phẩm khác nhau cần lưu trữ thuộc tính khác nhau nên em đã tạo thêm bảng productAttribute để lưu trữ các thuộc tính của sản phẩm của dòng sản phẩm đó
     - trong mỗi 1 sản phẩm sẽ có các phiên bản khác nhau, ví dụ như 1 chiếc điện thoại có thể có nhiều màu sắc, dung lượng khác nhau nên em đã thêm bảng productDetail và thông tin cấu hình này sẽ lưu ở bảng productDetailAttribute.
 
+## demo
+- tao 1 danh muc moi "tivi"
+- tao 1 san pham moi "tivi sony x9000"
+- tao 1 nhan hieu moi "sony"
+- tao 1 phien ban moi "tivi sony x9000 55 inch"
+- tao 1 phien ban moi "tivi sony x9000 65 inch"
+
+- tìm kiếm sản phẩm
+    - tìm theo tên
+    - tìm theo danh mục, lọc
+- quản lý giỏ hàng
+    - thêm sản phẩm mới
+    - thêm đã có
+    - cập nhật số lượng: -1, lớn hơn số lượng đang có, số lượng hợp lệ
+    - xóa sản phẩm
+- tạo 1 đơn hàng mới online, offline
+- thông báo mail
+
+- quản lý đơn hàng online
+- thay đổi trạng thái
+    - thay đổi từ chờ xác nhận đến thành công
+    - hủy.
+- show log.
+
+- show thống kê doanh thu
 
