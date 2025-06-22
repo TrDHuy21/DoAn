@@ -1,5 +1,8 @@
-﻿@{
+﻿@using Application.Dtos.CategoryDtos
+@{
     ViewData["Title"] = "Home Page";
+    var categories = ViewData["Categories"] as List<IndexCategoryDto>
+        ?? new List<IndexCategoryDto>();
 }
 <link rel="stylesheet" href="~/css/TrangChu.css" asp-append-version="true" />
 
@@ -42,8 +45,14 @@
 </div>
 
 <div class="container mt-4">
-    @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "laptop", filter = "ishot", name = "Laptop nổi bật" })
-    @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "dien_thoai", filter = "ishot", name = "Điện thoại nổi bật" })
-    @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "camera", filter = "ishot", name = "Camera" })
+    @foreach(var c in categories)
+    {
+		<div class="row">
+            @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = c.UrlName, filter = "ishot", name = c.Name + " nổi bật" })
+		</div>
+    } 
+    @* @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "laptop", filter = "ishot", name = "Laptop nổi bật" }) *@
+    @* @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "dien_thoai", filter = "ishot", name = "Điện thoại nổi bật" }) *@
+    @* @await Component.InvokeAsync("StatusFilteredProduct", new { categoryName = "camera", filter = "ishot", name = "Camera" }) *@
 </div>
 

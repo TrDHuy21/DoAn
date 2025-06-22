@@ -2,6 +2,9 @@
 @using Application.Dtos.ImageDtos
 @using Application.Dtos.ProductDetailAttributeDtos
 @using Application.Dtos.ProductDetailDtos
+@using System.Security.Claims
+@inject IHttpContextAccessor _httpContextAccessor
+
 
 @{
 	var productDetail = ViewData["productDetail"] as DetailClientProductDetail
@@ -18,6 +21,9 @@
 
 	List<ImageFileDto> images = ViewData["images"] as List<ImageFileDto>
 		?? new List<ImageFileDto>();
+
+	var user = _httpContextAccessor.HttpContext?.User;
+	string userRole = user?.FindFirst(ClaimTypes.Role)?.Value;
 }
 
 <link href="~/css/ProductDetailInfo.css" rel="stylesheet" />
@@ -182,9 +188,9 @@
 						productDetailId: parseInt(productId),
 						quantity: 1
 					}];
-				
+					let role = @Html.Raw(Json.Serialize(@userRole));
 				$.ajax({
-					url: '/Cart/Checkoutonline',
+					url: role === "Customer" ? '/Cart/Checkoutonline' : '/Cart/Checkoutoffline',
 					type: 'POST',
 					contentType: 'application/json',
 					data: JSON.stringify(requestData),

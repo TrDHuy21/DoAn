@@ -53,17 +53,15 @@
                         Products
                     </h6>
                     <p>
-                        <a href="./ProductDetail/dien_thoai" class="text-reset">Điện thoại - Smartphone</a>
+                        <a href="~/ProductDetail/dien_thoai" class="text-reset">Điện thoại - Smartphone</a>
                     </p>
                     <p>
-                        <a href="./ProductDetail/lap_top" class="text-reset">Laptop</a>
+                        <a href="~/ProductDetail/lap_top" class="text-reset">Laptop</a>
                     </p>
                     <p>
-                        <a href="./ProductDetail/chuot_may_tinh" class="text-reset">Chuột máy tính</a>
+                        <a href="~/ProductDetail/camera" class="text-reset">Camera</a>
                     </p>
-                    <p>
-                        <a href="./ProductDetail/ban_phim" class="text-reset">Bàn phím máy tính</a>
-                    </p>
+                   
                 </div>
                 <!-- Grid column -->
                 <!-- Grid column -->
@@ -73,13 +71,13 @@
                         Các liên kết tiện ích
                     </h6>
                     <p>
-                        <a href="./" class="text-reset">Trang chủ</a>
+                        <a href="@Url.Action("Index","Home")" class="text-reset">Trang chủ</a>
                     </p>
                     <p>
-                        <a href="./cart" class="text-reset">Giỏ hàng</a>
+                        <a href="@Url.Action("Index","Cart")" class="text-reset">Giỏ hàng</a>
                     </p>
                     <p>
-                        <a href="/order" class="text-reset">Đơn hàng</a>
+                        <a href="@Url.Action("MyOrders","Order")" class="text-reset">Đơn hàng</a>
                     </p>
                 </div>
                 <!-- Grid column -->

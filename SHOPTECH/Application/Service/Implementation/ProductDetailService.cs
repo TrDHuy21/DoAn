@@ -204,7 +204,7 @@ namespace Application.Service.Implementation
                     productDetail.ImageId = imageFile.Id;
                 }
 
-                foreach (var productDetailAttributeDto in productDetailDto.ProductDetailAttributes)
+                foreach (var productDetailAttributeDto in productDetailDto.ProductDetailAttributes ?? new())
                 {
                     var productDetailAttribute = await _unitOfWork.ProductDetailAttributes.GetByIdAsync((productDetail.Id, productDetailAttributeDto.ProductAttributeId));
                     if (productDetailAttribute != null)
