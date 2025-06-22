@@ -158,6 +158,13 @@ namespace Application.Service.Implementation
                     throw new Exception("Số điện thoại này đã được đăng ký");
                 }
 
+                userExist = await _unitOfWork.Users.GetAll()
+                    .FirstOrDefaultAsync(x => x.Email == registerUser.Email);
+                if (userExist != null)
+                {
+                    throw new Exception("Địa chỉ email này đã được đăng ký");
+                }
+
                 var user = _mapper.Map<User>(registerUser);
                 user.UrlName = "";
                 user.IsActive = true; // Mặc định người dùng mới được kích hoạt

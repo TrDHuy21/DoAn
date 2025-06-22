@@ -86,10 +86,10 @@ namespace Application.Service.Implementation
                     throw new InvalidOperationException("Password is wrong");
                 }
 
-                if (user.Password != loginDto.Password)
-                {
-                    throw new InvalidOperationException("Password is wrong");
-                }
+                //if (user.Password != loginDto.Password)
+                //{
+                //    throw new InvalidOperationException("Password is wrong");
+                //}
                 if(user.RoleId != null)
                 {
                     await _unitOfWork.Roles.GetByIdAsync(user.RoleId.Value);

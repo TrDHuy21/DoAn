@@ -57,7 +57,7 @@ namespace WebApi.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return StatusCode(500, new { Message = "Có lỗi xảy ra" });
+                return StatusCode(500, new { Message = ex.Message });
             }
 
         }

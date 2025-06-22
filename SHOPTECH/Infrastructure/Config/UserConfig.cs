@@ -43,9 +43,9 @@ namespace Infrastructure.Config
             builder.HasIndex(c => c.Email)
                 .IsUnique();
 
-            builder.Property(c => c.Password)
-              .IsRequired()
-              .HasMaxLength(100);
+            //builder.Property(c => c.Password)
+            //  .IsRequired()
+            //  .HasMaxLength(100);
 
             builder.Property(c => c.UrlName)
               .IsRequired()

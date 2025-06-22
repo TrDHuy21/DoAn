@@ -36,6 +36,13 @@
                         <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
 
+                    <div class="form-outline mb-3">
+                        <label asp-for="Email" class="form-label mb-2">Địa chỉ email</label>
+                        <input asp-for="Email" type="email" class="form-control"
+                               placeholder="Nhập địa chỉ email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
                     <!-- Birth Date input -->
                     <div class="form-outline mb-3">
                         <label asp-for="BirthDate" class="form-label mb-2">Ngày sinh</label>
