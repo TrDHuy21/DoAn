@@ -194,10 +194,25 @@ namespace Application.Service.Implementation
                     throw new ArgumentNullException(nameof(userDto), "categoryDto cannot be null");
                 }
 
-                // Bắt đầu transaction
+                var existUser = await _unitOfWork.Users.GetAll()
+                    .FirstOrDefaultAsync(x => x.Phone == userDto.Phone);
+
+                if (existUser != null && existUser.Id != userDto.Id)
+                {
+                    throw new Exception("Số điện thoại này đã được đăng ký");
+                }
+                existUser = null;
+                existUser = await _unitOfWork.Users.GetAll()
+                    .Where(x => x.Email == userDto.Email)
+                   .FirstOrDefaultAsync();
+
+                if (existUser != null && existUser.Id != userDto.Id)
+                {
+                    throw new Exception("Email này đã được đăng ký");
+                }
+
                 await _unitOfWork.BeginTransactionAsync();
 
-                // Tìm category cần cập nhật
                 var user = await GetByIdAsync(userDto.Id);
                 if (userDto == null)
                 {
@@ -206,23 +221,6 @@ namespace Application.Service.Implementation
 
                 // Cập nhật thông tin brand từ DTO
                 _mapper.Map(userDto, user);
-
-                // Xử lý upload file mới nếu có
-                if (userDto.FormFile != null)
-                {
-                    // Upload file mới
-                    var imageFile = await _imageFileService.UploadFileAsync(userDto.FormFile);
-
-                    // Xóa file cũ nếu có
-                    if (user.ImageId.HasValue)
-                    {
-                        await _imageFileService.DeleteFileAsync(user.ImageId.Value);
-                    }
-
-                    user.ImageId = imageFile.Id;
-                }
-
-
 
                 BaseEntityService<User>.Update(user); // Cập nhật các thuộc tính cơ bản như UpdatedAt, UpdatedBy
                 await _unitOfWork.SaveChangeAsync();

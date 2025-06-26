@@ -87,7 +87,8 @@ namespace WebApi.Controllers.Admin
 
         //update
         [HttpPut]
-        public async Task<IActionResult> Update([FromForm] UpdateUserDto userDto)
+        [AllowAnonymous]
+        public async Task<IActionResult> Update([FromBody] UpdateUserDto userDto)
         {
             try
             {

@@ -162,5 +162,68 @@ namespace WebMvc.Controllers
                 return View(registerUser);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Update()
+        {
+
+            try
+            {
+                var response = await _apiService.GetAsync(CustomerApiString.USER_ADMIN_PROFILE());
+                if (response.IsSuccessStatusCode)
+                {
+                    var user = await response.Content.ReadFromJsonAsync<DetailUserDto>()
+                        ?? throw new Exception("");
+                    var updateUser = new UpdateUserDto
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        Phone = user.Phone,
+                        AdressDetail = user.AdressDetail,
+                        BirthDate = user.BirthDate
+                    };
+                    return View(updateUser);
+                }
+                else
+                {
+                    throw new Exception("");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(UpdateUserDto userDto)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(userDto);
+            }
+
+            try
+            {
+                var response = await _apiService.PutAsync(AdminApiString.USER_ADMIN(), userDto);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Profile updated successfully.";
+                    return RedirectToAction("Profile");
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    throw new Exception(errorResponse?.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(userDto);
+            }
+        }
     }
 }
